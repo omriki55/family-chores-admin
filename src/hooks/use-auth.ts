@@ -4,14 +4,29 @@ import { auth } from "@/lib/firebase";
 import { getAdminConfig, setAdminConfig } from "@/lib/firestore";
 
 const googleProvider = new GoogleAuthProvider();
+const ADMIN_PASSWORD = "1234";
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [checking, setChecking] = useState(false);
+  const [passwordAuth, setPasswordAuth] = useState(false);
+
+  // Check if already authenticated via password in sessionStorage
+  useEffect(() => {
+    const stored = sessionStorage.getItem("admin_password_auth");
+    if (stored === "true") {
+      setPasswordAuth(true);
+      setIsAdmin(true);
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
+    // If password auth is active, skip Firebase auth
+    if (passwordAuth) return;
+
     const unsub = onAuthStateChanged(auth, async (u) => {
       setUser(u);
       if (u) {
@@ -41,7 +56,7 @@ export function useAuth() {
       setLoading(false);
     });
     return unsub;
-  }, []);
+  }, [passwordAuth]);
 
   const signIn = async () => {
     try {
@@ -51,10 +66,27 @@ export function useAuth() {
     }
   };
 
-  const signOut = async () => {
-    await fbSignOut(auth);
-    setIsAdmin(false);
+  const signInWithPassword = (password: string): boolean => {
+    if (password === ADMIN_PASSWORD) {
+      setPasswordAuth(true);
+      setIsAdmin(true);
+      setLoading(false);
+      sessionStorage.setItem("admin_password_auth", "true");
+      return true;
+    }
+    return false;
   };
 
-  return { user, isAdmin, loading: loading || checking, signIn, signOut };
+  const signOut = async () => {
+    if (passwordAuth) {
+      setPasswordAuth(false);
+      setIsAdmin(false);
+      sessionStorage.removeItem("admin_password_auth");
+    } else {
+      await fbSignOut(auth);
+      setIsAdmin(false);
+    }
+  };
+
+  return { user, isAdmin, loading: loading || checking, signIn, signInWithPassword, signOut, passwordAuth };
 }

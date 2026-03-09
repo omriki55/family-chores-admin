@@ -7,7 +7,9 @@ interface AuthContextType {
   isAdmin: boolean;
   loading: boolean;
   signIn: () => Promise<void>;
+  signInWithPassword: (password: string) => boolean;
   signOut: () => Promise<void>;
+  passwordAuth: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -15,7 +17,9 @@ const AuthContext = createContext<AuthContextType>({
   isAdmin: false,
   loading: true,
   signIn: async () => {},
+  signInWithPassword: () => false,
   signOut: async () => {},
+  passwordAuth: false,
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
