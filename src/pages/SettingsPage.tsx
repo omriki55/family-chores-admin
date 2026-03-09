@@ -14,7 +14,8 @@ import {
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { toast } from "sonner";
-import { Plus, Trash2, LogOut, RefreshCw, Server, Shield, Users, Mail } from "lucide-react";
+import { Plus, Trash2, LogOut, RefreshCw, Server, Shield, Users, Mail, Database } from "lucide-react";
+import { seedSampleData } from "@/lib/seed-data";
 
 export default function SettingsPage() {
   const { user, signOut } = useAuthContext();
@@ -29,6 +30,7 @@ export default function SettingsPage() {
   const [newFamilyId, setNewFamilyId] = useState("");
   const [loadingFamilies, setLoadingFamilies] = useState(true);
   const [discovering, setDiscovering] = useState(false);
+  const [seeding, setSeeding] = useState(false);
 
   // Load admin config
   useEffect(() => {
@@ -164,6 +166,19 @@ export default function SettingsPage() {
       toast.error("Auto-discovery failed");
     }
     setDiscovering(false);
+  };
+
+  const handleSeedData = async () => {
+    setSeeding(true);
+    try {
+      const familyId = await seedSampleData();
+      toast.success(`Sample data created for family ${familyId}`);
+      loadFamilyRegistry();
+    } catch (e) {
+      console.error("Seed failed:", e);
+      toast.error("Failed to seed sample data");
+    }
+    setSeeding(false);
   };
 
   const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID || "Not configured";
@@ -312,6 +327,37 @@ export default function SettingsPage() {
               </div>
             </div>
           )}
+        </CardContent>
+      </Card>
+
+      {/* Seed Sample Data */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <Database className="h-4 w-4" />
+            Sample Data
+          </CardTitle>
+          <CardDescription>
+            Create a demo family with realistic data for testing the admin panel
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button onClick={handleSeedData} disabled={seeding} variant="outline" className="w-full">
+            {seeding ? (
+              <>
+                <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                Creating sample data...
+              </>
+            ) : (
+              <>
+                <Database className="h-4 w-4 mr-2" />
+                Seed Sample Family Data
+              </>
+            )}
+          </Button>
+          <p className="text-xs text-muted-foreground mt-2 text-center">
+            Creates "DEMO01" family with 3 children, tasks, completions, XP, messages, and more
+          </p>
         </CardContent>
       </Card>
 
