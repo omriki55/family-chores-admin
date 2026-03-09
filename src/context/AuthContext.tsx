@@ -7,7 +7,7 @@ interface AuthContextType {
   isAdmin: boolean;
   loading: boolean;
   signIn: () => Promise<void>;
-  signInWithPassword: (password: string) => boolean;
+  signInWithPassword: (password: string) => Promise<boolean>;
   signOut: () => Promise<void>;
   passwordAuth: boolean;
 }
@@ -17,7 +17,7 @@ const AuthContext = createContext<AuthContextType>({
   isAdmin: false,
   loading: true,
   signIn: async () => {},
-  signInWithPassword: () => false,
+  signInWithPassword: async () => false,
   signOut: async () => {},
   passwordAuth: false,
 });

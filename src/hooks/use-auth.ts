@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { type User, signInWithPopup, GoogleAuthProvider, signOut as fbSignOut, onAuthStateChanged } from "firebase/auth";
+import { type User, signInWithPopup, signInAnonymously, GoogleAuthProvider, signOut as fbSignOut, onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { getAdminConfig, setAdminConfig } from "@/lib/firestore";
 
@@ -19,7 +19,8 @@ export function useAuth() {
     if (stored === "true") {
       setPasswordAuth(true);
       setIsAdmin(true);
-      setLoading(false);
+      // Also sign in anonymously for Firestore access
+      signInAnonymously(auth).catch(() => {}).finally(() => setLoading(false));
     }
   }, []);
 
@@ -66,8 +67,14 @@ export function useAuth() {
     }
   };
 
-  const signInWithPassword = (password: string): boolean => {
+  const signInWithPassword = async (password: string): Promise<boolean> => {
     if (password === ADMIN_PASSWORD) {
+      try {
+        // Sign in anonymously so Firestore rules (request.auth != null) are satisfied
+        await signInAnonymously(auth);
+      } catch (e) {
+        console.error("Anonymous sign-in failed:", e);
+      }
       setPasswordAuth(true);
       setIsAdmin(true);
       setLoading(false);

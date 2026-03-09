@@ -15,9 +15,9 @@ export default function LoginPage() {
     if (!loading && (passwordAuth || (user && isAdmin))) navigate("/", { replace: true });
   }, [user, isAdmin, loading, navigate, passwordAuth]);
 
-  const handlePasswordLogin = () => {
+  const handlePasswordLogin = async () => {
     setPasswordError(false);
-    const ok = signInWithPassword(password);
+    const ok = await signInWithPassword(password);
     if (!ok) {
       setPasswordError(true);
       setPassword("");
