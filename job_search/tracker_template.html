@@ -50,7 +50,11 @@
     .hero-greeting{font-family:var(--font-display);font-size:.82rem;font-weight:800;color:var(--ink)}
     .hero-meta{font-size:.75rem;color:var(--inkFaint);margin-top:1px}
     .hero-coach{font-family:var(--font-display);font-size:.9rem;font-weight:700;color:var(--accentInk)}
+    .hero-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
     .sheet-btn{display:inline-flex;align-items:center;gap:4px;background:var(--surface);border:1px solid var(--line);color:var(--inkSoft);border-radius:10px;padding:6px 10px;font-size:.73rem;text-decoration:none;font-weight:600;white-space:nowrap;font-family:var(--font-ui)}
+    .scan-btn,.settings-btn{display:inline-flex;align-items:center;justify-content:center;background:var(--surface);border:1px solid var(--line);color:var(--inkSoft);border-radius:10px;padding:6px 9px;font-size:.85rem;cursor:pointer;font-family:var(--font-ui);transition:all .15s}
+    .scan-btn:hover,.settings-btn:hover{border-color:var(--accent);color:var(--accentInk)}
+    .scan-btn:disabled{opacity:.5;cursor:not-allowed}
 
     /* funnel bars */
     .funnel{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
@@ -105,7 +109,7 @@
       box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 20px rgba(20,20,40,.05);
       border:1px solid transparent;
       position:relative;overflow:hidden;
-      transition:box-shadow .2s,border-color .2s;
+      transition:box-shadow .2s,border-color .2s,opacity .2s;
     }
     .job-card:hover{box-shadow:0 2px 6px rgba(0,0,0,.06),0 14px 32px rgba(20,20,40,.10)}
     .job-card.open{border-color:var(--line)}
@@ -114,6 +118,8 @@
     .job-card.st-rejected{opacity:.7}
     .job-card.st-rejected::before{opacity:.3}
     .job-card.has-followup{outline:2px solid oklch(0.64 0.18 45);outline-offset:-2px}
+    /* dismissed card */
+    .job-card.dismissed{opacity:.5;border-left:4px solid oklch(0.56 0.16 20);border-color:oklch(0.88 0.06 20)}
 
     /* card header */
     .card-head{display:flex;align-items:center;gap:12px;padding:14px 17px 14px 17px;cursor:pointer;user-select:none}
@@ -135,6 +141,8 @@
     .chevron{font-size:.72rem;color:var(--inkFaint);transition:transform .25s cubic-bezier(.2,.7,.3,1);flex-shrink:0}
     .job-card.open .chevron{transform:rotate(180deg)}
     .follow-badge{font-size:.64rem;background:oklch(0.97 0.04 45);color:oklch(0.5 0.18 45);border:1px solid oklch(0.88 0.08 45);border-radius:999px;padding:2px 7px;font-weight:700;white-space:nowrap}
+    /* new badge */
+    .new-badge{background:oklch(0.955 0.045 150);color:oklch(0.46 0.13 150);border-radius:999px;padding:2px 7px;font-size:.64rem;font-weight:700;border:1px solid oklch(0.86 0.08 150);white-space:nowrap}
 
     /* card body — grid-rows animation */
     .card-body-wrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s cubic-bezier(.2,.7,.3,1)}
@@ -194,6 +202,19 @@
     .act-open{background:var(--accent);color:var(--onAccent);border-color:var(--accent)}
     .act-copy.copied{color:var(--accent);border-color:var(--accent)}
 
+    /* dismiss section */
+    .dismiss-toggle{background:none;border:none;font-size:.72rem;color:var(--inkFaint);cursor:pointer;padding:3px 0;font-family:var(--font-ui);text-align:right;direction:rtl}
+    .dismiss-toggle:hover{color:var(--ink)}
+    .dismiss-panel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .25s cubic-bezier(.2,.7,.3,1)}
+    .dismiss-panel.open{grid-template-rows:1fr}
+    .dismiss-panel-inner{overflow:hidden;min-height:0}
+    .dismiss-btns{display:flex;gap:6px;flex-wrap:wrap;padding-top:6px}
+    .dismiss-btn{padding:6px 10px;border-radius:8px;font-size:.72rem;font-weight:600;font-family:var(--font-ui);cursor:pointer;border:1.5px solid oklch(0.88 0.06 20);background:oklch(0.975 0.01 20);color:oklch(0.46 0.13 20);transition:all .12s;outline:none}
+    .dismiss-btn:hover{background:oklch(0.955 0.045 20);border-color:oklch(0.56 0.16 20)}
+    .undismiss-link{font-size:.69rem;color:var(--inkFaint);cursor:pointer;text-decoration:underline;background:none;border:none;font-family:var(--font-ui);padding:0}
+    .undismiss-link:hover{color:var(--ink)}
+    .dismissed-banner{background:oklch(0.975 0.01 20);border:1px solid oklch(0.88 0.06 20);border-radius:8px;padding:5px 10px;font-size:.72rem;color:oklch(0.46 0.13 20);display:flex;align-items:center;justify-content:space-between;gap:8px}
+
     /* ── TOAST ── */
     #toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--toast-bg);color:#fff;border-radius:999px;padding:10px 22px;font-size:.83rem;font-weight:600;font-family:var(--font-ui);z-index:999;transition:transform .3s cubic-bezier(.2,.7,.3,1),opacity .3s;pointer-events:none;box-shadow:0 6px 24px rgba(0,0,0,.22);opacity:0;white-space:nowrap}
     #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
@@ -210,6 +231,33 @@
     .modal-body{padding:14px 16px;overflow-y:auto;white-space:pre-wrap;font-size:.79rem;line-height:1.55;color:var(--ink);font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
     .modal-foot{padding:10px 16px;border-top:1px solid var(--line);display:flex;gap:7px}
     .modal-foot .act-btn{min-width:0}
+
+    /* ── SETTINGS DRAWER ── */
+    .drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:199;display:none;backdrop-filter:blur(1px)}
+    .drawer-overlay.show{display:block}
+    .drawer{position:fixed;top:0;left:0;bottom:0;width:min(380px,95vw);background:white;box-shadow:-4px 0 24px rgba(0,0,0,.12);z-index:200;transform:translateX(-100%);transition:transform .3s cubic-bezier(.2,.7,.3,1);display:flex;flex-direction:column}
+    .drawer.open{transform:translateX(0)}
+    .drawer-head{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+    .drawer-head h3{font-size:1rem;font-weight:800;font-family:var(--font-display);color:var(--ink)}
+    .drawer-close{background:var(--surfaceAlt);border:none;width:30px;height:30px;border-radius:50%;font-size:1rem;cursor:pointer;color:var(--inkSoft);flex-shrink:0}
+    .drawer-tabs{display:flex;border-bottom:1px solid var(--line);flex-shrink:0}
+    .dtab{flex:1;padding:10px 6px;font-size:.76rem;font-weight:600;font-family:var(--font-ui);color:var(--inkSoft);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .12s;text-align:center}
+    .dtab.on{color:var(--accent);border-bottom-color:var(--accent)}
+    .drawer-body{flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:14px}
+    .d-section{display:flex;flex-direction:column;gap:6px}
+    .d-lbl{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--inkFaint)}
+    .d-inp{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;font-size:.82rem;font-family:var(--font-ui);color:var(--ink);background:var(--surfaceAlt);outline:none;direction:rtl;transition:border-color .15s}
+    .d-inp:focus{border-color:var(--accent);background:var(--surface)}
+    .d-ta{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;font-size:.78rem;font-family:var(--font-ui);color:var(--ink);resize:vertical;min-height:100px;background:var(--surfaceAlt);outline:none;direction:rtl;transition:border-color .15s}
+    .d-ta:focus{border-color:var(--accent);background:var(--surface)}
+    .d-hint{font-size:.67rem;color:var(--inkFaint);line-height:1.4}
+    .d-btn{padding:9px 14px;border-radius:10px;font-size:.78rem;font-weight:700;font-family:var(--font-ui);cursor:pointer;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);transition:all .13s;text-align:center}
+    .d-btn:hover{border-color:var(--accent);color:var(--accentInk);background:var(--accentSoft)}
+    .d-btn.primary{background:var(--accent);color:var(--onAccent);border-color:var(--accent)}
+    .d-btn.primary:hover{background:var(--accentDeep)}
+    .d-tab-panel{display:none;flex-direction:column;gap:14px}
+    .d-tab-panel.on{display:flex}
+    .d-status{font-size:.7rem;color:var(--inkFaint);margin-top:2px}
 
     @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
     @media(max-width:480px){
@@ -229,7 +277,11 @@
         <div class="hero-meta" id="hero-meta"></div>
         <div class="hero-coach" id="hero-coach" style="margin-top:5px"></div>
       </div>
-      <a class="sheet-btn" href="https://docs.google.com/spreadsheets/d/1i33qr_r_xj_2LkHzg0Hxe5Dh4G_m4T21Xa4WNhQLkjg/edit" target="_blank">📊 Sheet</a>
+      <div class="hero-actions">
+        <a class="sheet-btn" href="https://docs.google.com/spreadsheets/d/1i33qr_r_xj_2LkHzg0Hxe5Dh4G_m4T21Xa4WNhQLkjg/edit" target="_blank">📊 Sheet</a>
+        <button class="scan-btn" onclick="triggerScan()" id="scan-btn" title="סריקה חדשה">🔄</button>
+        <button class="settings-btn" onclick="openSettings()" title="הגדרות">⚙️</button>
+      </div>
     </div>
     <div class="funnel" id="funnel"></div>
     <div class="m-chips" id="m-chips"></div>
@@ -258,6 +310,7 @@
       <button class="sf-chip" data-stage="offer" onclick="setStageFilter(this)" style="--f-bg:oklch(0.955 0.045 150);--f-fg:oklch(0.46 0.13 150);--f-solid:oklch(0.56 0.16 150)">הצעות <span class="n" id="fc-offer"></span></button>
       <button class="sf-chip" data-stage="rejected" onclick="setStageFilter(this)" style="--f-bg:oklch(0.955 0.045 20);--f-fg:oklch(0.46 0.13 20);--f-solid:oklch(0.56 0.16 20)">נסגרו <span class="n" id="fc-rejected"></span></button>
       <button class="sf-chip" data-stage="starred" onclick="setStageFilter(this)">⭐ נבחרות</button>
+      <button class="sf-chip" data-stage="dismissed" onclick="setStageFilter(this)" style="--f-bg:oklch(0.975 0.01 20);--f-fg:oklch(0.46 0.13 20);--f-solid:oklch(0.56 0.16 20)">🗑️ נסגרו <span class="n" id="fc-dismissed"></span></button>
     </div>
     <div class="filter-row">
       <span class="filter-lbl">ציון</span>
@@ -279,6 +332,8 @@
 </div>
 
 <div id="toast"></div>
+
+<!-- CV MODAL -->
 <div id="modal" onclick="if(event.target===this)closeModal()">
   <div class="modal-card">
     <div class="modal-head">
@@ -294,8 +349,74 @@
   </div>
 </div>
 
+<!-- SETTINGS DRAWER -->
+<div class="drawer-overlay" id="drawer-overlay" onclick="closeSettings()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-head">
+    <h3>⚙️ הגדרות</h3>
+    <button class="drawer-close" onclick="closeSettings()">✕</button>
+  </div>
+  <div class="drawer-tabs">
+    <button class="dtab on" data-tab="cv" onclick="switchDrawerTab(this)">קורות חיים</button>
+    <button class="dtab" data-tab="roles" onclick="switchDrawerTab(this)">תפקידים</button>
+    <button class="dtab" data-tab="connect" onclick="switchDrawerTab(this)">חיבורים</button>
+  </div>
+  <div class="drawer-body">
+    <!-- Tab: CV -->
+    <div class="d-tab-panel on" id="dtab-cv">
+      <div class="d-section">
+        <div class="d-lbl">שם</div>
+        <input class="d-inp" id="cv-name" placeholder="OMRI GONEN" oninput="saveCvOverride()"/>
+      </div>
+      <div class="d-section">
+        <div class="d-lbl">פרטי קשר</div>
+        <input class="d-inp" id="cv-contact" placeholder="+972-55-..." oninput="saveCvOverride()"/>
+      </div>
+      <div class="d-section">
+        <div class="d-lbl">Tagline</div>
+        <input class="d-inp" id="cv-tagline" placeholder="Growth & AI Executive..." oninput="saveCvOverride()"/>
+      </div>
+      <div class="d-section">
+        <div class="d-lbl">סיכום</div>
+        <textarea class="d-ta" id="cv-summary" rows="4" placeholder="Growth executive with 15+ years..." oninput="saveCvOverride()"></textarea>
+      </div>
+      <button class="d-btn" onclick="resetCvOverride()">↩ אפס לברירת מחדל</button>
+    </div>
+    <!-- Tab: Roles -->
+    <div class="d-tab-panel" id="dtab-roles">
+      <div class="d-section">
+        <div class="d-lbl">תפקידים מבוקשים (שורה לכל תפקיד)</div>
+        <textarea class="d-ta" id="roles-ta" rows="7" oninput="saveRoles()"></textarea>
+      </div>
+      <button class="d-btn" onclick="downloadConfig()">⬇ הורד config.json</button>
+      <div class="d-hint">העלה קובץ זה לתיקיית job_search/ כדי לשנות את חיפוש המשרות</div>
+    </div>
+    <!-- Tab: Connect -->
+    <div class="d-tab-panel" id="dtab-connect">
+      <div class="d-section">
+        <div class="d-lbl">GitHub Token</div>
+        <input class="d-inp" id="gh-token-inp" type="password" placeholder="ghp_..." autocomplete="off"/>
+        <button class="d-btn primary" onclick="saveGhToken()" style="margin-top:6px">שמור Token</button>
+        <div class="d-status" id="gh-token-status"></div>
+      </div>
+      <div class="d-section" style="display:flex;flex-direction:column;gap:8px">
+        <button class="d-btn" onclick="triggerScan();closeSettings()">🔄 סרוק עכשיו</button>
+        <button class="d-btn" onclick="syncFeedback()">📤 סנכרן פידבק</button>
+        <div class="d-status" id="sync-status"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 const JOBS=__JOBS_JSON__;
+
+/* ── new badge (Feature 2) ── */
+const latestScan=JOBS.reduce((max,j)=>(j.scan_date||'')>max?(j.scan_date||''):max,'');
+const seenScan=localStorage.getItem('seenScan')||'';
+const hasNew=latestScan>seenScan;
+function isNew(j){return hasNew&&j.scan_date===latestScan;}
+if(hasNew)setTimeout(()=>localStorage.setItem('seenScan',latestScan),45000);
 
 /* ── stage config ── */
 const STAGES=[
@@ -319,7 +440,7 @@ function fitColor(fit){
 function fitBand(f){return f>=8?'high':f>=5?'mid':'low';}
 
 /* ── CV base ── */
-const CV={
+const CV_BASE={
   name:"OMRI GONEN",
   tagline:"Growth & AI Executive | RevOps Architect | B2B SaaS & Fintech",
   contact:"+972-55-8820837 | omrigonen5050@gmail.com | linkedin.com/in/omri-gonen-82453545",
@@ -365,6 +486,12 @@ const CV={
   education:"MBA & BA, Business Administration – The Academic College of Management (MLA)"
 };
 
+function getCV(){
+  const ov=JSON.parse(localStorage.getItem('cv_override')||'{}');
+  return{...CV_BASE,...ov};
+}
+const CV=CV_BASE; // backward compat alias
+
 /* ── localStorage state ── */
 function jobKey(j){return(j.company+"|"+j.title).replace(/\s+/g,"_");}
 function loadState(){try{return JSON.parse(localStorage.getItem("jobState")||"{}");}catch(e){return{};}}
@@ -402,19 +529,43 @@ function saveNote(j,val){
   cur.note=val;STATE[k]=cur;saveState(STATE);
 }
 
+/* ── dismiss (Feature 1) ── */
+function dismissJob(j,reason){
+  const k=jobKey(j),cur=STATE[k]||{status:"saved"};
+  cur.dismissed=true;
+  cur.dismiss_reason=reason;
+  cur.dismiss_date=new Date().toISOString().slice(0,10);
+  cur.company=j.company;
+  STATE[k]=cur;saveState(STATE);
+  const token=localStorage.getItem('gh_token');
+  if(token)syncFeedback();
+  render();
+}
+function undismissJob(j){
+  const k=jobKey(j),cur=STATE[k]||{};
+  cur.dismissed=false;cur.dismiss_reason=null;cur.dismiss_date=null;
+  STATE[k]=cur;saveState(STATE);render();
+}
+function toggleDismissPanel(btn){
+  const panel=btn.nextElementSibling;
+  panel.classList.toggle('open');
+}
+
 /* ── stats ── */
 function computeStats(){
   const by={saved:0,applied:0,interview:0,offer:0,rejected:0};
-  let starred=0,followup=0;
+  let starred=0,followup=0,dismissedCount=0,newCount=0;
   JOBS.forEach(j=>{
     const st=getJobState(j);
+    if(st.dismissed){dismissedCount++;return;}
     const stage=getStage(j);
     if(by[stage]!==undefined)by[stage]++;
     if(st.starred)starred++;
     if(needsFollowup(st))followup++;
+    if(isNew(j))newCount++;
   });
   const inPlay=by.saved+by.applied+by.interview;
-  return{by,starred,followup,inPlay,interviews:by.interview,offers:by.offer,total:JOBS.length};
+  return{by,starred,followup,inPlay,interviews:by.interview,offers:by.offer,total:JOBS.length,dismissed:dismissedCount,newCount};
 }
 function coachLine(stats){
   if(stats.offers>0)return`יש לך ${stats.offers} הצעות 🎉`;
@@ -440,7 +591,6 @@ let fStage="all",fFit="all",fSort="score",fQ="";
 function setStageFilter(b){
   const v=b.dataset.stage;
   fStage=v;
-  // two-way sync with funnel
   document.querySelectorAll(".sf-chip").forEach(c=>c.classList.remove("on-all","on-stage"));
   if(v==="all"){b.classList.add("on-all");}
   else{b.classList.add("on-stage");}
@@ -478,25 +628,27 @@ function initials(n){return n.split(" ").map(w=>w[0]).slice(0,2).join("").toUppe
 
 /* ── CV ── */
 function tailorData(j){
+  const cvData=getCV();
   const text=((j.title||"")+" "+(j.description||"")+" "+(j.score_reason||"")+" "+(j.ai_opener||"")).toLowerCase();
   const score=arr=>arr.reduce((n,kw)=>n+(text.includes(kw)?1:0),0);
-  const comps=[...CV.competencies].map(c=>({t:c.t,s:score(c.k)})).sort((a,b)=>b.s-a.s);
+  const comps=[...cvData.competencies].map(c=>({t:c.t,s:score(c.k)})).sort((a,b)=>b.s-a.s);
   const useComps=(comps.filter(c=>c.s>0).slice(0,4).length?comps.filter(c=>c.s>0).slice(0,4):comps.slice(0,4)).map(c=>c.t);
-  const exp=CV.experience.map(e=>{
+  const exp=cvData.experience.map(e=>{
     const bl=[...e.bullets].map(b=>({t:b.t,s:score(b.k)})).sort((a,b)=>b.s-a.s);
     return{role:e.role,org:e.org,dates:e.dates,bullets:bl.slice(0,3).map(b=>b.t)};
   });
   return{useComps,exp};
 }
 function tailorCV(j){
+  const cvData=getCV();
   const{useComps,exp}=tailorData(j);
   let L=[];
-  L.push(CV.name,CV.tagline,CV.contact,"","— TAILORED FOR: "+j.title+" @ "+j.company+" —","","PROFILE");
-  L.push(CV.summary+" Directly aligned with "+j.company+"'s need for "+j.title+".","","KEY STRENGTHS FOR THIS ROLE");
+  L.push(cvData.name,cvData.tagline,cvData.contact,"","— TAILORED FOR: "+j.title+" @ "+j.company+" —","","PROFILE");
+  L.push(cvData.summary+" Directly aligned with "+j.company+"'s need for "+j.title+".","","KEY STRENGTHS FOR THIS ROLE");
   useComps.forEach(c=>L.push("• "+c));
   L.push("","EXPERIENCE");
   exp.forEach(e=>{L.push(e.role+" | "+e.org+"  ("+e.dates+")");e.bullets.forEach(b=>L.push("  • "+b));L.push("");});
-  L.push("EDUCATION",CV.education);
+  L.push("EDUCATION",cvData.education);
   return L.join("\n");
 }
 let _cvText="",_cvCompany="",_cvJob=null;
@@ -516,6 +668,7 @@ function downloadCV(){
 }
 function printCV(){
   if(!_cvJob)return;
+  const cvData=getCV();
   const j=_cvJob,{useComps,exp}=tailorData(j);
   const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
   const expH=exp.map(e=>`<div class="role"><div class="rh"><span class="rt">${esc(e.role)}</span><span class="rd">${esc(e.dates)}</span></div><div class="ro">${esc(e.org)}</div><ul>${e.bullets.map(b=>`<li>${esc(b)}</li>`).join("")}</ul></div>`).join("");
@@ -523,11 +676,11 @@ function printCV(){
   <style>@page{margin:14mm}*{box-sizing:border-box}body{font-family:Georgia,serif;color:#1a1a1a;line-height:1.4;max-width:780px;margin:0 auto;padding:10px}h1{font-size:24px;margin:0}.tag{color:#2563eb;font-weight:bold;font-size:12.5px;margin:3px 0}.contact{font-size:11px;color:#555;margin-bottom:4px}.tailored{font-size:11px;color:#7c3aed;font-weight:bold;border:1px solid #e4d8fb;background:#f7f3ff;padding:5px 9px;border-radius:6px;display:inline-block;margin:6px 0}h2{font-size:12.5px;text-transform:uppercase;letter-spacing:1px;color:#2563eb;border-bottom:1.5px solid #2563eb;padding-bottom:2px;margin:16px 0 7px}p{font-size:12.5px;margin:0}ul{margin:4px 0 0;padding-left:18px}li{font-size:12px;margin:2px 0}.role{margin-bottom:11px}.rh{display:flex;justify-content:space-between}.rt{font-weight:bold;font-size:13px}.rd{font-size:11px;color:#666}.ro{font-style:italic;font-size:11.5px;color:#444}@media print{.np{display:none}}.np{text-align:center;margin:14px 0}.np button{font-family:sans-serif;font-size:14px;padding:9px 22px;border:none;border-radius:8px;background:#2563eb;color:#fff;cursor:pointer}</style>
   </head><body>
   <div class="np"><button onclick="window.print()">🖨️ הדפס / שמור כ-PDF</button></div>
-  <h1>${esc(CV.name)}</h1><div class="tag">${esc(CV.tagline)}</div><div class="contact">${esc(CV.contact)}</div>
+  <h1>${esc(cvData.name)}</h1><div class="tag">${esc(cvData.tagline)}</div><div class="contact">${esc(cvData.contact)}</div>
   <div class="tailored">Tailored for: ${esc(j.title)} @ ${esc(j.company)}</div>
-  <h2>Profile</h2><p>${esc(CV.summary)}</p>
+  <h2>Profile</h2><p>${esc(cvData.summary)}</p>
   <h2>Key Strengths for This Role</h2><ul>${useComps.map(c=>`<li>${esc(c)}</li>`).join("")}</ul>
-  <h2>Experience</h2>${expH}<h2>Education</h2><p>${esc(CV.education)}</p>
+  <h2>Experience</h2>${expH}<h2>Education</h2><p>${esc(cvData.education)}</p>
   </body></html>`;
   const w=window.open("","_blank");if(!w){showToast("אפשר חלונות קופצים");return;}
   w.document.write(html);w.document.close();
@@ -562,6 +715,7 @@ function render(){
   if(stats.interviews>0)chips.push(`<div class="m-chip">📅 <span class="val">${stats.interviews}</span> ראיונות בתהליך</div>`);
   if(stats.offers>0)chips.push(`<div class="m-chip">★ <span class="val">${stats.offers}</span> הצעות</div>`);
   if(stats.followup>0)chips.push(`<div class="m-chip">💬 <span class="val">${stats.followup}</span> follow-up</div>`);
+  if(stats.newCount>0)chips.push(`<div class="m-chip">✨ <span class="val">${stats.newCount}</span> חדשות</div>`);
   document.getElementById("m-chips").innerHTML=chips.join("");
 
   // stage filter counts
@@ -569,10 +723,10 @@ function render(){
     const el=document.getElementById("fc-"+k);if(el)el.textContent=stats.by[k]||0;
   });
   const allEl=document.getElementById("fc-all");if(allEl)allEl.textContent=stats.total;
+  const dismissedEl=document.getElementById("fc-dismissed");if(dismissedEl)dismissedEl.textContent=stats.dismissed||0;
 
   // sort + filter
   let list=JOBS.map((j,idx)=>({j,idx,st:getJobState(j),stage:getStage(j)}));
-  // starred float to top within sort
   if(fSort==="score")list.sort((a,b)=>(b.st.starred-a.st.starred)||b.j.fit_score-a.j.fit_score);
   else if(fSort==="posted")list.sort((a,b)=>(b.st.starred-a.st.starred)||new Date(b.j.posted||0)-new Date(a.j.posted||0));
   else list.sort((a,b)=>(b.st.starred-a.st.starred)||(a.j.company||"").localeCompare(b.j.company||"","he"));
@@ -581,10 +735,19 @@ function render(){
   let v=0;
   document.getElementById("container").innerHTML=list.map((x,i)=>{
     const j=x.j,st=x.st,stage=x.stage;
-    const passStage=fStage==="all"||(fStage==="starred"?st.starred:stage===fStage);
-    const passFit=fFit==="all"||fitBand(j.fit_score)===fFit;
-    const passQ=!fQ||(j.company||"").toLowerCase().includes(fQ)||(j.title||"").toLowerCase().includes(fQ);
-    const show=passStage&&passFit&&passQ;
+    const isDismissed=!!st.dismissed;
+    // show logic
+    let show=false;
+    if(fStage==="dismissed"){show=isDismissed;}
+    else{
+      if(isDismissed){show=false;}
+      else{
+        const passStage=fStage==="all"||(fStage==="starred"?st.starred:stage===fStage);
+        const passFit=fFit==="all"||fitBand(j.fit_score)===fFit;
+        const passQ=!fQ||(j.company||"").toLowerCase().includes(fQ)||(j.title||"").toLowerCase().includes(fQ);
+        show=passStage&&passFit&&passQ;
+      }
+    }
     if(show)v++;
     const sc=stageColor(STAGES.find(s=>s.key===stage)?.hue||235);
     const fc=fitColor(j.fit_score);
@@ -592,6 +755,7 @@ function render(){
     const sm=STAGES.find(s=>s.key===stage)||STAGES[0];
     const c=j.contact;
     const delay=Math.min(i,12)*0.03;
+    const novel=isNew(j);
     const contactHTML=c?`<div class="contact-box">
       <div class="contact-head">👤 למי לפנות · via Clay</div>
       <div class="contact-main">
@@ -616,7 +780,27 @@ function render(){
     const channelHTML=showChan?`<div class="channel-wrap"><div class="channel-lbl">דרך מה הוגש?</div><div class="chan">${chanBtns}</div></div>`:"";
     const noteVal=(st.note||"").replace(/"/g,"&quot;");
     const aiNote=j.ai_opener||j.score_reason||"";
-    return`<div class="job-card st-${stage}${follow?" has-followup":""}"
+
+    // dismiss section
+    const dismissSection=isDismissed
+      ?`<div class="dismissed-banner">
+          <span>🗑️ סומן כסגור · ${st.dismiss_reason||''} · ${st.dismiss_date||''}</span>
+          <button class="undismiss-link" onclick='event.stopPropagation();undismissJob(window._sorted[${i}])'>בטל</button>
+        </div>`
+      :`<div>
+          <button class="dismiss-toggle" onclick='event.stopPropagation();toggleDismissPanel(this)'>⊖ סמן כסגורה</button>
+          <div class="dismiss-panel">
+            <div class="dismiss-panel-inner">
+              <div class="dismiss-btns">
+                <button class="dismiss-btn" onclick='event.stopPropagation();dismissJob(window._sorted[${i}],"irrelevant")'>🚫 לא רלוונטי</button>
+                <button class="dismiss-btn" onclick='event.stopPropagation();dismissJob(window._sorted[${i}],"broken_link")'>🔗 לינק שבור</button>
+                <button class="dismiss-btn" onclick='event.stopPropagation();dismissJob(window._sorted[${i}],"closed")'>❌ משרה לא קיימת</button>
+              </div>
+            </div>
+          </div>
+        </div>`;
+
+    return`<div class="job-card st-${stage}${follow?" has-followup":""}${isDismissed?" dismissed":""}"
       style="display:${show?"":"none"};--s-solid:${sc.solid};--s-bg:${sc.bg};--s-fg:${sc.fg};
              animation:cardIn .45s ${delay}s both"
       id="jc-${i}">
@@ -635,6 +819,7 @@ function render(){
             <span class="s-dot"></span>${sm.he}${st.statusDate?" · "+fmtDate(st.statusDate):""}
           </div>
           ${follow?`<span class="follow-badge">💬 Follow up?</span>`:""}
+          ${novel?`<span class="new-badge">חדש ✨</span>`:""}
         </div>
         <div class="chevron">▾</div>
       </div>
@@ -666,6 +851,7 @@ function render(){
               <button class="act-btn act-copy" onclick='event.stopPropagation();copyOpener(this,${i})'>פנייה 📋</button>
               <a href="${j.url}" target="_blank" rel="noopener" class="act-btn act-open" onclick='event.stopPropagation()'>משרה ↗</a>
             </div>
+            ${dismissSection}
           </div>
         </div>
       </div>
@@ -676,6 +862,7 @@ function render(){
   let ct=`${v} משרות`;
   if(starredC)ct+=` · ⭐ ${starredC}`;
   if(stats.followup)ct+=` · 💬 ${stats.followup} follow-up`;
+  if(stats.newCount)ct+=` · ✨ ${stats.newCount} חדשות`;
   document.getElementById("count-lbl").textContent=ct;
 }
 
@@ -699,6 +886,133 @@ function shareWA(i){
   msg+=`\n${j.url}`;
   window.open("https://wa.me/?text="+encodeURIComponent(msg),"_blank");
 }
+
+/* ── GitHub feedback sync (Feature 1) ── */
+async function syncFeedback(){
+  const token=localStorage.getItem('gh_token');
+  if(!token){showToast('הוסף GitHub token בהגדרות');return;}
+  const dismissed={};
+  Object.entries(STATE).forEach(([k,v])=>{
+    if(v.dismissed)dismissed[k]={reason:v.dismiss_reason,date:v.dismiss_date,company:v.company};
+  });
+  const avoid=Object.values(dismissed)
+    .filter(d=>d.reason==='irrelevant')
+    .map(d=>d.company).filter(Boolean);
+  const payload={dismissed,avoid_companies:[...new Set(avoid)]};
+  try{
+    const r=await fetch('https://api.github.com/repos/omriki55/family-chores-admin/contents/job_search/feedback.json',{
+      headers:{Authorization:`Bearer ${token}`,Accept:'application/vnd.github.v3+json'}
+    });
+    const cur=await r.json();
+    await fetch('https://api.github.com/repos/omriki55/family-chores-admin/contents/job_search/feedback.json',{
+      method:'PUT',
+      headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},
+      body:JSON.stringify({
+        message:`Update feedback — ${new Date().toISOString().slice(0,10)}`,
+        content:btoa(unescape(encodeURIComponent(JSON.stringify(payload,null,2)))),
+        sha:cur.sha
+      })
+    });
+    showToast('✅ פידבק עודכן בריפו');
+    document.getElementById('sync-status').textContent=`סונכרן: ${new Date().toLocaleTimeString('he-IL')}`;
+  }catch(e){showToast('❌ שגיאה בסנכרון: '+e.message);}
+}
+
+/* ── Scan button (Feature 3) ── */
+async function triggerScan(){
+  const token=localStorage.getItem('gh_token');
+  if(!token){
+    showToast('הוסף GitHub token בהגדרות כדי לסרוק');
+    openSettings('connect');
+    return;
+  }
+  const btn=document.getElementById('scan-btn');
+  btn.textContent='⏳';btn.disabled=true;
+  try{
+    const r=await fetch('https://api.github.com/repos/omriki55/family-chores-admin/actions/workflows/job-scan.yml/dispatches',{
+      method:'POST',
+      headers:{Authorization:`Bearer ${token}`,Accept:'application/vnd.github.v3+json','Content-Type':'application/json'},
+      body:JSON.stringify({ref:'main'})
+    });
+    if(r.status===204)showToast('✅ סריקה הופעלה! תוצאות יגיעו בעוד ~2 דקות');
+    else showToast('❌ שגיאה בהפעלת סריקה');
+  }catch(e){showToast('❌ '+e.message);}
+  setTimeout(()=>{btn.textContent='🔄';btn.disabled=false;},5000);
+}
+
+/* ── Settings drawer (Feature 4) ── */
+function openSettings(tab){
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('drawer-overlay').classList.add('show');
+  // load values
+  const ov=JSON.parse(localStorage.getItem('cv_override')||'{}');
+  const cvData=getCV();
+  document.getElementById('cv-name').value=ov.name||'';
+  document.getElementById('cv-contact').value=ov.contact||'';
+  document.getElementById('cv-tagline').value=ov.tagline||'';
+  document.getElementById('cv-summary').value=ov.summary||'';
+  const roles=JSON.parse(localStorage.getItem('desired_roles')||'null')||CV_BASE_ROLES;
+  document.getElementById('roles-ta').value=roles.join('\n');
+  const tk=localStorage.getItem('gh_token')||'';
+  document.getElementById('gh-token-inp').value=tk;
+  document.getElementById('gh-token-status').textContent=tk?'Token שמור ✓':'';
+  if(tab)switchDrawerTabByKey(tab);
+}
+function closeSettings(){
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawer-overlay').classList.remove('show');
+}
+function switchDrawerTab(btn){
+  document.querySelectorAll('.dtab').forEach(t=>t.classList.remove('on'));
+  btn.classList.add('on');
+  switchDrawerTabByKey(btn.dataset.tab);
+}
+function switchDrawerTabByKey(key){
+  document.querySelectorAll('.d-tab-panel').forEach(p=>p.classList.remove('on'));
+  const panel=document.getElementById('dtab-'+key);
+  if(panel)panel.classList.add('on');
+  document.querySelectorAll('.dtab').forEach(t=>{if(t.dataset.tab===key)t.classList.add('on');else t.classList.remove('on');});
+}
+function saveCvOverride(){
+  const ov={};
+  const name=document.getElementById('cv-name').value.trim();
+  const contact=document.getElementById('cv-contact').value.trim();
+  const tagline=document.getElementById('cv-tagline').value.trim();
+  const summary=document.getElementById('cv-summary').value.trim();
+  if(name)ov.name=name;
+  if(contact)ov.contact=contact;
+  if(tagline)ov.tagline=tagline;
+  if(summary)ov.summary=summary;
+  localStorage.setItem('cv_override',JSON.stringify(ov));
+}
+function resetCvOverride(){
+  localStorage.removeItem('cv_override');
+  document.getElementById('cv-name').value='';
+  document.getElementById('cv-contact').value='';
+  document.getElementById('cv-tagline').value='';
+  document.getElementById('cv-summary').value='';
+  showToast('קורות חיים אופסו לברירת מחדל');
+}
+const CV_BASE_ROLES=[
+  "Head of Revenue Operations","RevOps Manager","GTM Engineer",
+  "Head of Growth","Marketing Operations Lead","Sales Operations Manager"
+];
+function saveRoles(){
+  const lines=document.getElementById('roles-ta').value.split('\n').map(l=>l.trim()).filter(Boolean);
+  localStorage.setItem('desired_roles',JSON.stringify(lines));
+}
+function downloadConfig(){
+  const roles=JSON.parse(localStorage.getItem('desired_roles')||'null')||CV_BASE_ROLES;
+  const cfg={roles,updated:new Date().toISOString().slice(0,10)};
+  const b=new Blob([JSON.stringify(cfg,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='config.json';a.click();
+}
+function saveGhToken(){
+  const tk=document.getElementById('gh-token-inp').value.trim();
+  if(tk){localStorage.setItem('gh_token',tk);document.getElementById('gh-token-status').textContent='Token שמור ✓';showToast('Token נשמר');}
+  else{localStorage.removeItem('gh_token');document.getElementById('gh-token-status').textContent='';showToast('Token הוסר');}
+}
+
 render();
 </script>
 </body>
