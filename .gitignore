@@ -34,3 +34,4 @@ job_search/_live_run.py
 job_search/pipeline_new.csv
 job_search/_live_run.py
 .claude/worktrees/
+=3.0.0
