@@ -93,7 +93,7 @@ def search_jobs() -> list[dict]:
     try:
         response = client.messages.create(
             model="claude-opus-4-8",
-            max_tokens=4096,
+            max_tokens=8192,
             tools=[{"type": "web_search_20250305", "name": "web_search", "max_uses": 8}],
             messages=[{"role": "user", "content": SEARCH_PROMPT}],
         )
@@ -102,13 +102,22 @@ def search_jobs() -> list[dict]:
         for block in response.content:
             if hasattr(block, "text"):
                 text += block.text
-        # Parse JSON from response
+        # Parse JSON from response — find first [...] array in text
         text = text.strip()
-        if "```" in text:
-            text = text.split("```")[1]
-            if text.startswith("json"):
-                text = text[4:]
-            text = text.split("```")[0]
+        import re
+        # Try code fence first
+        fence = re.search(r"```(?:json)?\s*(\[.*?\])\s*```", text, re.DOTALL)
+        if fence:
+            text = fence.group(1)
+        else:
+            # Find outermost JSON array
+            start = text.find("[")
+            end = text.rfind("]")
+            if start != -1 and end != -1 and end > start:
+                text = text[start:end+1]
+            elif start != -1:
+                # Truncated response — close the array manually
+                text = text[start:].rstrip().rstrip(",") + "]"
         jobs = json.loads(text.strip())
         print(f"  Found {len(jobs)} job listings")
         return jobs
