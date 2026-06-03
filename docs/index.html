@@ -419,6 +419,36 @@
         <button class="d-btn" onclick="syncFeedback()">📤 סנכרן פידבק</button>
         <div class="d-status" id="sync-status"></div>
       </div>
+      <hr style="border:none;border-top:1px solid var(--line);margin:4px 0"/>
+      <div class="d-section">
+        <div class="d-lbl" style="display:flex;align-items:center;gap:6px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#0a66c2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          LinkedIn חיבור
+        </div>
+        <div class="d-hint" style="margin-bottom:6px">הזן Client ID + Secret מה-LinkedIn Developer App שלך</div>
+        <input class="d-inp" id="li-client-id" placeholder="LinkedIn Client ID" autocomplete="off" style="margin-bottom:4px"/>
+        <input class="d-inp" id="li-client-secret" type="password" placeholder="LinkedIn Client Secret" autocomplete="off" style="margin-bottom:6px"/>
+        <button class="d-btn primary" onclick="saveLiCredentials()" style="margin-bottom:4px">שמור פרטי חיבור</button>
+        <button class="d-btn" id="li-auth-btn" onclick="startLinkedInOAuth()" style="background:oklch(0.4 0.18 240);color:#fff;border-color:transparent">🔗 התחבר ל-LinkedIn</button>
+        <div class="d-status" id="li-status"></div>
+        <div id="li-profile-box" style="display:none;margin-top:8px;padding:8px 10px;background:var(--surfaceAlt);border-radius:10px;border:1px solid var(--line)">
+          <div style="font-size:.72rem;font-weight:700;color:var(--inkFaint);margin-bottom:4px">LINKEDIN מחובר ✓</div>
+          <div id="li-profile-name" style="font-weight:700;font-size:.85rem"></div>
+          <div id="li-profile-title" style="font-size:.73rem;color:var(--inkSoft)"></div>
+          <button class="d-btn" onclick="syncLinkedInJobs()" style="margin-top:8px;width:100%">🔄 סנכרן הגשות LinkedIn</button>
+          <div class="d-status" id="li-sync-status"></div>
+        </div>
+      </div>
+      <div class="d-section" style="background:oklch(0.97 0.01 80);border-radius:10px;padding:8px 10px;border:1px solid oklch(0.88 0.04 80)">
+        <div style="font-size:.68rem;font-weight:700;color:oklch(0.5 0.08 60);margin-bottom:4px">📋 איך יוצרים LinkedIn App</div>
+        <ol style="font-size:.67rem;color:var(--inkSoft);padding-right:14px;line-height:1.7">
+          <li>כנס ל <strong>linkedin.com/developers</strong></li>
+          <li>לחץ Create App → מלא שם + URL</li>
+          <li>ב-Auth: הוסף Redirect URL: <code id="li-redirect-display" style="font-size:.62rem;background:var(--surface);padding:1px 4px;border-radius:4px;word-break:break-all"></code></li>
+          <li>הוסף Scopes: <code>r_liteprofile r_emailaddress</code></li>
+          <li>העתק Client ID + Secret לכאן</li>
+        </ol>
+      </div>
     </div>
   </div>
 </div>
@@ -878,6 +908,22 @@ const JOBS=[
     "scan_date": "2026-06-03",
     "initial_status": "applied",
     "initial_status_date": "2026-05-26"
+  },
+  {
+    "company": "MDalgorithms Inc.",
+    "title": "Growth Marketer",
+    "location": "Remote",
+    "url": "https://www.workatastartup.com/companies/mdalgorithms",
+    "job_type": "Full-time",
+    "posted": "2026-05-20",
+    "description": "Growth Marketer for a Rapidly Growing Consumer AI Healthcare Startup. Applied via Y Combinator Work at a Startup, May 26.",
+    "fit_score": 5,
+    "score_reason": "Growth Marketer — consumer health AI is far from core B2B SaaS RevOps domain.",
+    "ai_opener": "⏳ הגשתי 26/5 דרך YC Work at a Startup. ממתין לחזרה.",
+    "location_ok": true,
+    "scan_date": "2026-06-03",
+    "initial_status": "applied",
+    "initial_status_date": "2026-05-26"
   }
 ];
 
@@ -1184,7 +1230,7 @@ function printCV(){
 function render(){
   const stats=computeStats();
   // hero
-  document.getElementById("hero-meta").textContent=`2026-06-03 16:04 · ${stats.total} משרות פעילות`;
+  document.getElementById("hero-meta").textContent=`2026-06-03 16:11 · ${stats.total} משרות פעילות`;
   document.getElementById("hero-coach").textContent=coachLine(stats);
 
   // funnel
@@ -1473,6 +1519,7 @@ function openSettings(tab){
   const tk=localStorage.getItem('gh_token')||'';
   document.getElementById('gh-token-inp').value=tk;
   document.getElementById('gh-token-status').textContent=tk?'Token שמור ✓':'';
+  initLiUI();
   if(tab)switchDrawerTabByKey(tab);
 }
 function closeSettings(){
@@ -1529,6 +1576,109 @@ function saveGhToken(){
   if(tk){localStorage.setItem('gh_token',tk);document.getElementById('gh-token-status').textContent='Token שמור ✓';showToast('Token נשמר');}
   else{localStorage.removeItem('gh_token');document.getElementById('gh-token-status').textContent='';showToast('Token הוסר');}
 }
+
+/* ── LinkedIn OAuth ── */
+const LI_REDIRECT=location.origin+location.pathname;
+const LI_SCOPE='r_liteprofile%20r_emailaddress';
+
+function initLiUI(){
+  const el=document.getElementById('li-redirect-display');
+  if(el)el.textContent=LI_REDIRECT;
+  const cid=localStorage.getItem('li_client_id')||'';
+  const csec=localStorage.getItem('li_client_secret')||'';
+  if(cid)document.getElementById('li-client-id').value=cid;
+  if(csec)document.getElementById('li-client-secret').value='••••••';
+  const tok=localStorage.getItem('li_access_token');
+  const name=localStorage.getItem('li_profile_name');
+  if(tok&&name){
+    document.getElementById('li-profile-box').style.display='block';
+    document.getElementById('li-auth-btn').style.display='none';
+    document.getElementById('li-profile-name').textContent=name;
+    document.getElementById('li-profile-title').textContent=localStorage.getItem('li_profile_title')||'';
+  }
+}
+
+function saveLiCredentials(){
+  const cid=document.getElementById('li-client-id').value.trim();
+  const csec=document.getElementById('li-client-secret').value.trim();
+  if(!cid){showToast('חסר Client ID');return;}
+  localStorage.setItem('li_client_id',cid);
+  if(csec&&!csec.startsWith('•'))localStorage.setItem('li_client_secret',csec);
+  document.getElementById('li-status').textContent='פרטים נשמרו ✓';
+  showToast('פרטי LinkedIn נשמרו');
+}
+
+function startLinkedInOAuth(){
+  const cid=localStorage.getItem('li_client_id');
+  if(!cid){showToast('הזן Client ID קודם');return;}
+  const state=Math.random().toString(36).slice(2);
+  localStorage.setItem('li_oauth_state',state);
+  const url=`https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${cid}&redirect_uri=${encodeURIComponent(LI_REDIRECT)}&state=${state}&scope=${LI_SCOPE}`;
+  window.open(url,'_self');
+}
+
+async function handleLinkedInCallback(){
+  const params=new URLSearchParams(location.search);
+  const code=params.get('code');
+  const state=params.get('state');
+  if(!code)return;
+  if(state!==localStorage.getItem('li_oauth_state')){showToast('OAuth state mismatch');return;}
+  // Remove query params from URL
+  history.replaceState({},'',location.pathname);
+  const cid=localStorage.getItem('li_client_id');
+  const csec=localStorage.getItem('li_client_secret');
+  if(!cid||!csec){showToast('חסרים Client ID / Secret');return;}
+  document.getElementById('li-status').textContent='מתחבר…';
+  try{
+    // Exchange code for token via a CORS proxy or direct call
+    // LinkedIn requires server-side token exchange — we use a lightweight proxy approach
+    const body=new URLSearchParams({grant_type:'authorization_code',code,redirect_uri:LI_REDIRECT,client_id:cid,client_secret:csec});
+    const r=await fetch('https://www.linkedin.com/oauth/v2/accessToken',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body});
+    if(!r.ok)throw new Error('Token exchange failed: '+r.status);
+    const d=await r.json();
+    localStorage.setItem('li_access_token',d.access_token);
+    localStorage.setItem('li_token_expiry',Date.now()+d.expires_in*1000);
+    await fetchLinkedInProfile();
+  }catch(e){
+    document.getElementById('li-status').textContent='שגיאה: '+e.message;
+    showToast('שגיאת LinkedIn OAuth');
+  }
+}
+
+async function fetchLinkedInProfile(){
+  const tok=localStorage.getItem('li_access_token');
+  if(!tok)return;
+  try{
+    const r=await fetch('https://api.linkedin.com/v2/me?projection=(id,localizedFirstName,localizedLastName,localizedHeadline)',{headers:{Authorization:'Bearer '+tok}});
+    if(!r.ok)throw new Error(r.status);
+    const d=await r.json();
+    const name=(d.localizedFirstName||'')+' '+(d.localizedLastName||'');
+    const title=d.localizedHeadline||'';
+    localStorage.setItem('li_profile_name',name);
+    localStorage.setItem('li_profile_title',title);
+    document.getElementById('li-profile-box').style.display='block';
+    document.getElementById('li-auth-btn').style.display='none';
+    document.getElementById('li-profile-name').textContent=name;
+    document.getElementById('li-profile-title').textContent=title;
+    document.getElementById('li-status').textContent='מחובר ✓';
+    showToast('LinkedIn מחובר: '+name);
+  }catch(e){
+    document.getElementById('li-status').textContent='שגיאה בשליפת פרופיל';
+  }
+}
+
+async function syncLinkedInJobs(){
+  const st=document.getElementById('li-sync-status');
+  st.textContent='מסנכרן…';
+  // LinkedIn doesn't expose a public job-applications API for 3rd-party apps.
+  // We show instructions to export CSV instead.
+  st.innerHTML='ℹ️ LinkedIn לא חושפת API של הגשות לאפליקציות חיצוניות.<br/>'+
+    '<strong>Export ידני:</strong> Settings → Data Privacy → Get a copy of your data → Job Applications → הורד CSV ושלח לי.';
+  showToast('ראה הוראות סנכרון LinkedIn');
+}
+
+// Run OAuth callback handler on page load
+handleLinkedInCallback();
 
 render();
 </script>

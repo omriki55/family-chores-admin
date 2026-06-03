@@ -452,5 +452,21 @@
     "scan_date": "2026-06-03",
     "initial_status": "applied",
     "initial_status_date": "2026-05-26"
+  },
+  {
+    "company": "MDalgorithms Inc.",
+    "title": "Growth Marketer",
+    "location": "Remote",
+    "url": "https://www.workatastartup.com/companies/mdalgorithms",
+    "job_type": "Full-time",
+    "posted": "2026-05-20",
+    "description": "Growth Marketer for a Rapidly Growing Consumer AI Healthcare Startup. Applied via Y Combinator Work at a Startup, May 26.",
+    "fit_score": 5,
+    "score_reason": "Growth Marketer — consumer health AI is far from core B2B SaaS RevOps domain.",
+    "ai_opener": "⏳ הגשתי 26/5 דרך YC Work at a Startup. ממתין לחזרה.",
+    "location_ok": true,
+    "scan_date": "2026-06-03",
+    "initial_status": "applied",
+    "initial_status_date": "2026-05-26"
   }
 ]
