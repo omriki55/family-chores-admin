@@ -3,7 +3,7 @@ import time
 import logging
 import os
 from anthropic import Anthropic
-from config import SCORING_PROMPT
+from config import SCORING_PROMPT, SCORING_MODEL
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +25,7 @@ def _score_job(job: dict) -> dict:
     for attempt in range(2):
         try:
             response = _get_client().messages.create(
-                model="claude-3-5-haiku-20241022",
+                model=SCORING_MODEL,
                 max_tokens=512,
                 messages=[{"role": "user", "content": prompt}],
             )

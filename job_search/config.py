@@ -55,3 +55,6 @@ SHEET_COLUMNS = [
 
 SHEET_NAME = "Pipeline"
 MIN_FIT_SCORE = 4
+
+# Fast + cheap model for scoring
+SCORING_MODEL = "claude-haiku-4-5-20251001"
