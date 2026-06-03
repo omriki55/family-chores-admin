@@ -512,7 +512,7 @@ function jobKey(j){return(j.company+"|"+j.title).replace(/\s+/g,"_");}
 function loadState(){try{return JSON.parse(localStorage.getItem("jobState")||"{}");}catch(e){return{};}}
 function saveState(s){localStorage.setItem("jobState",JSON.stringify(s));}
 let STATE=loadState();
-function getJobState(j){return STATE[jobKey(j)]||{status:"saved",channel:null,statusDate:null,starred:false,note:""};}
+function getJobState(j){const def=j.initial_status?{status:j.initial_status,channel:null,statusDate:j.initial_status_date||null,starred:false,note:""}:{status:"saved",channel:null,statusDate:null,starred:false,note:""};return STATE[jobKey(j)]||def;}
 // Map old "todo" status to "saved"
 function getStage(j){const s=getJobState(j).status||"saved";return s==="todo"?"saved":s;}
 
