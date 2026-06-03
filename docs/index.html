@@ -142,7 +142,8 @@
     <div class="modal-body" id="m-body"></div>
     <div class="modal-foot">
       <button class="btn btn-copy" onclick="copyCV()">העתק 📋</button>
-      <button class="btn btn-cv" onclick="downloadCV()">הורד .txt ⬇</button>
+      <button class="btn btn-cv" onclick="printCV()">הדפס / PDF 🖨️</button>
+      <button class="btn btn-view" onclick="downloadCV()">.txt ⬇</button>
     </div>
   </div>
 </div>
@@ -247,18 +248,20 @@ function postedLabel(d){if(!d)return "";const dt=new Date(d);if(isNaN(dt))return
 function initials(n){return n.split(" ").map(w=>w[0]).slice(0,2).join("").toUpperCase();}
 
 /* ===== CV tailoring ===== */
-function tailorCV(j){
+function tailorData(j){
   const text=((j.title||"")+" "+(j.description||"")+" "+(j.score_reason||"")).toLowerCase();
   const score=arr=>arr.reduce((n,kw)=>n+(text.includes(kw)?1:0),0);
-  // top matching competencies
   const comps=[...CV.competencies].map(c=>({t:c.t,s:score(c.k)})).sort((a,b)=>b.s-a.s);
   const topComps=comps.filter(c=>c.s>0).slice(0,4);
   const useComps=(topComps.length?topComps:comps.slice(0,4)).map(c=>c.t);
-  // reorder bullets within each role by relevance, keep most relevant 3
   const exp=CV.experience.map(e=>{
     const bl=[...e.bullets].map(b=>({t:b.t,s:score(b.k)})).sort((a,b)=>b.s-a.s);
-    return {role:e.role,org:e.org,dates:e.dates,bullets:bl.slice(0,3).map(b=>b.t),rel:bl.reduce((n,b)=>n+b.s,0)};
+    return {role:e.role,org:e.org,dates:e.dates,bullets:bl.slice(0,3).map(b=>b.t)};
   });
+  return {useComps,exp};
+}
+function tailorCV(j){
+  const {useComps,exp}=tailorData(j);
   let lines=[];
   lines.push(CV.name);
   lines.push(CV.tagline);
@@ -285,7 +288,7 @@ function tailorCV(j){
 let _cvText="",_cvCompany="";
 function openCV(i){
   const j=window._sorted[i];
-  _cvText=tailorCV(j);_cvCompany=j.company;
+  _cvJob=j;_cvText=tailorCV(j);_cvCompany=j.company;
   document.getElementById("m-title").textContent="קורות חיים מותאמים — "+j.company;
   document.getElementById("m-sub").textContent=j.title;
   document.getElementById("m-body").textContent=_cvText;
@@ -298,6 +301,49 @@ function downloadCV(){
   const a=document.createElement("a");a.href=URL.createObjectURL(blob);
   a.download="Omri_Gonen_CV_"+_cvCompany.replace(/[^a-z0-9]+/gi,"_")+".txt";
   a.click();showToast("ירד קובץ קורות חיים");
+}
+let _cvJob=null;
+function printCV(){
+  if(!_cvJob)return;
+  const j=_cvJob,{useComps,exp}=tailorData(j);
+  const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  const expHTML=exp.map(e=>`<div class="role"><div class="rh"><span class="rt">${esc(e.role)}</span><span class="rd">${esc(e.dates)}</span></div><div class="ro">${esc(e.org)}</div><ul>${e.bullets.map(b=>`<li>${esc(b)}</li>`).join("")}</ul></div>`).join("");
+  const html=`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Omri Gonen — CV — ${esc(j.company)}</title>
+  <style>
+   @page{margin:14mm}
+   *{box-sizing:border-box}body{font-family:Georgia,'Times New Roman',serif;color:#1a1a1a;line-height:1.4;max-width:780px;margin:0 auto;padding:10px}
+   h1{font-size:24px;letter-spacing:.5px;margin:0}
+   .tag{color:#2563eb;font-weight:bold;font-size:12.5px;margin:3px 0}
+   .contact{font-size:11px;color:#555;margin-bottom:4px}
+   .tailored{font-size:11px;color:#7c3aed;font-weight:bold;border:1px solid #e4d8fb;background:#f7f3ff;padding:5px 9px;border-radius:6px;display:inline-block;margin:6px 0}
+   h2{font-size:12.5px;text-transform:uppercase;letter-spacing:1px;color:#2563eb;border-bottom:1.5px solid #2563eb;padding-bottom:2px;margin:16px 0 7px}
+   p.sum{font-size:12.5px;margin:0}
+   ul{margin:4px 0 0;padding-left:18px}li{font-size:12px;margin:2px 0}
+   .comps li{margin:2px 0}
+   .role{margin-bottom:11px}
+   .rh{display:flex;justify-content:space-between;align-items:baseline}
+   .rt{font-weight:bold;font-size:13px}.rd{font-size:11px;color:#666}
+   .ro{font-style:italic;font-size:11.5px;color:#444}
+   .edu{font-size:12px}
+   @media print{.noprint{display:none}}
+   .noprint{text-align:center;margin:14px 0}
+   .noprint button{font-family:sans-serif;font-size:14px;padding:9px 22px;border:none;border-radius:8px;background:#2563eb;color:#fff;cursor:pointer}
+  </style></head><body>
+  <div class="noprint"><button onclick="window.print()">🖨️ הדפס / שמור כ-PDF</button></div>
+  <h1>${esc(CV.name)}</h1>
+  <div class="tag">${esc(CV.tagline)}</div>
+  <div class="contact">${esc(CV.contact)}</div>
+  <div class="tailored">Tailored for: ${esc(j.title)} @ ${esc(j.company)}</div>
+  <h2>Profile</h2>
+  <p class="sum">${esc(CV.summary)}</p>
+  <h2>Key Strengths for This Role</h2>
+  <ul class="comps">${useComps.map(c=>`<li>${esc(c)}</li>`).join("")}</ul>
+  <h2>Experience</h2>${expHTML}
+  <h2>Education</h2><div class="edu">${esc(CV.education)}</div>
+  </body></html>`;
+  const w=window.open("","_blank");
+  if(!w){showToast("אפשר חלונות קופצים כדי להדפיס");return;}
+  w.document.write(html);w.document.close();
 }
 
 /* ===== render ===== */
