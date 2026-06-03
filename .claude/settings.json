@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /home/user/family-chores-admin/job_search && python run_pipeline.py >> /tmp/job_pipeline.log 2>&1",
+            "async": true,
+            "statusMessage": "🎯 Running job search pipeline..."
+          }
+        ]
+      }
+    ]
+  }
+}
