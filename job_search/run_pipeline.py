@@ -385,6 +385,12 @@ def main():
         except Exception:
             existing = []
     manual = [j for j in existing if j.get("initial_status")]
+    # Fallback: if this scan found no good pipeline jobs (e.g. web search
+    # returned nothing), keep the previous run's pipeline jobs instead of
+    # wiping them out.
+    if not good:
+        good = [j for j in existing if not j.get("initial_status")]
+        print(f"  ⚠️  No new pipeline jobs — keeping {len(good)} from previous run")
     # Deduplicate: drop pipeline jobs whose company+title match a manual entry
     manual_keys = {(j["company"].lower(), j["title"].lower()) for j in manual}
     pipeline_jobs = [j for j in good if (j["company"].lower(), j["title"].lower()) not in manual_keys]
