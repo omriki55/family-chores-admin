@@ -118,6 +118,7 @@
     .job-card.st-rejected{opacity:.7}
     .job-card.has-followup{box-shadow:inset 0 0 0 2px #e8a33d}
     .job-card.dismissed{opacity:.5}
+    .job-card.removing{opacity:0!important;transform:translateX(-24px) scale(.97);transition:opacity .28s ease,transform .28s ease;pointer-events:none}
 
     .card-head{display:flex;align-items:center;gap:13px;padding:18px 20px;cursor:pointer;user-select:none}
     .star-btn{background:none;border:none;font-size:1.2rem;cursor:pointer;padding:0;line-height:1;color:var(--inkFaint);transition:color .15s,transform .15s;flex-shrink:0}
@@ -684,6 +685,12 @@ function dismissJob(j,reason){
     showToast(hasToken?"🧠 נלמד — "+j.company+" לא יוצע שוב בסריקה הבאה":"🧠 נשמר. הוסף GitHub token בהגדרות כדי שהסורק ילמד");
   render();
 }
+function learnIrrelevant(btn,i){
+  const j=window._sorted[i];
+  const card=btn.closest(".job-card");
+  if(card){card.classList.add("removing");setTimeout(()=>dismissJob(j,"irrelevant"),280);}
+  else dismissJob(j,"irrelevant");
+}
 function undismissJob(j){
   const k=jobKey(j),cur=STATE[k]||{};
   cur.dismissed=false;cur.dismiss_reason=null;cur.dismiss_date=null;
@@ -1098,7 +1105,7 @@ function render(){
               <button class="act-btn act-copy" onclick='event.stopPropagation();copyOpener(this,${i})'>פנייה 📋</button>
               <button class="act-btn act-wa" onclick='event.stopPropagation();shareWA(${i})'>וואטסאפ</button>
               <a href="${j.url}" target="_blank" rel="noopener" class="act-btn act-open" onclick='event.stopPropagation()'><span class="material-symbols-rounded">open_in_new</span>פתח משרה</a>
-              <button class="act-btn act-dismiss" onclick='event.stopPropagation();dismissJob(window._sorted[${i}],"irrelevant")'><span class="material-symbols-rounded">thumb_down</span>לא רלוונטי — למד מזה</button>
+              <button class="act-btn act-dismiss" onclick='event.stopPropagation();learnIrrelevant(this,${i})'><span class="material-symbols-rounded">thumb_down</span>לא רלוונטי — למד מזה</button>
             </div>
             ${dismissSection}
           </div>
