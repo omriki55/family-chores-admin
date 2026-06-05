@@ -13,6 +13,7 @@
   <link rel="apple-touch-icon" href="icon.svg"/>
   <link rel="icon" href="icon.svg" type="image/svg+xml"/>
   <title>Job Tracker — Omri</title>
+  <script>(function(){try{var t=localStorage.getItem('theme')||((window.matchMedia&&matchMedia('(prefers-color-scheme:dark)').matches)?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,700&display=swap" rel="stylesheet"/>
@@ -378,54 +379,54 @@
     /* keyboard accessibility */
     :focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:8px}
 
-    /* ===== DARK MODE (Material 3 dark palette) ===== */
-    @media(prefers-color-scheme:dark){
-      :root{
-        --primary:#b9c3ff;
-        --on-primary:#001257;
-        --primary-container:#33479b;
-        --on-primary-container:#dde1ff;
-        --secondary-container:#3a3f57;
-        --on-secondary-container:#dfe1f9;
-        --tertiary-container:#5c3f4a;
-        --on-tertiary-container:#ffd8e8;
-        --canvas:#121318;
-        --surface:#121318;
-        --surfaceAlt:#1e1f25;
-        --surface-container:#1e1f25;
-        --surface-container-high:#282a30;
-        --surface-container-highest:#33343b;
-        --ink:#e4e1e9;
-        --inkSoft:#c7c5d0;
-        --inkFaint:#918f9a;
-        --line:#46464f;
-        --lineSoft:#33343b;
-        --accent:#b9c3ff;
-        --accentDeep:#dde1ff;
-        --accentSoft:#33479b;
-        --accentInk:#dde1ff;
-        --onAccent:#001257;
-        --heroBg:#33479b;
-        --wa:#7ad6a0;
-        --star:#e8c45a;
-        --toast-bg:#e4e1e9;
-        --success:#7ad6a0;
-        --success-container:#1d4a30;
-        --error-container:#5c1414;
-      }
-      body{color:var(--ink)}
-      #toast{color:#1b1b21}
-      .save-btn,.act-open,.chan-btn.on,.step-btn.on,.fab,.d-btn.primary{color:#001257}
-      .new-badge{color:#001257}
-      .act-wa{background:var(--success-container);color:#b3f1c7}
-      .act-dismiss,.dismiss-btn{background:var(--error-container);color:#ffdad6}
-      .act-dossier{background:#1f3a5f;color:#cfe0ff}
-      .round-card.r-passed{background:#1d4a30}
-      .round-card.r-rejected{background:#5c1414}
+    /* ===== DARK MODE (Material 3 dark palette) — toggled via [data-theme] on <html> ===== */
+    html[data-theme="dark"]{
+      --primary:#b9c3ff;
+      --on-primary:#001257;
+      --primary-container:#33479b;
+      --on-primary-container:#dde1ff;
+      --secondary-container:#3a3f57;
+      --on-secondary-container:#dfe1f9;
+      --tertiary-container:#5c3f4a;
+      --on-tertiary-container:#ffd8e8;
+      --canvas:#121318;
+      --surface:#121318;
+      --surfaceAlt:#1e1f25;
+      --surface-container:#1e1f25;
+      --surface-container-high:#282a30;
+      --surface-container-highest:#33343b;
+      --ink:#e4e1e9;
+      --inkSoft:#c7c5d0;
+      --inkFaint:#918f9a;
+      --line:#46464f;
+      --lineSoft:#33343b;
+      --accent:#b9c3ff;
+      --accentDeep:#dde1ff;
+      --accentSoft:#33479b;
+      --accentInk:#dde1ff;
+      --onAccent:#001257;
+      --heroBg:#33479b;
+      --wa:#7ad6a0;
+      --star:#e8c45a;
+      --toast-bg:#e4e1e9;
+      --success:#7ad6a0;
+      --success-container:#1d4a30;
+      --error-container:#5c1414;
     }
-    @media(prefers-color-scheme:dark){
-      meta[name="theme-color"]{}
-    }
+    html[data-theme="dark"] #toast{color:#1b1b21}
+    html[data-theme="dark"] .save-btn,
+    html[data-theme="dark"] .act-open,
+    html[data-theme="dark"] .chan-btn.on,
+    html[data-theme="dark"] .step-btn.on,
+    html[data-theme="dark"] .fab,
+    html[data-theme="dark"] .d-btn.primary,
+    html[data-theme="dark"] .new-badge{color:#001257}
+    html[data-theme="dark"] .act-wa{background:var(--success-container);color:#b3f1c7}
+    html[data-theme="dark"] .act-dismiss,
+    html[data-theme="dark"] .dismiss-btn{background:var(--error-container);color:#ffdad6}
+    html[data-theme="dark"] .act-dossier{background:#1f3a5f;color:#cfe0ff}
+    html[data-theme="dark"] .round-card.r-passed{background:#1d4a30}
+    html[data-theme="dark"] .round-card.r-rejected{background:#5c1414}
   </style>
 </head>
 <body>
@@ -438,6 +439,7 @@
         <div class="hero-meta" id="hero-meta"></div>
       </div>
       <div class="hero-actions">
+        <button class="settings-btn" onclick="toggleTheme()" id="theme-btn" title="מצב תצוגה"><span class="material-symbols-rounded" id="theme-ico">dark_mode</span></button>
         <button class="settings-btn" onclick="openAnalytics()" title="ניתוח"><span class="material-symbols-rounded">analytics</span></button>
         <button class="settings-btn" onclick="openSettings()" title="הגדרות"><span class="material-symbols-rounded">settings</span></button>
       </div>
@@ -1010,7 +1012,7 @@ function closeAnalytics(){document.getElementById("sheet").classList.remove("sho
 /* ── RENDER ── */
 function render(){
   const stats=computeStats();
-  document.getElementById("hero-meta").textContent=`05/06/2026 20:05 UTC · ${stats.total} משרות פעילות`;
+  document.getElementById("hero-meta").textContent=`05/06/2026 20:12 UTC · ${stats.total} משרות פעילות`;
   document.getElementById("hero-coach").textContent=coachLine(stats);
 
   const funnelStages=STAGES.filter(s=>s.key!=="rejected");
@@ -1379,6 +1381,25 @@ function saveGhToken(){
   if(tk){localStorage.setItem('gh_token',tk);document.getElementById('gh-token-status').textContent='Token שמור ✓';showToast('Token נשמר');}
   else{localStorage.removeItem('gh_token');document.getElementById('gh-token-status').textContent='';showToast('Token הוסר');}
 }
+
+/* ── theme toggle (light / dark, persisted; defaults to system) ── */
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme',t);
+  const ico=document.getElementById('theme-ico');
+  if(ico)ico.textContent=(t==='dark')?'light_mode':'dark_mode';
+  const tc=document.querySelector('meta[name="theme-color"]:not([media])')||document.querySelector('meta[name="theme-color"]');
+}
+function initTheme(){
+  let t=localStorage.getItem('theme');
+  if(!t)t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';
+  applyTheme(t);
+}
+function toggleTheme(){
+  const cur=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';
+  localStorage.setItem('theme',cur);applyTheme(cur);
+  showToast(cur==='dark'?'🌙 מצב כהה':'☀️ מצב בהיר');
+}
+initTheme();
 
 render();
 
