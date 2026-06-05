@@ -393,6 +393,26 @@
     @media(min-width:1320px){
       #app{max-width:1500px}
     }
+    /* ===== MASTER–DETAIL (desktop ≥1024px) ===== */
+    #detail{display:none}
+    @media(min-width:1024px){
+      #work{display:grid;grid-template-columns:minmax(300px,360px) 1fr;gap:20px;align-items:start}
+      #container{display:flex!important;flex-direction:column;gap:8px!important;position:sticky;top:14px;max-height:calc(100vh - 28px);overflow-y:auto;padding:2px}
+      #detail{display:block;min-width:0}
+      #detail .job-card{box-shadow:0 2px 18px rgba(20,20,40,.09)}
+      #detail .job-card:hover{transform:none}
+      #detail .chevron{display:none}
+      .detail-empty{padding:80px 24px;text-align:center;color:var(--inkFaint);font-weight:700;font-size:.95rem;background:var(--surface-container);border-radius:28px}
+      .rail-row{display:flex;align-items:center;gap:11px;background:var(--surface-container);border-radius:16px;padding:10px 12px;cursor:pointer;transition:background .15s,transform .12s;border:2px solid transparent}
+      .rail-row:hover{background:var(--surface-container-high)}
+      .rail-row.sel{background:var(--secondary-container);border-color:var(--primary)}
+      .rr-fit{width:40px;height:40px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.05rem;flex-shrink:0}
+      .rr-text{flex:1;min-width:0}
+      .rr-co{font-weight:800;font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:ltr;text-align:right}
+      .rr-ti{font-size:.73rem;color:var(--inkSoft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:ltr;text-align:right;margin-top:1px}
+      .rr-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+      .rr-star{color:var(--star);font-size:.85rem;flex-shrink:0}
+    }
     /* keyboard-shortcut hint chip */
     .kbd{font-family:var(--font-mono);font-size:.62rem;background:var(--surface-container-highest);border-radius:6px;padding:1px 6px;color:var(--inkFaint);margin-inline-start:6px}
     @media(max-width:859px){.kbd{display:none}}
@@ -514,7 +534,10 @@
   </div>
 
   <!-- CARDS -->
-  <div id="container" style="display:flex;flex-direction:column;gap:14px"></div>
+  <div id="work">
+    <div id="container" style="display:flex;flex-direction:column;gap:14px"></div>
+    <aside id="detail"></aside>
+  </div>
 </div>
 
 <div id="toast"></div>
@@ -1073,23 +1096,19 @@ function render(){
   else list.sort((a,b)=>(b.st.starred-a.st.starred)||(a.j.company||"").localeCompare(b.j.company||"","he"));
   window._sorted=list.map(x=>x.j);
 
-  let v=0;
-  document.getElementById("container").innerHTML=list.map((x,i)=>{
+  function jobVisible(x){
+    const j=x.j,st=x.st,stage=x.stage,isDismissed=!!st.dismissed;
+    if(fStage==="dismissed")return isDismissed;
+    if(isDismissed)return false;
+    const passStage=fStage==="all"||(fStage==="starred"?st.starred:stage===fStage);
+    const passFit=fFit==="all"||fitBand(j.fit_score)===fFit;
+    const passQ=!fQ||(j.company||"").toLowerCase().includes(fQ)||(j.title||"").toLowerCase().includes(fQ);
+    const passAge=(()=>{if(fAge==="all")return true;if(!j.posted)return false;const d=Math.round((NOW-new Date(j.posted))/86400000);if(fAge==="day")return d<=1;if(fAge==="week")return d<=7;if(fAge==="month")return d<=30;return true;})();
+    return passStage&&passFit&&passQ&&passAge;
+  }
+  window._buildCard=function(x,i,forceOpen,show){
     const j=x.j,st=x.st,stage=x.stage;
     const isDismissed=!!st.dismissed;
-    let show=false;
-    if(fStage==="dismissed"){show=isDismissed;}
-    else{
-      if(isDismissed){show=false;}
-      else{
-        const passStage=fStage==="all"||(fStage==="starred"?st.starred:stage===fStage);
-        const passFit=fFit==="all"||fitBand(j.fit_score)===fFit;
-        const passQ=!fQ||(j.company||"").toLowerCase().includes(fQ)||(j.title||"").toLowerCase().includes(fQ);
-        const passAge=(()=>{if(fAge==="all")return true;if(!j.posted)return false;const d=Math.round((NOW-new Date(j.posted))/86400000);if(fAge==="day")return d<=1;if(fAge==="week")return d<=7;if(fAge==="month")return d<=30;return true;})();
-        show=passStage&&passFit&&passQ&&passAge;
-      }
-    }
-    if(show)v++;
     const sc=stageColor(STAGES.find(s=>s.key===stage)?.hue||235);
     const fc=fitColor(j.fit_score);
     const follow=needsFollowupDirect(st);
@@ -1140,11 +1159,11 @@ function render(){
           </div>
         </div>`;
 
-    return`<div class="job-card st-${stage}${follow?" has-followup":""}${isDismissed?" dismissed":""}"
+    return`<div class="job-card st-${stage}${follow?" has-followup":""}${isDismissed?" dismissed":""}${forceOpen?" open":""}"
       style="display:${show?"":"none"};--s-solid:${sc.solid};--s-bg:${sc.bg};--s-fg:${sc.fg};
              animation:cardIn .45s ${delay}s both"
       id="jc-${i}">
-      <div class="card-head" onclick="toggleCard(this.parentElement)">
+      <div class="card-head" onclick="${forceOpen?'':'toggleCard(this.parentElement)'}">
         <button class="star-btn${st.starred?" on":""}" onclick='event.stopPropagation();toggleStar(window._sorted[${i}])'>★</button>
         <div class="fit-mark" style="background:${fc.bg}">
           <div class="fit-num" style="color:${fc.fg}">${j.fit_score}</div>
@@ -1215,7 +1234,22 @@ function render(){
         </div>
       </div>
     </div>`;
-  }).join("");
+  };
+
+  // ── visibility + layout: master-detail on desktop, accordion on mobile ──
+  let v=0;
+  const desktop=window.matchMedia('(min-width:1024px)').matches;
+  const vis=[];
+  list.forEach((x,i)=>{ if(jobVisible(x)){v++;vis.push({x,i});} });
+  if(desktop){
+    if(!vis.some(o=>o.i===window._selIndex))window._selIndex=vis.length?vis[0].i:-1;
+    document.getElementById("container").innerHTML=vis.map(o=>buildRailRow(o.x,o.i,o.i===window._selIndex)).join("");
+    const selO=vis.find(o=>o.i===window._selIndex);
+    document.getElementById("detail").innerHTML=selO?window._buildCard(selO.x,selO.i,true,true):'<div class="detail-empty">בחר משרה מהרשימה כדי לראות פרטים</div>';
+  }else{
+    document.getElementById("detail").innerHTML='';
+    document.getElementById("container").innerHTML=list.map((x,i)=>window._buildCard(x,i,false,jobVisible(x))).join("");
+  }
 
   const starredC=JOBS.filter(j=>getJobState(j).starred).length;
   let ct=`${v} משרות`;
@@ -1225,6 +1259,20 @@ function render(){
   document.getElementById("count-lbl").textContent=ct;
 }
 
+function selectJob(i){window._selIndex=i;render();}
+function buildRailRow(x,i,sel){
+  const j=x.j,st=x.st,stage=x.stage;
+  const fc=fitColor(j.fit_score),sc=stageColor(STAGES.find(s=>s.key===stage)?.hue||235);
+  const novel=isNew(j),follow=needsFollowupDirect(st);
+  const sm=STAGES.find(s=>s.key===stage)||STAGES[0];
+  return`<div class="rail-row${sel?" sel":""}" onclick="selectJob(${i})">
+    <div class="rr-fit" style="background:${fc.bg};color:${fc.fg}">${j.fit_score}</div>
+    <div class="rr-text"><div class="rr-co">${j.company}</div><div class="rr-ti">${j.title}</div></div>
+    ${st.starred?'<span class="rr-star">★</span>':''}
+    ${novel?'<span class="new-badge">חדש</span>':(follow?'<span class="follow-badge">💬</span>':'')}
+    <span class="rr-dot" style="background:${sc.solid}" title="${sm.he}"></span>
+  </div>`;
+}
 function showToast(msg){
   const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");
   setTimeout(()=>t.classList.remove("show"),2400);
@@ -1421,6 +1469,10 @@ function toggleTheme(){
   showToast(cur==='dark'?'🌙 מצב כהה':'☀️ מצב בהיר');
 }
 initTheme();
+
+/* ── re-render when crossing the desktop/mobile breakpoint ── */
+let _wasDesktop=window.matchMedia('(min-width:1024px)').matches;
+window.addEventListener('resize',()=>{const d=window.matchMedia('(min-width:1024px)').matches;if(d!==_wasDesktop){_wasDesktop=d;render();}});
 
 /* ── keyboard shortcuts (desktop) ── */
 document.addEventListener('keydown',e=>{
