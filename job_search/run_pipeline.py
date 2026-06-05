@@ -248,15 +248,30 @@ def score_jobs(jobs: list[dict]) -> list[dict]:
 
 
 def update_feedback_after_scoring(scored: list[dict]):
-    """Write low-score companies back to feedback.json."""
+    """Persist scoring memory without polluting it.
+
+    The only feedback the scoring prompt actually consumes is the USER's
+    explicit signal: `avoid_companies` (jobs dismissed as irrelevant) and
+    `job_feedback` (manual notes), both written by the tracker. We must NOT
+    auto-blacklist companies just because a single listing scored 0 — a
+    company like Finout can score 0 on a bad-location listing yet be a 9/10
+    fit elsewhere. So we only PRESERVE existing user feedback here and record
+    a non-authoritative score history for transparency.
+    """
     feedback = load_feedback()
-    low = feedback.get("low_score_companies", [])
+    # Drop the legacy polluted/unused list if present.
+    feedback.pop("low_score_companies", None)
+    # Keep a rolling, capped record of recent scores per company (informational
+    # only — never used to filter). Helps audit which companies recur.
+    history = feedback.get("score_history", {})
+    today = date.today().isoformat()
     for j in scored:
-        if j.get("fit_score", 0) == 0:
-            company = j.get("company", "")
-            if company and company not in low:
-                low.append(company)
-    feedback["low_score_companies"] = low
+        company = j.get("company", "")
+        if company:
+            history.setdefault(company, [])
+            history[company].append({"date": today, "score": j.get("fit_score", 0)})
+            history[company] = history[company][-5:]  # keep last 5 only
+    feedback["score_history"] = history
     save_feedback(feedback)
 
 
