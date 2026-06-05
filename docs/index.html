@@ -2,7 +2,10 @@
 <html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="theme-color" content="#dde1ff"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
   <title>Job Tracker — Omri</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -298,6 +301,51 @@
     .d-status{font-size:.72rem;color:var(--inkFaint);margin-top:2px}
 
     @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+    /* ===== MOBILE OPTIMISATIONS ===== */
+    /* prevent iOS auto-zoom on focus: inputs must be ≥16px */
+    .search-inp,.notes-ta,.round-inp,.round-sel,.round-note,.d-inp,.d-ta{font-size:16px}
+    /* respect notch / home-indicator safe areas */
+    #app{padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right))}
+    .fab{bottom:max(22px,calc(env(safe-area-inset-bottom) + 14px))}
+    #toast{bottom:max(90px,calc(env(safe-area-inset-bottom) + 80px))}
+    /* smooth momentum scroll for chip rows */
+    .filter-row{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px}
+    .filter-row::-webkit-scrollbar{display:none}
+    .sf-chip,.fit-chip,.sort-btn,.exp-btn,.chan-btn{flex-shrink:0}
+    /* kill tap highlight + allow active feedback */
+    *{-webkit-tap-highlight-color:transparent}
+    button,a,.f-stage,.card-head{touch-action:manipulation}
+
+    @media(max-width:480px){
+      #app{padding-top:10px;gap:12px}
+      .hero{padding:18px 18px;border-radius:26px}
+      .hero-coach{font-size:1.28rem}
+      .f-count{font-size:1.55rem}
+      .f-label{font-size:.6rem}
+      .toolbar{padding:14px;border-radius:24px}
+      .search-row{gap:8px}
+      .sort-seg{width:100%}
+      .job-card{border-radius:24px}
+      .card-head{padding:15px 16px;gap:11px}
+      .card-company{font-size:1.1rem}
+      .fit-mark{width:48px;height:48px;border-radius:15px}
+      .fit-num{font-size:1.25rem}
+      .card-body{padding:0 16px 16px}
+      /* action buttons: 2-per-row grid for thumb reach */
+      .actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+      .act-btn{min-width:0;padding:13px 8px}
+      .act-dismiss{grid-column:span 2}
+      .step-btn{padding:11px 3px;font-size:.72rem}
+      .fab{padding:15px 22px;font-size:.88rem}
+      .modal-card{max-height:92vh}
+    }
+    @media(max-width:360px){
+      .actions{grid-template-columns:1fr}
+      .act-dismiss{grid-column:span 1}
+      .stepper{flex-wrap:wrap}
+      .step-btn{flex:1 1 28%}
+    }
   </style>
 </head>
 <body>
@@ -873,7 +921,7 @@ function closeAnalytics(){document.getElementById("sheet").classList.remove("sho
 /* ── RENDER ── */
 function render(){
   const stats=computeStats();
-  document.getElementById("hero-meta").textContent=`05/06/2026 19:33 UTC · ${stats.total} משרות פעילות`;
+  document.getElementById("hero-meta").textContent=`05/06/2026 19:36 UTC · ${stats.total} משרות פעילות`;
   document.getElementById("hero-coach").textContent=coachLine(stats);
 
   const funnelStages=STAGES.filter(s=>s.key!=="rejected");
