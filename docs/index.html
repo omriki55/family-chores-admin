@@ -704,7 +704,7 @@ function saveField(type,i){
   if(ack){ack.textContent="✓ נשמר";ack.style.color="var(--accent)";setTimeout(()=>{ack.textContent="";},2000);}
 }
 /* ── interview rounds ── */
-const ROUND_STAGES=["טלפוני / HR","ראיון מקצועי","ראיון טכני","פגישה עם מנהל","מטלה / תרגיל","ראיון סופי","אחר"];
+const ROUND_STAGES=["ראיון טלפוני","ראיון HR","ראיון וידאו","ראיון מקצועי","ראיון טכני","עבודת בית / מטלה","ראיון מנהל","ראיון סופי","אחר"];
 const ROUND_OUTCOMES=[["pending","⏳ ממתין"],["passed","✅ עבר"],["rejected","❌ נדחה"]];
 function getRounds(j){const k=jobKey(j),cur=STATE[k]||{};return cur.interviews||j.initial_rounds||[];}
 function seedRounds(j,cur){if(!cur.interviews)cur.interviews=j.initial_rounds?JSON.parse(JSON.stringify(j.initial_rounds)):[];return cur;}
@@ -727,7 +727,8 @@ function roundsHTML(j,i){
   const rounds=getRounds(j);
   const cards=rounds.map((r,ri)=>{
     const cls=r.outcome==="passed"?" r-passed":r.outcome==="rejected"?" r-rejected":"";
-    const stageOpts=ROUND_STAGES.map(s=>`<option ${s===r.stage?"selected":""}>${s}</option>`).join("");
+    const stageList=ROUND_STAGES.includes(r.stage)||!r.stage?ROUND_STAGES:[r.stage,...ROUND_STAGES];
+    const stageOpts=stageList.map(s=>`<option ${s===r.stage?"selected":""}>${s}</option>`).join("");
     const outOpts=ROUND_OUTCOMES.map(([v,l])=>`<option value="${v}" ${v===r.outcome?"selected":""}>${l}</option>`).join("");
     return `<div class="round-card${cls}">
       <button class="round-del" title="מחק סבב" onclick='event.stopPropagation();removeRound(${i},${ri})'>🗑️</button>
@@ -1012,7 +1013,7 @@ function closeAnalytics(){document.getElementById("sheet").classList.remove("sho
 /* ── RENDER ── */
 function render(){
   const stats=computeStats();
-  document.getElementById("hero-meta").textContent=`05/06/2026 20:12 UTC · ${stats.total} משרות פעילות`;
+  document.getElementById("hero-meta").textContent=`05/06/2026 20:37 UTC · ${stats.total} משרות פעילות`;
   document.getElementById("hero-coach").textContent=coachLine(stats);
 
   const funnelStages=STAGES.filter(s=>s.key!=="rejected");
