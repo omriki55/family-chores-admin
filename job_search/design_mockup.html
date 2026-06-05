@@ -3,135 +3,193 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Job Tracker — 3 Design Directions</title>
+<title>Job Tracker — Material 3 Expressive</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Frank+Ruhl+Libre:wght@400;500;700;900&family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
 <style>
+/* ===== MATERIAL 3 EXPRESSIVE — tonal palette from a single seed (#4F6BED) ===== */
+:root{
+  --primary:#4F6BED;            /* seed */
+  --on-primary:#ffffff;
+  --primary-container:#dde1ff;
+  --on-primary-container:#001257;
+  --secondary-container:#dfe1f9;
+  --on-secondary-container:#171b2c;
+  --tertiary:#7d5260;
+  --tertiary-container:#ffd8e8;
+  --on-tertiary-container:#31101d;
+  --surface:#fbf8ff;
+  --surface-container:#f0edf5;
+  --surface-container-high:#eae7ef;
+  --surface-container-highest:#e4e1e9;
+  --on-surface:#1b1b21;
+  --on-surface-variant:#46464f;
+  --outline-variant:#c7c5d0;
+  --success:#2e6b46;
+  --success-container:#b3f1c7;
+  --error:#ba1a1a;
+  --error-container:#ffdad6;
+}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:#0a0a0b;font-family:'Heebo',sans-serif;padding:24px;color:#fff}
-.wrap{max-width:1300px;margin:0 auto}
-.intro{text-align:center;margin-bottom:32px}
-.intro h1{font-size:1.6rem;font-weight:900;margin-bottom:6px}
-.intro p{color:#888;font-size:.9rem}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-@media(max-width:1000px){.grid{grid-template-columns:1fr}}
-.col-label{text-align:center;font-weight:800;font-size:1.05rem;margin-bottom:14px;padding:8px;border-radius:8px}
-.demo{border-radius:16px;overflow:hidden;height:100%}
+body{background:var(--surface);font-family:'Heebo','Roboto Flex',sans-serif;color:var(--on-surface);padding:0 0 100px;-webkit-font-smoothing:antialiased}
+.material-symbols-rounded{font-variation-settings:'FILL' 0,'wght' 400,'opsz' 24;vertical-align:middle}
+#app{max-width:460px;margin:0 auto;padding:16px}
 
-/* ============ 1. BLOOMBERG / FINANCIAL DARK ============ */
-.bb{background:#0d1117;border:1px solid #1f2937;font-family:'IBM Plex Mono',monospace;padding:18px}
-.bb .hd{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #1f2937;padding-bottom:12px;margin-bottom:14px}
-.bb .logo{color:#f7931a;font-weight:700;font-size:.8rem;letter-spacing:1px}
-.bb .live{color:#22c55e;font-size:.62rem;display:flex;align-items:center;gap:5px}
-.bb .live::before{content:"";width:6px;height:6px;background:#22c55e;border-radius:50%;animation:pulse 1.5s infinite}
-@keyframes pulse{50%{opacity:.3}}
-.bb .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#1f2937;border:1px solid #1f2937;margin-bottom:14px}
-.bb .stat{background:#0d1117;padding:10px 8px;text-align:center}
-.bb .stat .v{font-size:1.5rem;font-weight:700;color:#fff}
-.bb .stat .l{font-size:.55rem;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
-.bb .stat.up .v{color:#22c55e}
-.bb .row{border:1px solid #1f2937;padding:11px;margin-bottom:8px;background:#0d1117;display:flex;justify-content:space-between;align-items:center;transition:.15s}
-.bb .row:hover{border-color:#f7931a;background:#11151c}
-.bb .co{font-weight:700;font-size:.82rem;color:#fff}
-.bb .ti{font-size:.66rem;color:#9ca3af;margin-top:2px}
-.bb .score{font-size:1.3rem;font-weight:700;color:#22c55e;text-align:center}
-.bb .score .max{font-size:.6rem;color:#6b7280}
-.bb .tag{font-size:.55rem;padding:2px 7px;border:1px solid #f7931a;color:#f7931a;border-radius:2px;text-transform:uppercase}
+/* ===== TOP APP BAR (large) ===== */
+.appbar{padding:20px 8px 18px}
+.appbar .greet{font-size:.8rem;color:var(--on-surface-variant);font-weight:500}
+.appbar h1{font-size:2.1rem;font-weight:800;letter-spacing:-1px;line-height:1.05;margin-top:2px}
+.appbar h1 span{color:var(--primary)}
 
-/* ============ 2. EDITORIAL / MAGAZINE ============ */
-.ed{background:#faf8f3;color:#1a1a1a;font-family:'Frank Ruhl Libre',serif;padding:22px}
-.ed .kicker{font-family:'Heebo',sans-serif;font-size:.62rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#c2410c;margin-bottom:4px}
-.ed h2{font-size:1.9rem;font-weight:900;line-height:1;margin-bottom:16px;letter-spacing:-.5px}
-.ed .stat-line{display:flex;gap:20px;border-top:2px solid #1a1a1a;border-bottom:1px solid #ddd;padding:12px 0;margin-bottom:18px;font-family:'Heebo',sans-serif}
-.ed .sl-item .v{font-size:1.5rem;font-weight:900}
-.ed .sl-item .l{font-size:.6rem;color:#888;text-transform:uppercase;letter-spacing:1px}
-.ed .art{border-bottom:1px solid #ddd;padding:14px 0;display:flex;gap:14px;align-items:baseline}
-.ed .art:hover .co{color:#c2410c}
-.ed .num{font-family:'Heebo',sans-serif;font-size:1.6rem;font-weight:900;color:#c2410c;min-width:38px}
-.ed .co{font-size:1.15rem;font-weight:700;transition:.15s}
-.ed .ti{font-family:'Heebo',sans-serif;font-size:.72rem;color:#666;margin-top:2px}
-.ed .meta{font-family:'Heebo',sans-serif;font-size:.6rem;color:#999;margin-top:5px;letter-spacing:.5px}
-.ed .pill{display:inline-block;font-family:'Heebo',sans-serif;font-size:.58rem;font-weight:700;background:#1a1a1a;color:#faf8f3;padding:2px 8px;border-radius:99px}
+/* ===== HERO STAT CARD (primary container, big radius) ===== */
+.hero{background:var(--primary-container);color:var(--on-primary-container);border-radius:32px;padding:22px 24px;margin-bottom:14px}
+.hero .lead{font-size:.85rem;font-weight:600;opacity:.85;display:flex;align-items:center;gap:6px}
+.hero .funnel{display:flex;justify-content:space-between;margin-top:16px}
+.hero .fstat{text-align:center;flex:1}
+.hero .fstat .v{font-size:2rem;font-weight:800;line-height:1}
+.hero .fstat .l{font-size:.65rem;font-weight:600;opacity:.7;margin-top:3px}
+.hero .arrow{align-self:center;opacity:.4;font-size:1.1rem}
 
-/* ============ 3. BRUTALIST ============ */
-.br{background:#e8e6dc;color:#000;font-family:'Space Grotesk',sans-serif;padding:20px}
-.br .hd{background:#000;color:#e8e6dc;padding:10px 14px;font-weight:700;font-size:.9rem;display:flex;justify-content:space-between;margin-bottom:14px}
-.br .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}
-.br .stat{border:3px solid #000;padding:10px 12px;background:#fff}
-.br .stat:nth-child(2){background:#ffe600}
-.br .stat:nth-child(3){background:#ff5c00;color:#fff}
-.br .stat .v{font-size:1.7rem;font-weight:700;line-height:1}
-.br .stat .l{font-size:.6rem;font-weight:600;text-transform:uppercase}
-.br .card{border:3px solid #000;background:#fff;padding:12px;margin-bottom:10px;box-shadow:5px 5px 0 #000;transition:.1s}
-.br .card:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 #000}
-.br .top{display:flex;justify-content:space-between;align-items:flex-start}
-.br .co{font-size:1.05rem;font-weight:700;text-transform:uppercase}
-.br .ti{font-size:.72rem;font-weight:500;margin-top:2px}
-.br .score{font-size:1.5rem;font-weight:700;background:#000;color:#ffe600;padding:2px 9px}
-.br .tag{display:inline-block;border:2px solid #000;font-size:.58rem;font-weight:700;padding:2px 8px;margin-top:8px;text-transform:uppercase}
+/* ===== SEGMENTED FILTER CHIPS ===== */
+.chips{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 14px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;border:1px solid var(--outline-variant);background:transparent;color:var(--on-surface-variant);border-radius:999px;padding:9px 16px;font-size:.8rem;font-weight:600;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:6px;transition:.18s}
+.chip.on{background:var(--secondary-container);color:var(--on-secondary-container);border-color:transparent}
+.chip.on .material-symbols-rounded{font-size:18px}
+.chip .cnt{background:rgba(0,0,0,.08);border-radius:99px;padding:1px 7px;font-size:.7rem}
+
+/* ===== JOB CARD (filled tonal, expressive radius) ===== */
+.card{background:var(--surface-container);border-radius:28px;padding:18px 20px;margin-bottom:12px;transition:.18s;cursor:pointer;position:relative;overflow:hidden}
+.card:active{transform:scale(.985)}
+.card.hl{background:var(--surface-container-high)}
+.card .row1{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.card .co{font-size:1.25rem;font-weight:800;letter-spacing:-.3px}
+.card .ti{font-size:.85rem;color:var(--on-surface-variant);font-weight:500;margin-top:1px}
+/* score badge — big tonal circle */
+.score{flex-shrink:0;width:54px;height:54px;border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800;background:var(--success-container);color:var(--success)}
+.score .n{font-size:1.4rem;line-height:1}
+.score .x{font-size:.55rem;opacity:.7;font-weight:600}
+.score.mid{background:#fdecc8;color:#7a5900}
+/* chips row inside card */
+.tags{display:flex;gap:7px;margin-top:14px;flex-wrap:wrap}
+.tag{font-size:.7rem;font-weight:600;padding:5px 12px;border-radius:999px;display:flex;align-items:center;gap:4px}
+.tag .material-symbols-rounded{font-size:15px}
+.tag.loc{background:var(--surface-container-highest);color:var(--on-surface-variant)}
+.tag.stage-applied{background:#d7e3ff;color:#0b4ba0}
+.tag.stage-interview{background:var(--tertiary-container);color:var(--on-tertiary-container)}
+.tag.new{background:var(--primary);color:#fff}
+/* action buttons row */
+.acts{display:flex;gap:8px;margin-top:16px}
+.btn{flex:1;border:none;border-radius:999px;padding:11px 8px;font-size:.78rem;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:.15s}
+.btn .material-symbols-rounded{font-size:18px}
+.btn-tonal{background:var(--secondary-container);color:var(--on-secondary-container)}
+.btn-filled{background:var(--primary);color:#fff}
+.btn-out{background:transparent;border:1px solid var(--outline-variant);color:var(--on-surface-variant)}
+
+/* section label */
+.seclbl{font-size:.78rem;font-weight:700;color:var(--on-surface-variant);margin:18px 6px 10px;display:flex;align-items:center;gap:6px}
+
+/* ===== EXTENDED FAB ===== */
+.fab{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--primary);color:#fff;border:none;border-radius:20px;padding:16px 26px;font-size:.9rem;font-weight:700;font-family:inherit;box-shadow:0 6px 20px rgba(79,107,237,.45);display:flex;align-items:center;gap:9px;cursor:pointer;z-index:50}
+.fab .material-symbols-rounded{font-size:22px}
+
+/* feature preview cards */
+.feat{background:var(--tertiary-container);color:var(--on-tertiary-container);border-radius:24px;padding:16px 18px;margin-bottom:10px;display:flex;gap:14px;align-items:center}
+.feat .ic{width:46px;height:46px;border-radius:16px;background:rgba(0,0,0,.07);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.feat .ic .material-symbols-rounded{font-size:24px}
+.feat .ft{font-weight:800;font-size:.95rem}
+.feat .fd{font-size:.74rem;opacity:.8;margin-top:1px}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="intro">
-    <h1>3 כיווני עיצוב — Job Tracker</h1>
-    <p>אותם נתונים אמיתיים, שלוש שפות ויזואליות. בחר אחד ואבנה את האפליקציה המלאה.</p>
+<div id="app">
+
+  <div class="appbar">
+    <div class="greet">בוקר טוב, עומרי · יום שישי, 5 ביוני</div>
+    <h1>מנוע <span>חיפוש העבודה</span></h1>
   </div>
-  <div class="grid">
 
-    <!-- 1. BLOOMBERG -->
-    <div>
-      <div class="col-label" style="background:#0d1117;color:#f7931a;border:1px solid #1f2937">① Bloomberg / פיננסי כהה</div>
-      <div class="demo bb">
-        <div class="hd"><span class="logo">◢ JOB TERMINAL</span><span class="live">LIVE · 13:42</span></div>
-        <div class="stats">
-          <div class="stat up"><div class="v">53</div><div class="l">Active</div></div>
-          <div class="stat up"><div class="v">25</div><div class="l">Applied</div></div>
-          <div class="stat up"><div class="v">5</div><div class="l">Interview</div></div>
-          <div class="stat"><div class="v">3</div><div class="l">Passed</div></div>
-        </div>
-        <div class="row"><div><div class="co">FINOUT</div><div class="ti">Head of Revenue Operations</div><span class="tag">remote</span></div><div class="score">9<span class="max">/10</span></div></div>
-        <div class="row"><div><div class="co">GONG.IO</div><div class="ti">RevOps Manager</div><span class="tag">tel aviv</span></div><div class="score">9<span class="max">/10</span></div></div>
-        <div class="row"><div><div class="co">PLUS500</div><div class="ti">Sales Ops · ראיון היום</div><span class="tag" style="border-color:#a855f7;color:#a855f7">interview</span></div><div class="score" style="color:#a855f7">9<span class="max">/10</span></div></div>
-      </div>
+  <!-- HERO FUNNEL -->
+  <div class="hero">
+    <div class="lead"><span class="material-symbols-rounded">trending_up</span> 3 ראיונות שעברת · המשך כך</div>
+    <div class="funnel">
+      <div class="fstat"><div class="v">53</div><div class="l">משרות</div></div>
+      <span class="arrow material-symbols-rounded">chevron_left</span>
+      <div class="fstat"><div class="v">25</div><div class="l">הוגשו</div></div>
+      <span class="arrow material-symbols-rounded">chevron_left</span>
+      <div class="fstat"><div class="v">5</div><div class="l">ראיונות</div></div>
+      <span class="arrow material-symbols-rounded">chevron_left</span>
+      <div class="fstat"><div class="v">3</div><div class="l">עברו</div></div>
     </div>
-
-    <!-- 2. EDITORIAL -->
-    <div>
-      <div class="col-label" style="background:#faf8f3;color:#c2410c;border:1px solid #ddd">② Editorial / מגזין</div>
-      <div class="demo ed">
-        <div class="kicker">מצב נכון ל-5 ביוני 2026</div>
-        <h2>מנוע חיפוש<br/>העבודה</h2>
-        <div class="stat-line">
-          <div class="sl-item"><div class="v">53</div><div class="l">משרות</div></div>
-          <div class="sl-item"><div class="v">25</div><div class="l">הוגשו</div></div>
-          <div class="sl-item"><div class="v">5</div><div class="l">ראיונות</div></div>
-          <div class="sl-item"><div class="v" style="color:#c2410c">3</div><div class="l">עברו</div></div>
-        </div>
-        <div class="art"><div class="num">01</div><div><div class="co">Finout</div><div class="ti">Head of Revenue Operations</div><div class="meta">REMOTE · עלתה לפני 3 ימים</div></div></div>
-        <div class="art"><div class="num">02</div><div><div class="co">Gong.io</div><div class="ti">RevOps Manager</div><div class="meta">TEL AVIV · עלתה לפני 5 ימים</div></div></div>
-        <div class="art"><div class="num">03</div><div><div class="co">Plus500</div><div class="ti">Sales Operations <span class="pill">ראיון היום</span></div><div class="meta">נתניה · בתהליך</div></div></div>
-      </div>
-    </div>
-
-    <!-- 3. BRUTALIST -->
-    <div>
-      <div class="col-label" style="background:#ffe600;color:#000;border:3px solid #000">③ Brutalist / אסרטיבי</div>
-      <div class="demo br">
-        <div class="hd"><span>JOB_TRACKER.EXE</span><span>● 05.06.26</span></div>
-        <div class="stats">
-          <div class="stat"><div class="v">53</div><div class="l">משרות פעילות</div></div>
-          <div class="stat"><div class="v">25</div><div class="l">הוגשו</div></div>
-          <div class="stat"><div class="v">5</div><div class="l">ראיונות</div></div>
-          <div class="stat"><div class="v">3</div><div class="l">עברו ✓</div></div>
-        </div>
-        <div class="card"><div class="top"><div><div class="co">Finout</div><div class="ti">Head of Revenue Operations</div></div><div class="score">9</div></div><span class="tag">REMOTE</span></div>
-        <div class="card"><div class="top"><div><div class="co">Gong.io</div><div class="ti">RevOps Manager</div></div><div class="score">9</div></div><span class="tag">TEL AVIV</span></div>
-        <div class="card" style="box-shadow:5px 5px 0 #ff5c00"><div class="top"><div><div class="co">Plus500</div><div class="ti">Sales Operations</div></div><div class="score" style="background:#ff5c00;color:#fff">9</div></div><span class="tag" style="border-color:#ff5c00;color:#ff5c00">ראיון היום</span></div>
-      </div>
-    </div>
-
   </div>
+
+  <!-- FILTER CHIPS -->
+  <div class="chips">
+    <button class="chip on"><span class="material-symbols-rounded">tune</span>הכל <span class="cnt">53</span></button>
+    <button class="chip">שמורות <span class="cnt">8</span></button>
+    <button class="chip">הוגשו <span class="cnt">25</span></button>
+    <button class="chip">ראיונות <span class="cnt">5</span></button>
+    <button class="chip">⭐ נבחרות</button>
+  </div>
+
+  <!-- JOB CARDS -->
+  <div class="card">
+    <div class="row1">
+      <div><div class="co">Finout</div><div class="ti">Head of Revenue Operations</div></div>
+      <div class="score"><span class="n">9</span><span class="x">/10</span></div>
+    </div>
+    <div class="tags">
+      <span class="tag new"><span class="material-symbols-rounded">auto_awesome</span>חדש</span>
+      <span class="tag loc"><span class="material-symbols-rounded">location_on</span>Remote</span>
+      <span class="tag loc"><span class="material-symbols-rounded">schedule</span>לפני 3 ימים</span>
+    </div>
+    <div class="acts">
+      <button class="btn btn-filled"><span class="material-symbols-rounded">mail</span>מכתב</button>
+      <button class="btn btn-tonal"><span class="material-symbols-rounded">description</span>קו״ח</button>
+      <button class="btn btn-out"><span class="material-symbols-rounded">open_in_new</span>משרה</button>
+    </div>
+  </div>
+
+  <div class="card hl">
+    <div class="row1">
+      <div><div class="co">Plus500</div><div class="ti">Sales Operations Manager</div></div>
+      <div class="score"><span class="n">9</span><span class="x">/10</span></div>
+    </div>
+    <div class="tags">
+      <span class="tag stage-interview"><span class="material-symbols-rounded">event</span>ראיון היום 14:00</span>
+      <span class="tag loc"><span class="material-symbols-rounded">location_on</span>נתניה</span>
+    </div>
+    <div class="acts">
+      <button class="btn btn-filled"><span class="material-symbols-rounded">quiz</span>הכנה לראיון</button>
+      <button class="btn btn-tonal"><span class="material-symbols-rounded">corporate_fare</span>דוסייר</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row1">
+      <div><div class="co">Gong.io</div><div class="ti">RevOps Manager, Territory Strategy</div></div>
+      <div class="score"><span class="n">9</span><span class="x">/10</span></div>
+    </div>
+    <div class="tags">
+      <span class="tag stage-applied"><span class="material-symbols-rounded">check</span>הוגש</span>
+      <span class="tag loc"><span class="material-symbols-rounded">location_on</span>Tel Aviv</span>
+    </div>
+    <div class="acts">
+      <button class="btn btn-tonal"><span class="material-symbols-rounded">notifications</span>תזכורת follow-up</button>
+      <button class="btn btn-out"><span class="material-symbols-rounded">open_in_new</span>משרה</button>
+    </div>
+  </div>
+
+  <!-- FEATURE PREVIEWS -->
+  <div class="seclbl"><span class="material-symbols-rounded">bolt</span>פיצ'רים חדשים</div>
+  <div class="feat"><div class="ic"><span class="material-symbols-rounded">quiz</span></div><div><div class="ft">הכנה לראיון</div><div class="fd">שאלות צפויות + נקודות דיבור לכל חברה</div></div></div>
+  <div class="feat" style="background:var(--secondary-container);color:var(--on-secondary-container)"><div class="ic"><span class="material-symbols-rounded">analytics</span></div><div><div class="ft">אנליטיקת Pipeline</div><div class="fd">גרף המרה · זמן בכל שלב · אחוזי הצלחה</div></div></div>
+  <div class="feat" style="background:var(--success-container);color:#0c3a22"><div class="ic"><span class="material-symbols-rounded">corporate_fare</span></div><div><div class="ft">דוסייר חברה</div><div class="fd">גיוס · גודל · חדשות אחרונות</div></div></div>
+
 </div>
+
+<button class="fab"><span class="material-symbols-rounded">refresh</span>סרוק עכשיו</button>
 </body>
 </html>
