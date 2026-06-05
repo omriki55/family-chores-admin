@@ -228,6 +228,9 @@
     .act-cv{background:var(--surfaceAlt)}
     .act-open{background:var(--accent);color:var(--onAccent);border-color:var(--accent)}
     .act-copy.copied{color:var(--accent);border-color:var(--accent)}
+    .act-letter{background:oklch(0.97 0.03 150);color:oklch(0.35 0.14 150);border-color:oklch(0.82 0.08 150)}
+    .act-letter:hover{background:oklch(0.94 0.06 150);border-color:oklch(0.55 0.16 150)}
+    .act-letter.copied{color:oklch(0.35 0.14 150);border-color:oklch(0.55 0.16 150)}
 
     /* dismiss section */
     .dismiss-toggle{background:none;border:none;font-size:.72rem;color:var(--inkFaint);cursor:pointer;padding:3px 0;font-family:var(--font-ui);text-align:right;direction:rtl}
@@ -1003,6 +1006,7 @@ function render(){
               <button class="act-btn act-wa" onclick='event.stopPropagation();shareWA(${i})'>וואטסאפ</button>
               <button class="act-btn act-cv" onclick='event.stopPropagation();openCV(${i})'>קו״ח 📄</button>
               <button class="act-btn act-copy" onclick='event.stopPropagation();copyOpener(this,${i})'>פנייה 📋</button>
+              <button class="act-btn act-letter" onclick='event.stopPropagation();copyLetterPrompt(this,${i})'>מכתב ✉️</button>
               <a href="${j.url}" target="_blank" rel="noopener" class="act-btn act-open" onclick='event.stopPropagation()'>משרה ↗</a>
               <button class="act-btn act-dismiss" onclick='event.stopPropagation();dismissJob(window._sorted[${i}],"irrelevant")' title="הסר מהרשימה">🚫 לא רלוונטי</button>
             </div>
@@ -1031,6 +1035,37 @@ function copyOpener(btn,i){
   navigator.clipboard.writeText(text).then(()=>{
     btn.textContent="הועתק! ✓";btn.classList.add("copied");showToast("הפנייה הועתקה!");
     setTimeout(()=>{btn.textContent="פנייה 📋";btn.classList.remove("copied");},2000);
+  }).catch(()=>showToast("ההעתקה נכשלה"));
+}
+function copyLetterPrompt(btn,i){
+  const j=window._sorted[i];
+  const cvData=getCV();
+  const prompt=`אתה עוזר לכתוב מכתב מקדים בעברית לפגישת ראיון/הגשה.
+
+## פרטי המשרה
+חברה: ${j.company}
+תפקיד: ${j.title}
+מיקום: ${j.location||""}
+${j.description?`תיאור:\n${j.description.slice(0,800)}`:""}
+
+## הפרופיל של המועמד
+שם: עומרי גונן
+${cvData.tagline}
+${cvData.summary}
+
+## המשימה
+כתוב מכתב מקדים קצר ועוצמתי (3-4 פסקאות, עברית):
+1. פתיח אישי שמתחבר לחברה/תפקיד הספציפי
+2. 2-3 הישגים כמותיים שרלוונטיים לתפקיד הזה
+3. סגירה עם CTA ברור
+
+טון: מקצועי אך אנושי. לא תבניתי. לא buzzwords ריקים.`;
+
+  navigator.clipboard.writeText(prompt).then(()=>{
+    const orig=btn.textContent;
+    btn.textContent="הועתק! ✓";btn.classList.add("copied");
+    showToast("פרומפט למכתב הועתק — הדבק ב-Claude.ai");
+    setTimeout(()=>{btn.textContent=orig;btn.classList.remove("copied");},2200);
   }).catch(()=>showToast("ההעתקה נכשלה"));
 }
 function shareWA(i){
