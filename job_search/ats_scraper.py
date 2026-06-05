@@ -137,9 +137,28 @@ _SCRAPERS = {
     "ashby": scrape_ashby,
 }
 
+# Title keywords used to pre-filter ATS jobs before scoring. ATS boards return
+# EVERY open role at a company (engineers, recruiters, etc.); scoring all of
+# them wastes tokens. Only roles whose title matches one of these are kept.
+_DEFAULT_KEYWORDS = [
+    "revenue operation", "revops", "rev ops", "gtm", "go-to-market",
+    "growth", "sales operation", "sales ops", "marketing operation",
+    "marketing ops", "revenue strategy", "sales strategy", "business operation",
+]
 
-def scrape_ats(ats_config: dict) -> list[dict]:
-    """Run all configured ATS scrapers and return a flat list of jobs."""
+
+def _title_relevant(title: str, keywords: list[str]) -> bool:
+    t = (title or "").lower()
+    return any(k in t for k in keywords)
+
+
+def scrape_ats(ats_config: dict, keywords: list[str] | None = None) -> list[dict]:
+    """Run all configured ATS scrapers, returning only role-relevant jobs.
+
+    `keywords` filters by job title (case-insensitive substring match) so we
+    only score listings that plausibly fit the target roles.
+    """
+    keywords = [k.lower() for k in (keywords or _DEFAULT_KEYWORDS)]
     jobs = []
     for provider, tokens in (ats_config or {}).items():
         fn = _SCRAPERS.get(provider)
@@ -147,9 +166,10 @@ def scrape_ats(ats_config: dict) -> list[dict]:
             continue
         for token in tokens:
             found = fn(token)
+            relevant = [j for j in found if _title_relevant(j["title"], keywords)]
             if found:
-                print(f"    {provider}/{token}: {len(found)} jobs")
-            jobs.extend(found)
+                print(f"    {provider}/{token}: {len(relevant)}/{len(found)} relevant")
+            jobs.extend(relevant)
     return jobs
 
 
