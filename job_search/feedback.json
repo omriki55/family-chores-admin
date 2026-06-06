@@ -7,6 +7,10 @@
       {
         "date": "2026-06-05",
         "score": 0
+      },
+      {
+        "date": "2026-06-06",
+        "score": 9
       }
     ],
     "Gong.io": [
@@ -43,12 +47,20 @@
       {
         "date": "2026-06-05",
         "score": 0
+      },
+      {
+        "date": "2026-06-06",
+        "score": 6
       }
     ],
     "Gradient Labs": [
       {
         "date": "2026-06-05",
         "score": 0
+      },
+      {
+        "date": "2026-06-06",
+        "score": 9
       }
     ],
     "Redwood Software": [
@@ -61,6 +73,10 @@
       {
         "date": "2026-06-05",
         "score": 0
+      },
+      {
+        "date": "2026-06-06",
+        "score": 9
       }
     ],
     "Shopmonkey": [
@@ -227,6 +243,10 @@
       {
         "date": "2026-06-05",
         "score": 0
+      },
+      {
+        "date": "2026-06-06",
+        "score": 8
       }
     ],
     "Undisclosed": [
@@ -297,6 +317,10 @@
       {
         "date": "2026-06-05",
         "score": 0
+      },
+      {
+        "date": "2026-06-06",
+        "score": 7
       }
     ],
     "Convoso": [
@@ -332,7 +356,60 @@
         "date": "2026-06-05",
         "score": 0
       }
+    ],
+    "Push Security": [
+      {
+        "date": "2026-06-06",
+        "score": 9
+      }
+    ],
+    "Render": [
+      {
+        "date": "2026-06-06",
+        "score": 9
+      }
+    ],
+    "Cyngn": [
+      {
+        "date": "2026-06-06",
+        "score": 9
+      }
+    ],
+    "Gong": [
+      {
+        "date": "2026-06-06",
+        "score": 9
+      }
+    ],
+    "Instrumentl": [
+      {
+        "date": "2026-06-06",
+        "score": 8
+      }
+    ],
+    "Orbital": [
+      {
+        "date": "2026-06-06",
+        "score": 8
+      }
+    ],
+    "Sprinto": [
+      {
+        "date": "2026-06-06",
+        "score": 8
+      }
+    ],
+    "Eve": [
+      {
+        "date": "2026-06-06",
+        "score": 7
+      }
+    ],
+    "Anyscale": [
+      {
+        "date": "2026-06-06",
+        "score": 9
+      }
     ]
-  },
-  "low_score_companies": []
+  }
 }
