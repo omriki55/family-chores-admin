@@ -281,6 +281,28 @@
     html[data-theme="dark"] .chat-msg.ai{background:#2a2d36}
     html[data-theme="dark"] .m-chatbar textarea{background:#1f2229;border-color:#3a3d47}
     .modal-foot .act-btn{min-width:0}
+    /* ── Practice Setup ── */
+    .psetup{display:flex;flex-direction:column;gap:18px;padding:6px 20px 20px;overflow-y:auto}
+    .psetup-section{display:flex;flex-direction:column;gap:8px}
+    .psetup-lbl{font-size:.72rem;font-weight:700;color:var(--inkFaint);display:flex;align-items:center;gap:6px}
+    .psetup-lbl .material-symbols-rounded{font-size:16px}
+    .lang-chips{display:flex;gap:8px}
+    .lang-chip{flex:1;padding:14px 10px;border-radius:18px;border:2px solid var(--line);background:var(--surface-container);font-family:var(--font-ui);font-size:.92rem;font-weight:700;cursor:pointer;transition:all .13s;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px}
+    .lang-chip .flag{font-size:1.6rem}
+    .lang-chip .lname{font-size:.72rem;font-weight:600;color:var(--inkSoft)}
+    .lang-chip.on{border-color:var(--primary);background:var(--primary-container);color:var(--on-primary-container)}
+    .lang-chip.on .lname{color:var(--on-primary-container)}
+    .stage-chips{display:flex;gap:6px;flex-wrap:wrap}
+    .stage-chip{padding:8px 13px;border-radius:999px;border:1.5px solid var(--line);background:transparent;font-family:var(--font-ui);font-size:.76rem;font-weight:600;cursor:pointer;color:var(--inkSoft);transition:all .12s}
+    .stage-chip.on{border-color:var(--primary);background:var(--secondary-container);color:var(--on-secondary-container)}
+    .interviewer-row{display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap}
+    .iview-chip{padding:8px 13px;border-radius:999px;border:1.5px solid var(--line);background:transparent;font-family:var(--font-ui);font-size:.76rem;font-weight:600;cursor:pointer;color:var(--inkSoft);transition:all .12s;display:flex;align-items:center;gap:5px}
+    .iview-chip.on{border-color:var(--primary);background:var(--secondary-container);color:var(--on-secondary-container)}
+    .iview-manual{flex:1;min-width:140px;border:1.5px solid var(--line);border-radius:14px;padding:9px 13px;font-size:.84rem;font-family:var(--font-ui);color:var(--ink);background:var(--surface-container);outline:none;transition:box-shadow .15s;direction:rtl}
+    .iview-manual:focus{box-shadow:0 0 0 2px var(--primary);border-color:var(--primary)}
+    .psetup-start{background:var(--primary);color:#fff;border:none;border-radius:999px;padding:14px 28px;font-size:.92rem;font-weight:800;font-family:var(--font-ui);cursor:pointer;align-self:stretch;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px}
+    .psetup-start:hover{background:var(--accentDeep);box-shadow:0 4px 16px rgba(79,107,237,.35)}
+    .psetup-start .material-symbols-rounded{font-size:20px}
 
     /* analytics */
     .an-body{padding:6px 20px 20px;overflow-y:auto;display:flex;flex-direction:column;gap:16px}
@@ -1367,44 +1389,167 @@ const STAGE_GUIDE={
   "ראיון סופי":"שלב אחרון — לרוב מנכ\"ל/מייסד. חזון, אנרגיה, התאמה לטווח ארוך, וסגירה. טון: מנהיגותי, אנושי.",
   "אחר":"ראיון כללי — שילוב של התנהגותי, מקצועי ומוטיבציה."
 };
-function openPractice(i){
-  const j=window._sorted[i],cvData=getCV();
-  const stage=currentStage(j);
-  _cvCompany=j.company;
-  const sysPrompt=`אתה מאמן ראיונות בכיר וגם מאמן מנטלי. אנהל איתך **סימולציית ראיון אינטראקטיבית** בעברית — שאלה, התשובה שלי, ואז הפידבק שלך. עבור אחת-אחת, לא הכל ביחד.
+const STAGE_GUIDE_EN={
+  "ראיון טלפוני":"Initial phone screening with a recruiter. Short and warm. Covers general fit, motivation, salary expectations, and availability.",
+  "ראיון HR":"HR interview. Assesses cultural fit, values, soft skills, and behavioral questions (STAR format).",
+  "ראיון וידאו":"Video interview (Zoom/Teams). Combines behavioral and professional questions. Presence, clarity and pacing matter.",
+  "ראיון מקצועי":"Deep-dive with the hiring manager. Focused on RevOps/GTM — metrics, pipeline, lead scoring, operations, tech stack. Be sharp and specific.",
+  "ראיון טכני":"Technical interview: scenarios, SQL, CRM workflows, live problem-solving. Show your process, not just the answer.",
+  "עבודת בית / מטלה":"Take-home assignment or case study. Structure your thinking, show impact metrics, and defend your choices.",
+  "ראיון מנהל":"Senior leadership interview (VP/Director). Strategy, business impact, and your 90-day plan. Be decisive and confident.",
+  "ראיון סופי":"Final round — often with CEO/Founder. Vision, leadership, long-term fit, and closing. Be authentic and compelling.",
+  "אחר":"General interview — mix of behavioral, professional, and motivation questions."
+};
 
-## השלב שאני מתאמן עליו: ${stage}
-${STAGE_GUIDE[stage]||""}
+function openPractice(i){
+  const j=window._sorted[i];
+  const stage=currentStage(j);
+  const rounds=getRounds(j);
+  // collect known interviewers from rounds
+  const knownInterviewers=rounds.filter(r=>r.name&&r.name.trim()).map(r=>({name:r.name.trim(),stage:r.stage||""}));
+
+  // build stage chips
+  const stageChips=ROUND_STAGES.map(s=>`
+    <button class="stage-chip${s===stage?" on":""}" onclick="practiceSelStage(this,'${s.replace(/'/g,"\\'")}')">
+      ${s}
+    </button>`).join("");
+
+  // build interviewer chips from rounds
+  const iviewChips=knownInterviewers.length ? knownInterviewers.map((iv,idx)=>`
+    <button class="iview-chip" onclick="practiceSelInterviewer(this,'${iv.name.replace(/'/g,"\\'")}')">
+      <span class="material-symbols-rounded" style="font-size:16px">person</span>${iv.name}${iv.stage?` · <small>${iv.stage}</small>`:""}
+    </button>`).join("") : "";
+
+  const body=document.getElementById("m-body");
+  const head=document.getElementById("m-title");
+  const sub=document.getElementById("m-sub");
+  const foot=document.getElementById("m-foot");
+  const bar=document.getElementById("m-chatbar");
+  head.textContent="🎙️ הגדרות תרגול — "+j.company;
+  sub.textContent=j.title;
+  foot.style.display="none";
+  bar.style.display="none";
+  body.className="modal-body";
+  body.style.whiteSpace="normal";
+  body.innerHTML=`<div class="psetup" id="psetup-${i}">
+    <div class="psetup-section">
+      <div class="psetup-lbl"><span class="material-symbols-rounded">translate</span>שפת הראיון</div>
+      <div class="lang-chips">
+        <button class="lang-chip on" id="lang-he" onclick="practiceSelLang('he')">
+          <span class="flag">🇮🇱</span><span class="lname">עברית</span>
+        </button>
+        <button class="lang-chip" id="lang-en" onclick="practiceSelLang('en')">
+          <span class="flag">🇬🇧</span><span class="lname">English</span>
+        </button>
+      </div>
+    </div>
+    <div class="psetup-section">
+      <div class="psetup-lbl"><span class="material-symbols-rounded">stairs</span>שלב הראיון</div>
+      <div class="stage-chips">${stageChips}</div>
+    </div>
+    <div class="psetup-section">
+      <div class="psetup-lbl"><span class="material-symbols-rounded">person</span>המראיין/ת${knownInterviewers.length?" (מהסבבים שלך)":""}</div>
+      <div class="interviewer-row">
+        ${iviewChips}
+        <input class="iview-manual" id="iview-manual" type="text" placeholder="שם ותפקיד המראיין/ת (אופציונלי)" value="${knownInterviewers.length?knownInterviewers[knownInterviewers.length-1].name:""}"/>
+      </div>
+    </div>
+    <button class="psetup-start" onclick="startPractice(${i})">
+      <span class="material-symbols-rounded">play_arrow</span>התחל תרגול
+    </button>
+  </div>`;
+  // store context on window for the start function
+  window._practiceCtx={i,stage,lang:'he'};
+  document.getElementById("modal").classList.add("show");
+}
+
+function practiceSelLang(lang){
+  window._practiceCtx.lang=lang;
+  document.getElementById("lang-he").classList.toggle("on",lang==="he");
+  document.getElementById("lang-en").classList.toggle("on",lang==="en");
+}
+function practiceSelStage(btn,stage){
+  window._practiceCtx.stage=stage;
+  btn.closest(".stage-chips").querySelectorAll(".stage-chip").forEach(b=>b.classList.remove("on"));
+  btn.classList.add("on");
+}
+function practiceSelInterviewer(btn,name){
+  btn.closest(".interviewer-row").querySelectorAll(".iview-chip").forEach(b=>b.classList.remove("on"));
+  btn.classList.add("on");
+  const inp=document.getElementById("iview-manual");
+  if(inp)inp.value=name;
+}
+
+function startPractice(i){
+  const {stage,lang}=window._practiceCtx||{};
+  const j=window._sorted[i],cvData=getCV();
+  _cvCompany=j.company;
+  const interviewer=(document.getElementById("iview-manual")||{}).value||"";
+  const stageUsed=stage||currentStage(j);
+  const langHe=lang!=="en";
+
+  const guideHe=STAGE_GUIDE[stageUsed]||"";
+  const guideEn=STAGE_GUIDE_EN[stageUsed]||"";
+
+  const interviewerCtx=interviewer
+    ?(langHe?`\n## המראיין/ת\n${interviewer}\nהתאם את השאלות לסגנון ולתפקיד של מי שמראיין — מה הם ישאלו, מה חשוב להם.`
+            :`\n## Interviewer\n${interviewer}\nTailor your questions to this person's role and perspective.`)
+    :"";
+
+  const sysPrompt=langHe
+    ?`אתה מאמן ראיונות בכיר וגם מאמן מנטלי. אנהל איתך **סימולציית ראיון אינטראקטיבית** בעברית — שאלה, התשובה שלי, ואז הפידבק שלך. עבור אחת-אחת, לא הכל ביחד.
+
+## השלב: ${stageUsed}
+${guideHe}${interviewerCtx}
 
 ## המשרה
 חברה: ${j.company}
 תפקיד: ${j.title}
 מיקום: ${j.location||""}
-${j.description?`תיאור התפקיד:\n${j.description.slice(0,800)}`:""}
+${j.description?`תיאור:\n${j.description.slice(0,600)}`:""}
 
 ## הפרופיל שלי
 עומרי גונן — ${cvData.tagline}
 ${cvData.summary}
 
-## איך הסימולציה עובדת
-1. שאל אותי **שאלה אחת בכל פעם**, מותאמת לשלב "${stage}" ולמשרה הזו (ערבב: שאלות ספציפיות לחברה/תפקיד, שאלות RevOps/GTM מקצועיות, שאלות התנהגותיות STAR, ולפעמים שאלה קשה/מלכודת אחת).
-2. חכה לתשובה שלי. אל תענה במקומי.
-3. אחרי כל תשובה, תן פידבק במבנה הבא:
-   • 💪 **מה היה חזק** — קודם החיובי, מה עבד ואיפה שכנעתי
-   • 🎯 **שיפור עניני** — מה לחדד, מה חסר, איך לבנות תשובת STAR טובה יותר
-   • 📊 **ניקוד** — מספר 1-10 לתשובה
-   • ➡️ עבור לשאלה הבאה
-4. אחרי 6-8 שאלות, תן לי **סיכום**: ציון ממוצע, מגמה (השתפרתי?), 3 חוזקות ו-2 דברים לתרגל לפני הראיון האמיתי.
+## כללי הסימולציה
+1. שאל **שאלה אחת בכל פעם** — מותאמת לשלב ולמשרה. ערבב: מקצועית, התנהגותית STAR, ולפחות שאלה קשה/מלכודת אחת.
+2. חכה לתשובה. אל תענה במקומי.
+3. אחרי כל תשובה: 💪 **חזק** · 🎯 **לשפר** · 📊 **ניקוד 1-10** · ➡️ שאלה הבאה.
+4. אחרי 6-8 שאלות: סיכום — ציון ממוצע, 3 חוזקות, 2 דברים לתרגל.
 
-## הטון שלך (חשוב מאוד)
-אתה מאמן שמעצים, לא שובר. גם כשאתה מבקר — תעשה את זה בצורה שמשאירה אותי עם ביטחון ואנרגיה לראיון. הזכר לי כמה כבר הגעתי. המטרה היא שאצא מהתרגול חזק יותר, לא מותש.
+## טון
+מעצים, לא שובר. אפילו ביקורת יוצאת ממקום של אמונה בי. המטרה — לצאת חזק יותר.`
+    :`You are a senior interview coach and mental performance trainer. Run an **interactive interview simulation** in English — one question at a time, then my answer, then your feedback. Never answer for me.
 
-תתחיל עכשיו עם השאלה הראשונה.`;
+## Stage: ${stageUsed}
+${guideEn}${interviewerCtx}
+
+## Job
+Company: ${j.company}
+Role: ${j.title}
+Location: ${j.location||""}
+${j.description?`Description:\n${j.description.slice(0,600)}`:""}
+
+## My Profile
+Omri Gonen — ${cvData.tagline}
+${cvData.summary}
+
+## Simulation Rules
+1. Ask **one question at a time** — tailored to the stage and this specific job. Mix: professional/technical, behavioral STAR, and at least one tough/curveball question.
+2. Wait for my answer. Never answer for me.
+3. After each answer: 💪 **Strengths** · 🎯 **Improve** · 📊 **Score 1-10** · ➡️ Next question.
+4. After 6-8 questions: Summary — average score, 3 strengths, 2 things to practise before the real interview.
+
+## Tone
+Empowering, not crushing. Even critical feedback should leave me energised and confident. The goal is to finish stronger than I started.`;
+
+  const kickoff=langHe?"אני מוכן. תתחיל בבקשה בשאלה הראשונה.":"I'm ready. Please start with the first question.";
   launchChat({
-    title:"🎙️ תרגול ראיון — "+j.company,
-    sub:stage+" · "+j.title,
+    title:"🎙️ תרגול — "+j.company,
+    sub:stageUsed+(interviewer?" · "+interviewer:"")+(langHe?" · עברית":" · English"),
     system:sysPrompt,
-    kickoff:"אני מוכן. תתחיל בבקשה בשאלה הראשונה.",
+    kickoff,
     fallbackText:sysPrompt
   });
 }
