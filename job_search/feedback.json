@@ -17,6 +17,10 @@
       {
         "date": "2026-06-05",
         "score": 0
+      },
+      {
+        "date": "2026-06-06",
+        "score": 9
       }
     ],
     "Embrace": [
@@ -47,24 +51,40 @@
       {
         "date": "2026-06-05",
         "score": 0
+      },
+      {
+        "date": "2026-06-06",
+        "score": 6
       }
     ],
     "Gradient Labs": [
       {
         "date": "2026-06-05",
         "score": 0
+      },
+      {
+        "date": "2026-06-06",
+        "score": 9
       }
     ],
     "Redwood Software": [
       {
         "date": "2026-06-05",
         "score": 0
+      },
+      {
+        "date": "2026-06-06",
+        "score": 7
       }
     ],
     "Ivo": [
       {
         "date": "2026-06-05",
         "score": 0
+      },
+      {
+        "date": "2026-06-06",
+        "score": 9
       }
     ],
     "Shopmonkey": [
@@ -235,6 +255,10 @@
       {
         "date": "2026-06-05",
         "score": 0
+      },
+      {
+        "date": "2026-06-06",
+        "score": 7
       }
     ],
     "Undisclosed": [
@@ -341,82 +365,46 @@
         "score": 0
       }
     ],
-    "Retool": [
+    "Passage Health": [
       {
         "date": "2026-06-06",
         "score": 8
       }
     ],
-    "Glean": [
+    "Vanta": [
       {
         "date": "2026-06-06",
-        "score": 8
+        "score": 5
       }
     ],
-    "Cortex": [
-      {
-        "date": "2026-06-06",
-        "score": 9
-      }
-    ],
-    "Temporal Technologies": [
-      {
-        "date": "2026-06-06",
-        "score": 8
-      }
-    ],
-    "Cresta": [
-      {
-        "date": "2026-06-06",
-        "score": 9
-      }
-    ],
-    "Unframe": [
-      {
-        "date": "2026-06-06",
-        "score": 9
-      }
-    ],
-    "Engine": [
+    "Tebra": [
       {
         "date": "2026-06-06",
         "score": 7
       }
     ],
-    "Instrumentl": [
+    "Proton": [
+      {
+        "date": "2026-06-06",
+        "score": 4
+      }
+    ],
+    "Iru": [
       {
         "date": "2026-06-06",
         "score": 9
       }
     ],
-    "HiHello": [
+    "Anyscale": [
+      {
+        "date": "2026-06-06",
+        "score": 9
+      }
+    ],
+    "Moss": [
       {
         "date": "2026-06-06",
         "score": 8
-      }
-    ],
-    "Eve": [
-      {
-        "date": "2026-06-06",
-        "score": 7
-      }
-    ],
-    "VulnCheck": [
-      {
-        "date": "2026-06-06",
-        "score": 9
-      }
-    ],
-    "Harvey": [
-      {
-        "date": "2026-06-06",
-        "score": 7
-      }
-    ],
-    "Workato": [
-      {
-        "date": "2026-06-06",
-        "score": 9
       }
     ]
   }
