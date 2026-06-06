@@ -261,6 +261,24 @@
     .cdn-btn:hover{filter:brightness(.95)}
     .cdn-btn:active{transform:scale(.97)}
 
+    /* ===== RESEARCH REPORT (dossier) ===== */
+    .rp-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:48px 24px;text-align:center;color:var(--inkSoft);font-size:.9rem;font-weight:600}
+    .rp-loading-sub{font-size:.76rem;color:var(--inkFaint);font-weight:400}
+    .rp-spin{width:34px;height:34px;border-radius:50%;border:3px solid var(--lineSoft);border-top-color:var(--primary);animation:fabSpin .8s linear infinite}
+    @keyframes fabSpin{to{transform:rotate(360deg)}}
+    .rp-err{padding:32px 22px;text-align:center;color:var(--error);font-size:.86rem;line-height:1.6}
+    .modal-body .rp-h{font-size:.96rem;font-weight:800;color:var(--ink);margin:16px 0 6px;letter-spacing:-.2px}
+    .modal-body .rp-h:first-child{margin-top:0}
+    .modal-body .rp-p{font-size:.86rem;line-height:1.65;color:var(--inkSoft);margin:4px 0;direction:rtl;text-align:right;white-space:normal}
+    .modal-body .rp-ul{margin:4px 18px 8px 0;padding:0;display:flex;flex-direction:column;gap:5px}
+    .modal-body .rp-ul li{font-size:.86rem;line-height:1.55;color:var(--inkSoft);direction:rtl;text-align:right}
+    .modal-body .rp-num{display:flex;gap:10px;align-items:flex-start;margin:8px 0;direction:rtl;text-align:right}
+    .modal-body .rp-num .rp-n{flex-shrink:0;width:23px;height:23px;border-radius:50%;background:var(--secondary-container);color:var(--on-secondary-container);display:flex;align-items:center;justify-content:center;font-size:.74rem;font-weight:800}
+    .modal-body .rp-num>span:last-child{font-size:.86rem;line-height:1.55;color:var(--inkSoft);padding-top:1px}
+    .modal-body .rp-sp{height:6px}
+    .modal-body b{color:var(--ink);font-weight:700}
+    .modal-body a{color:var(--primary);text-decoration:none}
+
     /* ===== EMPTY STATE ===== */
     .list-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px;padding:56px 28px;animation:cardIn .4s var(--ease)}
     .le-icon{font-size:3.4rem;color:var(--primary);opacity:.55;font-variation-settings:'FILL' 1,'wght' 300,'opsz' 48}
@@ -1515,6 +1533,72 @@ function sendChat(){
   appendMsg('user',text);
   runChatTurn();
 }
+
+/* ── one-shot research report (web search), not a chat ── */
+function mdLite(s){
+  const esc=t=>t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const inline=t=>t.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\[(.+?)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+  const lines=esc(s).split('\n');let html='',inList=false;
+  const closeList=()=>{if(inList){html+='</ul>';inList=false;}};
+  for(const ln of lines){
+    const t=ln.trim();
+    if(/^#{1,4}\s/.test(t)){closeList();html+='<div class="rp-h">'+inline(t.replace(/^#{1,4}\s/,''))+'</div>';continue;}
+    if(/^[-•*]\s/.test(t)){if(!inList){html+='<ul class="rp-ul">';inList=true;}html+='<li>'+inline(t.replace(/^[-•*]\s/,''))+'</li>';continue;}
+    const num=t.match(/^(\d+)[.)]\s+(.*)/);
+    if(num){closeList();html+='<div class="rp-num"><span class="rp-n">'+num[1]+'</span><span>'+inline(num[2])+'</span></div>';continue;}
+    if(!t){closeList();html+='<div class="rp-sp"></div>';continue;}
+    closeList();html+='<p class="rp-p">'+inline(t)+'</p>';
+  }
+  closeList();return html;
+}
+async function callResearch(system,userText,useTools){
+  const proxy=getProxy(),key=getApiKey();
+  const payload={model:CHAT_MODEL,max_tokens:2500,system,messages:[{role:'user',content:userText}]};
+  if(useTools)payload.tools=[{type:'web_search_20250305',name:'web_search',max_uses:5}];
+  let res;
+  if(proxy)res=await fetch(proxy,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)});
+  else res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify(payload)});
+  if(!res.ok){const t=await res.text();const err=new Error(res.status+' '+t.slice(0,160));err.status=res.status;throw err;}
+  const data=await res.json();
+  return (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n').trim();
+}
+function openReport({title,sub,system,query,fallbackText}){
+  document.getElementById('m-title').textContent=title;
+  document.getElementById('m-sub').textContent=sub||'';
+  const body=document.getElementById('m-body');
+  const bar=document.getElementById('m-chatbar');
+  const foot=document.getElementById('m-foot');
+  document.getElementById('m-pdf-btn').style.display='none';
+  if(!chatReady()){
+    _modalMode='prompt';_cvText=fallbackText||query;
+    body.className='modal-body';body.innerHTML='';
+    const note=document.createElement('div');note.className='chat-disabled-note';
+    note.innerHTML='🔎 <b>רוצה דוסייר אוטומטי עם חיפוש ברשת?</b> הוסף מפתח API פעם אחת.<button class="cdn-btn" onclick="closeModal();openSettings(\'connect\')">פתח הגדרות והוסף מפתח</button>';
+    body.appendChild(note);
+    const pre=document.createElement('div');pre.style.whiteSpace='pre-wrap';pre.textContent=_cvText;body.appendChild(pre);
+    bar.style.display='none';foot.style.display='flex';
+    document.getElementById('modal').classList.add('show');
+    return;
+  }
+  _modalMode='report';
+  body.className='modal-body';
+  body.innerHTML='<div class="rp-loading"><div class="rp-spin"></div><div>🔎 חוקר את החברה ברשת…</div><div class="rp-loading-sub">אוסף מידע עדכני · 10-20 שניות</div></div>';
+  bar.style.display='none';foot.style.display='none';
+  document.getElementById('modal').classList.add('show');
+  (async()=>{
+    let text;
+    try{text=await callResearch(system,query,true);}
+    catch(e){
+      try{text=await callResearch(system,query,false);}
+      catch(e2){body.innerHTML='<div class="rp-err">לא הצלחתי להשלים את הדוסייר 😕<br>'+((e2&&e2.message)||(e&&e.message)||'')+'</div>';return;}
+    }
+    if(!text){body.innerHTML='<div class="rp-err">לא חזר תוכן. נסה שוב.</div>';return;}
+    _cvText=text;
+    body.innerHTML=mdLite(text);
+    foot.style.display='flex';
+    document.getElementById('m-pdf-btn').style.display='none';
+  })();
+}
 /* Launch: if API key present → live chat; else → copy-prompt fallback */
 function launchChat({title,sub,system,kickoff,fallbackText,pdf}){
   document.getElementById('m-title').textContent=title;
@@ -2113,27 +2197,49 @@ if(window.speechSynthesis)window.speechSynthesis.onvoiceschanged=()=>{};
 function openDossier(i){
   const j=window._sorted[i];
   _cvCompany=j.company;
-  const prompt=`חקור עבורי את החברה הבאה והכן דוסייר תמציתי בעברית.
+  const query=`חקור את החברה והכן דוסייר לקראת ראיון עבודה.
 
 חברה: ${j.company}
-${j.url?`קישור: ${j.url}`:""}
+תפקיד הרלוונטי: ${j.title}
+${j.location?`מיקום: ${j.location}`:""}
+${j.url?`קישור למשרה: ${j.url}`:""}
 
-## מה לכלול
-1. מה החברה עושה (משפט-שניים)
-2. שלב/גיוס: כמה גייסו, סבב אחרון, משקיעים בולטים
-3. גודל: מספר עובדים משוער, איפה הם ממוקמים
-4. 2-3 חדשות / אירועים אחרונים
-5. תרבות ומוניטין כמעסיק
-6. למה זה רלוונטי למישהו מתחום RevOps/GTM
-7. דגל אדום אחד אם יש
+החזר בדיוק במבנה הבא (כותרות עם ## וטקסט תמציתי מתחת):
 
-תן תשובה קצרה ומדויקת. אם אין לך מידע עדכני על פרט מסוים — ציין זאת בכנות.`;
-  launchChat({
+## ⚡ במשפט
+מה החברה עושה, במשפט אחד חד.
+
+## 💰 מימון ושלב
+סבב אחרון, סכום, משקיעים בולטים, הערכת שווי אם ידועה.
+
+## 👥 גודל ומיקום
+מספר עובדים משוער, משרדים, שוק יעד.
+
+## 📰 חדשות אחרונות
+2-3 אירועים/הכרזות מהחודשים האחרונים, עם תאריך.
+
+## 🌟 תרבות ומוניטין כמעסיק
+איך זה להיות עובד שם (Glassdoor/לינקדאין/דעות).
+
+## 🎯 רלוונטי לתפקיד שלי (RevOps / GTM)
+למה התפקיד הזה מעניין, ואיזה כאב הם כנראה מנסים לפתור.
+
+## 🗣️ 3 שאלות חכמות לראיון
+שאלות שמראות שעשית שיעורי בית.
+
+## 🚩 דגל אדום
+סיכון/חשש אחד אם קיים, אחרת כתוב "לא זוהה".
+
+## 🔗 מקורות
+הקישורים שמהם נלקח המידע.
+
+חשוב: השתמש בחיפוש ברשת כדי למצוא מידע עדכני ואמיתי. אל תמציא — אם פרט לא נמצא, כתוב "לא נמצא מידע".`;
+  openReport({
     title:"🏢 דוסייר חברה — "+j.company,
     sub:j.title,
-    system:"אתה אנליסט שמכין דוסיירים על חברות הייטק. ענה בעברית, תמציתי ומדויק. אם חסר לך מידע עדכני, אמור זאת — אל תמציא. הזמן את המשתמש לשאול שאלות המשך.",
-    kickoff:prompt,
-    fallbackText:prompt
+    system:"אתה אנליסט מודיעין עסקי שמכין דוסיירים על חברות הייטק לקראת ראיונות עבודה. חובה להשתמש בכלי החיפוש ברשת כדי לאסוף מידע עדכני ומדויק. ענה בעברית בלבד, תמציתי, ובמבנה המבוקש בדיוק. לעולם אל תמציא עובדות — אם משהו לא נמצא, אמור זאת. תמיד צרף מקורות בסוף.",
+    query:query,
+    fallbackText:query
   });
 }
 
@@ -2273,7 +2379,7 @@ function render(){
   const stats=computeStats();
   const gEl=document.getElementById("hero-greeting");
   if(gEl){const h=new Date().getHours();const g=h<5?"לילה טוב":h<12?"בוקר טוב":h<17?"צהריים טובים":h<21?"ערב טוב":"לילה טוב";gEl.textContent=`${g}, עומרי 👋`;}
-  document.getElementById("hero-meta").textContent=`06/06/2026 20:52 · ${stats.total} משרות פעילות`;
+  document.getElementById("hero-meta").textContent=`06/06/2026 21:00 · ${stats.total} משרות פעילות`;
   document.getElementById("hero-coach").textContent=coachLine(stats);
 
   /* ── Desktop top-bar stats chips ── */
