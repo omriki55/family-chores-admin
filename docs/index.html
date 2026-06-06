@@ -64,7 +64,7 @@
     .material-symbols-rounded{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;line-height:1;letter-spacing:normal;text-transform:none;white-space:nowrap;font-variation-settings:'FILL' 0,'wght' 400,'opsz' 24;vertical-align:middle;-webkit-font-feature-settings:'liga'}
 
     /* ===== APP SHELL ===== */
-    #app{max-width:560px;margin:0 auto;padding:14px 14px 100px;display:flex;flex-direction:column;gap:14px}
+    #app{max-width:560px;margin:0 auto;padding:14px 14px calc(180px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px}
 
     /* ===== HERO (primary container) ===== */
     .hero{background:var(--primary-container);color:var(--on-primary-container);border-radius:32px;padding:22px 24px;display:flex;flex-direction:column;gap:14px}
@@ -310,8 +310,9 @@
     html[data-theme=dark] .psetup-start-voice{background:var(--success-container);color:#b3f1c7}
 
     /* ── Voice call overlay ── */
-    #voice-overlay{position:fixed;inset:0;z-index:2000;background:linear-gradient(160deg,#0f1c3a 0%,#1a2d50 60%,#0e1a2e 100%);display:none;flex-direction:column;align-items:center;justify-content:center;gap:32px}
+    #voice-overlay{position:fixed;inset:0;height:100dvh;z-index:2000;background:linear-gradient(160deg,#0f1c3a 0%,#1a2d50 60%,#0e1a2e 100%);display:none;flex-direction:column;align-items:center;justify-content:space-between;gap:32px;overflow-y:auto;padding:max(24px,env(safe-area-inset-top)) 16px max(32px,calc(env(safe-area-inset-bottom) + 24px))}
     #voice-overlay.show{display:flex}
+    .vo-top-block{display:flex;flex-direction:column;align-items:center;gap:24px;flex:1;justify-content:center}
     .vo-company{color:rgba(255,255,255,.55);font-size:.82rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
     .vo-stage{color:rgba(255,255,255,.35);font-size:.72rem;margin-top:2px;text-align:center}
     .vo-avatar-wrap{position:relative;display:flex;align-items:center;justify-content:center;width:140px;height:140px}
@@ -330,7 +331,7 @@
     .vo-who{color:#fff;font-size:1rem;font-weight:700;text-align:center;min-height:1.4em}
     .vo-interim{color:rgba(255,255,255,.5);font-size:.82rem;text-align:center;max-width:320px;min-height:2.4em;line-height:1.45;padding:0 16px}
     .vo-last-ai{color:rgba(255,255,255,.7);font-size:.78rem;text-align:center;max-width:340px;min-height:2.4em;line-height:1.45;padding:0 16px;font-style:italic}
-    .vo-controls{display:flex;gap:20px;align-items:center;margin-top:8px}
+    .vo-controls{display:flex;gap:20px;align-items:center;margin-top:auto;padding-top:16px}
     .vo-btn{width:64px;height:64px;border-radius:50%;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;font-size:0}
     .vo-btn .material-symbols-rounded{font-size:26px;color:#fff}
     .vo-mute{background:rgba(255,255,255,.15);backdrop-filter:blur(6px)}
@@ -362,8 +363,7 @@
     /* ===== SETTINGS DRAWER ===== */
     .drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:199;display:none;backdrop-filter:blur(2px)}
     .drawer-overlay.show{display:block}
-    .drawer{position:fixed;top:0;left:0;bottom:0;width:min(400px,95vw);background:var(--surface);box-shadow:-4px 0 24px rgba(0,0,0,.12);z-index:200;transform:translateX(-100%);transition:transform .3s cubic-bezier(.2,.7,.3,1);display:flex;flex-direction:column}
-    .drawer.open{transform:translateX(0)}
+    /* drawer positioning handled below in RTL section */
     .drawer-head{padding:18px 20px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
     .drawer-head h3{font-size:1.1rem;font-weight:800;color:var(--ink)}
     .drawer-close{background:var(--surface-container-highest);border:none;width:38px;height:38px;border-radius:50%;font-size:1.1rem;cursor:pointer;color:var(--inkSoft);flex-shrink:0}
@@ -412,8 +412,9 @@
       .search-row{gap:8px}
       .sort-seg{width:100%}
       .job-card{border-radius:24px}
-      .card-head{padding:15px 16px;gap:11px}
+      .card-head{padding:15px 16px;gap:8px}
       .card-company{font-size:1.1rem}
+      .card-text{flex:1;min-width:0}
       .fit-mark{width:48px;height:48px;border-radius:15px}
       .fit-num{font-size:1.25rem}
       .card-body{padding:0 16px 16px}
@@ -423,8 +424,22 @@
       .act-open{grid-column:span 2}
       .act-dismiss{grid-column:span 2}
       .step-btn{padding:11px 3px;font-size:.72rem}
-      .fab{padding:15px 22px;font-size:.88rem}
+      /* FAB: bottom-left corner (RTL), above bottom nav */
+      .fab{padding:15px 22px;font-size:.88rem;left:18px;right:auto;transform:none;bottom:calc(72px + max(14px,env(safe-area-inset-bottom)))}
+      .fab:active{transform:scale(.96)}
       .modal-card{max-height:92vh}
+      /* touch targets */
+      .star-btn{padding:8px;margin:-8px}
+      .round-del{width:40px;height:40px;display:flex;align-items:center;justify-content:center}
+      .sf-chip,.fit-chip{min-height:44px}
+      .sort-btn,.exp-btn{min-height:40px}
+      .modal-close,.drawer-close{width:44px;height:44px}
+      .search-clear{width:40px;height:40px;display:flex;align-items:center;justify-content:center;left:6px}
+      /* tiny text floors */
+      .fit-lbl{font-size:.55rem}
+      .new-badge,.follow-badge{font-size:.7rem}
+      .next-pill{font-size:.7rem}
+      .card-posted{font-size:.7rem}
     }
     @media(max-width:340px){
       .stepper{flex-wrap:wrap}
@@ -679,6 +694,53 @@
     /* keyboard accessibility */
     :focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:8px}
 
+    /* ===== MOBILE BOTTOM NAV BAR ===== */
+    #mobile-bottom-nav{
+      display:none;
+      position:fixed;bottom:0;left:0;right:0;
+      background:var(--surface-container);
+      border-top:1px solid var(--lineSoft);
+      padding-bottom:env(safe-area-inset-bottom);
+      z-index:100;
+      flex-direction:row;
+      justify-content:space-around;
+      align-items:stretch;
+    }
+    @media(max-width:1023px){
+      #mobile-bottom-nav{display:flex}
+    }
+    @media(min-width:1024px){
+      #mobile-bottom-nav{display:none!important}
+    }
+    .mbn-item{
+      flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      gap:3px;padding:8px 4px 6px;min-height:56px;
+      border:none;background:none;
+      font-family:var(--font-ui);font-size:.58rem;font-weight:600;
+      color:var(--inkSoft);cursor:pointer;
+      transition:color .15s;
+      -webkit-tap-highlight-color:transparent;
+      touch-action:manipulation;
+    }
+    .mbn-item .material-symbols-rounded{font-size:24px;position:relative;z-index:1}
+    .mbn-item.active{color:var(--primary)}
+    .mbn-item.active .material-symbols-rounded{font-variation-settings:'FILL' 1,'wght' 400,'opsz' 24}
+
+    /* ===== MODAL / SHEET SAFE-AREA PADDING ===== */
+    .modal-foot{padding-bottom:max(14px,calc(env(safe-area-inset-bottom) + 8px))}
+    .m-chatbar{padding-bottom:max(10px,calc(env(safe-area-inset-bottom) + 4px))}
+    .psetup{padding-bottom:max(20px,calc(env(safe-area-inset-bottom) + 14px))}
+
+    /* ===== TOAST ===== */
+    /* (already positioned; add overflow wrapping) */
+    @media(max-width:600px){
+      #toast{max-width:calc(100vw - 32px);white-space:normal;text-align:center}
+    }
+
+    /* ===== DRAWER: open from RIGHT (RTL-correct) ===== */
+    .drawer{position:fixed;top:0;right:0;left:auto;bottom:0;width:min(400px,95vw);background:var(--surface);box-shadow:4px 0 24px rgba(0,0,0,.12);z-index:200;transform:translateX(100%);transition:transform .3s cubic-bezier(.2,.7,.3,1);display:flex;flex-direction:column}
+    .drawer.open{transform:translateX(0)}
+
     /* ===== DARK MODE (Material 3 dark palette) — toggled via [data-theme] on <html> ===== */
     html[data-theme="dark"]{
       --primary:#b9c3ff;
@@ -840,28 +902,50 @@
 
 <!-- VOICE CALL OVERLAY -->
 <div id="voice-overlay">
-  <div class="vo-company" id="vo-company"></div>
-  <div class="vo-stage" id="vo-stage"></div>
-  <div class="vo-avatar-wrap" id="vo-avatar-wrap">
-    <div class="vo-ring" style="--o:.4"></div>
-    <div class="vo-ring" style="--o:.25"></div>
-    <div class="vo-ring" style="--o:.12"></div>
-    <div class="vo-circle"><span class="material-symbols-rounded" id="vo-icon">smart_toy</span></div>
+  <div class="vo-top-block">
+    <div class="vo-company" id="vo-company"></div>
+    <div class="vo-stage" id="vo-stage"></div>
+    <div class="vo-avatar-wrap" id="vo-avatar-wrap">
+      <div class="vo-ring" style="--o:.4"></div>
+      <div class="vo-ring" style="--o:.25"></div>
+      <div class="vo-ring" style="--o:.12"></div>
+      <div class="vo-circle"><span class="material-symbols-rounded" id="vo-icon">smart_toy</span></div>
+    </div>
+    <div class="vo-who" id="vo-who">מתחיל...</div>
+    <div class="vo-last-ai" id="vo-last-ai"></div>
+    <div class="vo-interim" id="vo-interim"></div>
+    <div class="vo-no-support" id="vo-no-support" style="display:none"></div>
   </div>
-  <div class="vo-who" id="vo-who">מתחיל...</div>
-  <div class="vo-last-ai" id="vo-last-ai"></div>
-  <div class="vo-interim" id="vo-interim"></div>
   <div class="vo-controls">
     <button class="vo-btn vo-skip" onclick="voiceSkip()" title="דלג / המשך"><span class="material-symbols-rounded">skip_next</span></button>
     <button class="vo-btn vo-end" onclick="endVoiceCall()" title="סיום שיחה"><span class="material-symbols-rounded">call_end</span></button>
     <button class="vo-btn vo-mute" id="vo-mute-btn" onclick="toggleVoiceMute()" title="השתק"><span class="material-symbols-rounded" id="vo-mute-ico">mic</span></button>
   </div>
-  <div class="vo-no-support" id="vo-no-support" style="display:none"></div>
 </div>
 
 <div id="toast"></div>
 
 <button class="fab" onclick="triggerScan()" id="scan-btn"><span class="material-symbols-rounded">refresh</span>סרוק עכשיו</button>
+
+<!-- MOBILE BOTTOM NAV (hidden on desktop ≥1024px) -->
+<nav id="mobile-bottom-nav">
+  <button class="mbn-item active" id="mbn-jobs" onclick="mbnJobs()">
+    <span class="material-symbols-rounded">work</span>
+    <span>משרות</span>
+  </button>
+  <button class="mbn-item" id="mbn-analytics" onclick="mbnAnalytics()">
+    <span class="material-symbols-rounded">analytics</span>
+    <span>סטטיסטיקה</span>
+  </button>
+  <button class="mbn-item" id="mbn-support" onclick="openSupport()">
+    <span class="material-symbols-rounded">favorite</span>
+    <span>תמיכה</span>
+  </button>
+  <button class="mbn-item" id="mbn-settings" onclick="openSettings()">
+    <span class="material-symbols-rounded">settings</span>
+    <span>הגדרות</span>
+  </button>
+</nav>
 
 <!-- CV / PREP / DOSSIER MODAL -->
 <div id="modal" onclick="if(event.target===this)closeModal()">
@@ -2103,7 +2187,7 @@ function openJobSupport(i){
 /* ── RENDER ── */
 function render(){
   const stats=computeStats();
-  document.getElementById("hero-meta").textContent=`Jun 06, 2026 · ${stats.total} משרות פעילות`;
+  document.getElementById("hero-meta").textContent=`06/06/2026 19:34 · ${stats.total} משרות פעילות`;
   document.getElementById("hero-coach").textContent=coachLine(stats);
 
   /* ── Desktop top-bar stats chips ── */
@@ -2328,6 +2412,21 @@ function nr(section){
   const btn=document.getElementById('nr-'+section);
   if(btn)btn.classList.add('active');
   if(section==='analytics')openAnalytics();
+}
+/* ── Mobile bottom nav handlers ── */
+function mbnJobs(){
+  document.querySelectorAll('.mbn-item').forEach(b=>b.classList.remove('active'));
+  const btn=document.getElementById('mbn-jobs');if(btn)btn.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function mbnAnalytics(){
+  document.querySelectorAll('.mbn-item').forEach(b=>b.classList.remove('active'));
+  const btn=document.getElementById('mbn-analytics');if(btn)btn.classList.add('active');
+  openAnalytics();
+  /* restore jobs active state after sheet closes */
+  document.getElementById('sheet').addEventListener('click',function once(e){
+    if(e.target===this){document.querySelectorAll('.mbn-item').forEach(b=>b.classList.remove('active'));const j=document.getElementById('mbn-jobs');if(j)j.classList.add('active');this.removeEventListener('click',once);}
+  });
 }
 function openSupport(){
   showToast('💙 אתה עושה עבודה מצוינת — כל הגשה מקרבת אותך');
