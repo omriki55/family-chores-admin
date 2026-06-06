@@ -255,6 +255,12 @@
     .undismiss-link:hover{color:var(--ink)}
     .dismissed-banner{background:var(--error-container);border-radius:999px;padding:7px 14px;font-size:.72rem;color:#5c0d0d;display:flex;align-items:center;justify-content:space-between;gap:8px}
 
+    /* ===== CHAT-DISABLED NOTICE (no API key) ===== */
+    .chat-disabled-note{background:var(--primary-container);color:var(--on-primary-container);border-radius:18px;padding:14px 16px;font-size:.82rem;line-height:1.5;margin-bottom:14px;display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+    .cdn-btn{background:var(--primary);color:#fff;border:none;border-radius:999px;padding:10px 18px;font-size:.8rem;font-weight:700;font-family:var(--font-ui);cursor:pointer;transition:filter .14s}
+    .cdn-btn:hover{filter:brightness(.95)}
+    .cdn-btn:active{transform:scale(.97)}
+
     /* ===== EMPTY STATE ===== */
     .list-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px;padding:56px 28px;animation:cardIn .4s var(--ease)}
     .le-icon{font-size:3.4rem;color:var(--primary);opacity:.55;font-variation-settings:'FILL' 1,'wght' 300,'opsz' 48}
@@ -1494,7 +1500,15 @@ function launchChat({title,sub,system,kickoff,fallbackText,pdf}){
   }else{
     // fallback: show the prompt for copy
     _modalMode='prompt';_cvText=fallbackText||(system+'\n\n'+(kickoff||''));
-    body.className='modal-body';body.textContent=_cvText;
+    body.className='modal-body';
+    body.innerHTML='';
+    const note=document.createElement('div');
+    note.className='chat-disabled-note';
+    note.innerHTML='💬 <b>רוצה לדבר ישירות עם Claude כאן</b>, בלי להעתיק? צריך להוסיף מפתח API פעם אחת.<button class="cdn-btn" onclick="closeModal();openSettings(\'connect\')">פתח הגדרות והוסף מפתח</button>';
+    body.appendChild(note);
+    const pre=document.createElement('div');
+    pre.style.whiteSpace='pre-wrap';pre.textContent=_cvText;
+    body.appendChild(pre);
     bar.style.display='none';foot.style.display='flex';
     document.getElementById('m-pdf-btn').style.display=pdf?'':'none';
     document.getElementById('modal').classList.add('show');
