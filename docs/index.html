@@ -64,7 +64,7 @@
     .material-symbols-rounded{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;line-height:1;letter-spacing:normal;text-transform:none;white-space:nowrap;font-variation-settings:'FILL' 0,'wght' 400,'opsz' 24;vertical-align:middle;-webkit-font-feature-settings:'liga'}
 
     /* ===== APP SHELL ===== */
-    #app{max-width:560px;margin:0 auto;padding:14px 14px calc(140px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px}
+    #app{max-width:560px;margin:0 auto;padding:14px 14px calc(84px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px}
 
     /* ===== HERO (primary container) ===== */
     .hero{background:var(--primary-container);color:var(--on-primary-container);border-radius:32px;padding:22px 24px;display:flex;flex-direction:column;gap:14px}
@@ -252,15 +252,6 @@
     #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 
     /* ===== EXTENDED FAB ===== */
-    .fab{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--primary);color:#fff;border:none;border-radius:20px;padding:16px 26px;font-size:.9rem;font-weight:700;font-family:var(--font-ui);box-shadow:0 6px 18px rgba(20,20,40,.18);display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;z-index:60;transition:transform .12s,box-shadow .18s cubic-bezier(.2,.7,.3,1)}
-    .fab:active{transform:translateX(-50%) scale(.96)}
-    .fab .material-symbols-rounded{font-size:22px}
-    /* scan busy / done states — drive icon by class, never by raw text */
-    @keyframes fabSpin{to{transform:rotate(360deg)}}
-    .fab.is-busy .fab-ico,.dtb-scan.is-busy .material-symbols-rounded{animation:fabSpin .9s linear infinite;transform-origin:50% 50%}
-    .fab.is-done .fab-ico,.dtb-scan.is-done .material-symbols-rounded{color:#fff}
-    .fab[aria-busy="true"],.dtb-scan[aria-busy="true"]{cursor:progress}
-    @media(prefers-reduced-motion:reduce){.fab.is-busy .fab-ico,.dtb-scan.is-busy .material-symbols-rounded{animation:none}}
 
     /* ===== MODAL (CV + Analytics + Prep) ===== */
     #modal,#sheet{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1000;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(3px)}
@@ -420,7 +411,6 @@
     .search-inp,.notes-ta,.round-inp,.round-sel,.round-note,.d-inp,.d-ta{font-size:16px}
     /* respect notch / home-indicator safe areas */
     #app{padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right))}
-    .fab{bottom:max(22px,calc(env(safe-area-inset-bottom) + 14px))}
     #toast{bottom:max(90px,calc(env(safe-area-inset-bottom) + 80px))}
     /* smooth momentum scroll for chip rows */
     .filter-row{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px}
@@ -470,13 +460,6 @@
       .stepper{flex-wrap:wrap}
       .step-btn{flex:1 1 28%}
     }
-    /* FAB: circular icon-only, bottom-left corner (RTL), above bottom nav — all phone/tablet widths */
-    @media(max-width:1023px){
-      .fab{width:56px;height:56px;padding:0;border-radius:18px;left:18px;right:auto;transform:none;bottom:calc(72px + max(14px,env(safe-area-inset-bottom)))}
-      .fab-label{display:none}
-      .fab:active{transform:scale(.96)}
-      .fab:hover{transform:translateY(-1px)}
-    }
 
     /* ===== STICKY TOOLBAR ===== */
     .toolbar{position:sticky;top:8px;z-index:30;box-shadow:0 2px 14px rgba(20,20,40,.06)}
@@ -489,7 +472,6 @@
       .job-card.open:hover{transform:none}
       .act-btn:hover,.d-btn:hover,.step-btn:hover,.chan-btn:hover,.sf-chip:hover,.fit-chip:hover,.sort-btn:hover,.exp-btn:hover,.round-add:hover,.clink:hover{filter:brightness(.97)}
       .sheet-btn:hover,.scan-btn:hover,.settings-btn:hover{background:#fff}
-      .fab:hover{box-shadow:0 10px 28px rgba(20,20,40,.22);transform:translateY(-1px)}
       .modal-close:hover,.drawer-close:hover{filter:brightness(.94)}
       /* scrollbars — subtle, Apple-like */
       *::-webkit-scrollbar{width:10px;height:10px}
@@ -597,19 +579,9 @@
       .dtb-stat.active .v{color:var(--on-secondary-container)}
       .dtb-stat.active .l{color:var(--on-secondary-container);opacity:.8}
       .dtb-actions{display:flex;align-items:center;gap:8px;margin-inline-start:auto}
-      .dtb-scan{
-        display:inline-flex;align-items:center;gap:6px;
-        background:var(--primary);color:#fff;border:none;
-        border-radius:20px;padding:10px 18px;font-size:.8rem;font-weight:700;
-        font-family:var(--font-ui);cursor:pointer;transition:all .15s;
-      }
-      .dtb-scan:hover{background:var(--accentDeep);box-shadow:0 2px 8px rgba(79,107,237,.35)}
-      .dtb-scan:disabled{opacity:.5;cursor:not-allowed}
-      .dtb-scan .material-symbols-rounded{font-size:18px}
 
       /* Hide mobile-only elements on desktop */
       .hero{display:none!important}
-      .fab{display:none!important}
       /* Toolbar stays visible — now lives inside #list-col */
       .toolbar{
         border-radius:0!important;
@@ -809,7 +781,6 @@
     html[data-theme="dark"] .act-open,
     html[data-theme="dark"] .chan-btn.on,
     html[data-theme="dark"] .step-btn.on,
-    html[data-theme="dark"] .fab,
     html[data-theme="dark"] .d-btn.primary,
     html[data-theme="dark"] .new-badge{color:#001257}
     html[data-theme="dark"] .act-wa{background:var(--success-container);color:#b3f1c7}
@@ -850,12 +821,7 @@
   <div id="desktop-topbar">
     <div class="dtb-title">Job Tracker</div>
     <div class="dtb-stats" id="dtb-stats"></div>
-    <div class="dtb-actions">
-      <button class="dtb-scan" id="dtb-scan-btn" type="button" onclick="triggerScan()">
-        <span class="material-symbols-rounded" aria-hidden="true">manage_search</span>
-        <span class="dtb-scan-label">סרוק עכשיו</span>
-      </button>
-    </div>
+    <div class="dtb-actions"></div>
   </div>
 
   <!-- HERO -->
@@ -951,7 +917,6 @@
 
 <div id="toast"></div>
 
-<button class="fab" type="button" onclick="triggerScan()" id="scan-btn" aria-label="סרוק משרות חדשות עכשיו"><span class="material-symbols-rounded fab-ico" id="scan-ico" aria-hidden="true">manage_search</span><span class="fab-label">סרוק עכשיו</span></button>
 
 <!-- MOBILE BOTTOM NAV (hidden on desktop ≥1024px) -->
 <nav id="mobile-bottom-nav">
@@ -1059,7 +1024,6 @@
         <div class="d-status" id="gh-token-status"></div>
       </div>
       <div class="d-section" style="display:flex;flex-direction:column;gap:8px">
-        <button class="d-btn" onclick="triggerScan();closeSettings()"><span class="material-symbols-rounded" aria-hidden="true">manage_search</span> סרוק עכשיו</button>
         <button class="d-btn" onclick="syncFeedback()">📤 סנכרן פידבק</button>
         <div class="d-status" id="sync-status"></div>
       </div>
@@ -2214,7 +2178,7 @@ function openJobSupport(i){
 /* ── RENDER ── */
 function render(){
   const stats=computeStats();
-  document.getElementById("hero-meta").textContent=`06/06/2026 19:55 · ${stats.total} משרות פעילות`;
+  document.getElementById("hero-meta").textContent=`06/06/2026 20:06 · ${stats.total} משרות פעילות`;
   document.getElementById("hero-coach").textContent=coachLine(stats);
 
   /* ── Desktop top-bar stats chips ── */
@@ -2586,55 +2550,6 @@ async function syncFeedback(){
 }
 
 /* ── Scan button ── */
-let _scanning=false;
-function _scanBtns(){return [document.getElementById('scan-btn'),document.getElementById('dtb-scan-btn')].filter(Boolean);}
-function setScanBusy(on){
-  _scanBtns().forEach(b=>{
-    b.classList.toggle('is-busy',on);b.classList.remove('is-done');
-    b.disabled=on;b.setAttribute('aria-busy',on?'true':'false');
-    const ico=b.querySelector('.material-symbols-rounded');if(ico)ico.textContent=on?'progress_activity':'manage_search';
-  });
-}
-function setScanDone(){
-  _scanBtns().forEach(b=>{
-    b.classList.remove('is-busy');b.classList.add('is-done');b.setAttribute('aria-busy','false');
-    const ico=b.querySelector('.material-symbols-rounded');if(ico)ico.textContent='check';
-  });
-  setTimeout(()=>{
-    _scanBtns().forEach(b=>{
-      b.classList.remove('is-done');b.disabled=false;
-      const ico=b.querySelector('.material-symbols-rounded');if(ico)ico.textContent='manage_search';
-    });
-    _scanning=false;
-  },1400);
-}
-async function triggerScan(){
-  if(_scanning)return;
-  const token=localStorage.getItem('gh_token');
-  if(!token){
-    showToast('הוסף GitHub token בהגדרות כדי לסרוק');
-    openSettings('connect');
-    return;
-  }
-  _scanning=true;setScanBusy(true);
-  try{
-    const r=await fetch('https://api.github.com/repos/omriki55/family-chores-admin/actions/workflows/job-scan.yml/dispatches',{
-      method:'POST',
-      headers:{Authorization:`Bearer ${token}`,Accept:'application/vnd.github.v3+json','Content-Type':'application/json'},
-      body:JSON.stringify({ref:'main'})
-    });
-    if(r.status===204){
-      showToast('✅ סריקה הופעלה! תוצאות יגיעו בעוד ~2 דקות');
-      setScanDone();
-    }else{
-      showToast('❌ שגיאה בהפעלת סריקה ('+r.status+')');
-      setScanBusy(false);_scanning=false;
-    }
-  }catch(e){
-    showToast('❌ '+e.message);
-    setScanBusy(false);_scanning=false;
-  }
-}
 
 /* ── Settings drawer ── */
 function openSettings(tab){
