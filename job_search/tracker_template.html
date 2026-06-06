@@ -394,24 +394,194 @@
       #app{max-width:1500px}
     }
     /* ===== MASTER–DETAIL (desktop ≥1024px) ===== */
+    #nav-rail{display:none}
+    #desktop-topbar{display:none}
+    #list-col{display:contents}
+    #list-search-bar{display:none}
     #detail{display:none}
     @media(min-width:1024px){
-      #work{display:grid;grid-template-columns:minmax(300px,360px) 1fr;gap:20px;align-items:start}
-      #container{display:flex!important;flex-direction:column;gap:8px!important;position:sticky;top:14px;max-height:calc(100vh - 28px);overflow-y:auto;padding:2px}
-      #detail{display:block;min-width:0}
-      #detail .job-card{box-shadow:0 2px 18px rgba(20,20,40,.09)}
-      #detail .job-card:hover{transform:none}
-      #detail .chevron{display:none}
-      .detail-empty{padding:80px 24px;text-align:center;color:var(--inkFaint);font-weight:700;font-size:.95rem;background:var(--surface-container);border-radius:28px}
-      .rail-row{display:flex;align-items:center;gap:11px;background:var(--surface-container);border-radius:16px;padding:10px 12px;cursor:pointer;transition:background .15s,transform .12s;border:2px solid transparent}
+      /* Full-height viewport app shell */
+      html{height:100%}
+      body{height:100%;overflow:hidden}
+
+      /* Nav rail — fixed, right side (RTL) */
+      #nav-rail{
+        display:flex!important;
+        position:fixed;right:0;top:0;bottom:0;width:80px;
+        background:var(--surface-container);
+        border-left:1px solid var(--lineSoft);
+        flex-direction:column;align-items:center;
+        padding:12px 0 16px;gap:2px;z-index:100;
+      }
+      .nr-item{
+        width:100%;display:flex;flex-direction:column;align-items:center;
+        padding:10px 8px 10px;gap:3px;cursor:pointer;
+        position:relative;border:none;background:none;
+        font-family:var(--font-ui);color:var(--inkSoft);
+        transition:color .15s;
+      }
+      .nr-lbl{font-size:.58rem;font-weight:600;line-height:1}
+      .nr-item .material-symbols-rounded{font-size:24px;position:relative;z-index:1}
+      .nr-item .nr-lbl{position:relative;z-index:1}
+      .nr-item::before{
+        content:'';position:absolute;
+        top:4px;right:12px;bottom:4px;left:12px;
+        border-radius:16px;background:transparent;transition:background .15s;
+      }
+      .nr-item:hover::before{background:rgba(0,0,0,.06)}
+      .nr-item.active{color:var(--on-secondary-container)}
+      .nr-item.active::before{background:var(--secondary-container)}
+      .nr-spacer{flex:1}
+      html[data-theme=dark] .nr-item:hover::before{background:rgba(255,255,255,.08)}
+
+      /* App shell: shift content right by nav rail width, full height */
+      #app{
+        margin-right:80px;
+        max-width:none;padding:0;
+        height:100vh;overflow:hidden;
+        display:grid;
+        grid-template-rows:auto 1fr;
+      }
+
+      /* Desktop top bar */
+      #desktop-topbar{
+        display:flex!important;
+        align-items:center;gap:16px;
+        padding:0 24px;height:64px;flex-shrink:0;
+        background:var(--surface);
+        border-bottom:1px solid var(--lineSoft);
+        position:relative;z-index:31;
+        box-shadow:0 1px 3px rgba(0,0,0,.06);
+      }
+      .dtb-title{
+        font-size:1.15rem;font-weight:800;color:var(--ink);
+        white-space:nowrap;
+      }
+      .dtb-stats{
+        display:flex;gap:8px;flex:1;
+        justify-content:center;
+      }
+      .dtb-stat{
+        display:flex;flex-direction:column;align-items:center;
+        padding:6px 16px;border-radius:12px;
+        background:var(--surface-container);
+        cursor:pointer;transition:background .15s;
+        border:1.5px solid transparent;
+        min-width:64px;
+      }
+      .dtb-stat:hover{background:var(--surface-container-high)}
+      .dtb-stat.active{background:var(--secondary-container);border-color:var(--primary)}
+      .dtb-stat .v{font-size:1.2rem;font-weight:800;color:var(--ink);line-height:1.1}
+      .dtb-stat .l{font-size:.58rem;font-weight:600;color:var(--inkFaint);margin-top:2px}
+      .dtb-stat.active .v{color:var(--on-secondary-container)}
+      .dtb-stat.active .l{color:var(--on-secondary-container);opacity:.8}
+      .dtb-actions{display:flex;align-items:center;gap:8px;margin-inline-start:auto}
+      .dtb-scan{
+        display:inline-flex;align-items:center;gap:6px;
+        background:var(--primary);color:#fff;border:none;
+        border-radius:20px;padding:10px 18px;font-size:.8rem;font-weight:700;
+        font-family:var(--font-ui);cursor:pointer;transition:all .15s;
+      }
+      .dtb-scan:hover{background:var(--accentDeep);box-shadow:0 2px 8px rgba(79,107,237,.35)}
+      .dtb-scan:disabled{opacity:.5;cursor:not-allowed}
+      .dtb-scan .material-symbols-rounded{font-size:18px}
+
+      /* Hide mobile hero + standalone FAB + standalone toolbar on desktop */
+      .hero{display:none!important}
+      .fab{display:none!important}
+      .toolbar{display:none!important}
+
+      /* Work area — fills remaining height */
+      #work{
+        display:grid!important;
+        grid-template-columns:320px 1fr;
+        gap:0!important;
+        height:100%;overflow:hidden;
+        align-items:stretch!important;
+      }
+
+      /* List column */
+      #list-col{
+        display:flex!important;flex-direction:column;
+        height:100%;overflow:hidden;
+        background:var(--surface-container);
+        border-left:1px solid var(--lineSoft);
+      }
+      #list-search-bar{
+        display:flex!important;
+        padding:10px 10px 6px;
+        background:var(--surface-container);
+        border-bottom:1px solid var(--lineSoft);
+        flex-shrink:0;
+        gap:8px;align-items:center;
+      }
+      #list-search-bar .search-wrap{flex:1}
+      #list-search-bar .search-inp{background:var(--surface-container-high)!important;font-size:.84rem!important}
+
+      /* List column: surface-container bg, full height scroll */
+      #container{
+        display:flex!important;flex-direction:column;
+        gap:2px!important;padding:8px!important;
+        position:static!important;
+        flex:1;overflow-y:auto;
+        background:var(--surface-container);
+      }
+
+      /* Rail rows — Google-grade dense list items */
+      .rail-row{
+        display:flex;align-items:center;gap:10px;
+        background:transparent;border-radius:12px;
+        padding:10px 12px;cursor:pointer;
+        transition:background .13s;border:1.5px solid transparent;
+        position:relative;
+      }
+      .rail-row::after{
+        content:'';position:absolute;inset:0;border-radius:inherit;
+        background:currentColor;opacity:0;transition:opacity .1s;pointer-events:none;
+      }
       .rail-row:hover{background:var(--surface-container-high)}
-      .rail-row.sel{background:var(--secondary-container);border-color:var(--primary)}
-      .rr-fit{width:40px;height:40px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.05rem;flex-shrink:0}
+      .rail-row:hover::after{opacity:.04}
+      .rail-row:active::after{opacity:.08}
+      .rail-row.sel{
+        background:var(--secondary-container);
+        border-color:rgba(79,107,237,.25);
+      }
+      .rail-row.sel::after{display:none}
+      .rr-fit{width:38px;height:38px;border-radius:11px;font-size:.98rem;display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0}
       .rr-text{flex:1;min-width:0}
-      .rr-co{font-weight:800;font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:ltr;text-align:right}
-      .rr-ti{font-size:.73rem;color:var(--inkSoft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:ltr;text-align:right;margin-top:1px}
+      .rr-co{font-weight:700;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:ltr;text-align:right}
+      .rr-ti{font-size:.72rem;color:var(--inkSoft);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:ltr;text-align:right}
+      .rr-date{font-size:.6rem;color:var(--inkFaint);margin-top:2px}
       .rr-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
       .rr-star{color:var(--star);font-size:.85rem;flex-shrink:0}
+
+      /* Detail pane */
+      #detail{
+        display:block;height:100%;overflow-y:auto;
+        background:var(--surface);min-width:0;
+      }
+      #detail .job-card{
+        box-shadow:none!important;border-radius:0!important;
+        background:transparent!important;
+      }
+      #detail .card-head{
+        padding:22px 28px 14px!important;
+        border-bottom:1px solid var(--lineSoft);
+        cursor:default!important;
+      }
+      #detail .card-body{padding:20px 28px 28px!important}
+      #detail .chevron{display:none!important}
+      #detail .job-card:active{transform:none!important}
+      #detail .job-card:hover{transform:none!important;box-shadow:none!important;background:transparent!important}
+
+      .detail-empty{
+        display:flex;flex-direction:column;align-items:center;justify-content:center;
+        height:100%;gap:12px;
+        color:var(--inkFaint);background:var(--surface);
+      }
+      .detail-empty .de-icon{font-size:3.5rem;opacity:.3}
+      .detail-empty .de-text{font-weight:700;font-size:.95rem}
+      .detail-empty .de-sub{font-size:.78rem;font-weight:400;opacity:.7}
     }
     /* keyboard-shortcut hint chip */
     .kbd{font-family:var(--font-mono);font-size:.62rem;background:var(--surface-container-highest);border-radius:6px;padding:1px 6px;color:var(--inkFaint);margin-inline-start:6px}
@@ -470,7 +640,42 @@
   </style>
 </head>
 <body>
+<nav id="nav-rail">
+  <button class="nr-item active" id="nr-jobs" onclick="nr('jobs')" title="משרות">
+    <span class="material-symbols-rounded">work</span>
+    <span class="nr-lbl">משרות</span>
+  </button>
+  <button class="nr-item" id="nr-analytics" onclick="nr('analytics')" title="אנליטיקה">
+    <span class="material-symbols-rounded">analytics</span>
+    <span class="nr-lbl">סטטיסטיקה</span>
+  </button>
+  <div class="nr-spacer"></div>
+  <button class="nr-item" id="nr-support" onclick="openSupport()" title="תמיכה רגשית">
+    <span class="material-symbols-rounded">favorite</span>
+    <span class="nr-lbl">תמיכה</span>
+  </button>
+  <button class="nr-item" id="nr-theme" onclick="toggleTheme()" title="מצב תצוגה">
+    <span class="material-symbols-rounded" id="theme-ico2">dark_mode</span>
+    <span class="nr-lbl">תצוגה</span>
+  </button>
+  <button class="nr-item" id="nr-settings" onclick="openSettings()" title="הגדרות">
+    <span class="material-symbols-rounded">settings</span>
+    <span class="nr-lbl">הגדרות</span>
+  </button>
+</nav>
 <div id="app">
+  <!-- DESKTOP TOP BAR -->
+  <div id="desktop-topbar">
+    <div class="dtb-title">Job Tracker</div>
+    <div class="dtb-stats" id="dtb-stats"></div>
+    <div class="dtb-actions">
+      <button class="dtb-scan" id="dtb-scan-btn" onclick="triggerScan()">
+        <span class="material-symbols-rounded">refresh</span>
+        סרוק עכשיו
+      </button>
+    </div>
+  </div>
+
   <!-- HERO -->
   <div class="hero">
     <div class="hero-top">
@@ -535,7 +740,16 @@
 
   <!-- CARDS -->
   <div id="work">
-    <div id="container" style="display:flex;flex-direction:column;gap:14px"></div>
+    <div id="list-col">
+      <div id="list-search-bar">
+        <div class="search-wrap" style="flex:1">
+          <span class="search-ico material-symbols-rounded">search</span>
+          <input class="search-inp" id="search-inp-d" type="text" placeholder="חיפוש…" oninput="onSearchDesktop(this)"/>
+          <button class="search-clear" id="search-clear-d" onclick="clearSearchDesktop()">✕</button>
+        </div>
+      </div>
+      <div id="container" style="display:flex;flex-direction:column;gap:14px"></div>
+    </div>
     <aside id="detail"></aside>
   </div>
 </div>
@@ -886,7 +1100,9 @@ function setSort(b){
 }
 function setAgeFilter(b){fAge=b.dataset.age;document.querySelectorAll("[data-age]").forEach(c=>c.classList.remove("on"));b.classList.add("on");render();}
 function onSearch(inp){fQ=inp.value.trim().toLowerCase();document.getElementById("search-clear").classList.toggle("show",!!fQ);render();}
-function clearSearch(){fQ="";const i=document.getElementById("search-inp");i.value="";document.getElementById("search-clear").classList.remove("show");render();}
+function clearSearch(){fQ="";const i=document.getElementById("search-inp");i.value="";document.getElementById("search-clear").classList.remove("show");const id=document.getElementById("search-inp-d");if(id)id.value="";const icd=document.getElementById("search-clear-d");if(icd)icd.classList.remove("show");render();}
+function onSearchDesktop(inp){fQ=inp.value.trim().toLowerCase();const icd=document.getElementById("search-clear-d");if(icd)icd.classList.toggle("show",!!fQ);render();}
+function clearSearchDesktop(){fQ="";const id=document.getElementById("search-inp-d");if(id)id.value="";const icd=document.getElementById("search-clear-d");if(icd)icd.classList.remove("show");render();}
 
 /* ── collapse / expand ── */
 function toggleCard(el){el.classList.toggle("open");}
@@ -1058,6 +1274,18 @@ function render(){
   const stats=computeStats();
   document.getElementById("hero-meta").textContent=`__LAST_UPDATED__ · ${stats.total} משרות פעילות`;
   document.getElementById("hero-coach").textContent=coachLine(stats);
+
+  /* ── Desktop top-bar stats chips ── */
+  const dtbEl=document.getElementById("dtb-stats");
+  if(dtbEl){
+    const statItems=[
+      {v:stats.total,l:'משרות',stage:'all'},
+      {v:stats.by.applied||0,l:'הוגשו',stage:'applied'},
+      {v:stats.by.interview||0,l:'ראיונות',stage:'interview'},
+      {v:stats.by.offer||0,l:'הצעות',stage:'offer'},
+    ];
+    dtbEl.innerHTML=statItems.map(s=>`<button class="dtb-stat${fStage===s.stage?' active':''}" onclick="setFunnelFilter('${s.stage}')"><span class="v">${s.v}</span><span class="l">${s.l}</span></button>`).join('');
+  }
 
   const funnelStages=STAGES.filter(s=>s.key!=="rejected");
   const maxCount=Math.max(1,...funnelStages.map(s=>stats.by[s.key]||0));
@@ -1245,7 +1473,7 @@ function render(){
     if(!vis.some(o=>o.i===window._selIndex))window._selIndex=vis.length?vis[0].i:-1;
     document.getElementById("container").innerHTML=vis.map(o=>buildRailRow(o.x,o.i,o.i===window._selIndex)).join("");
     const selO=vis.find(o=>o.i===window._selIndex);
-    document.getElementById("detail").innerHTML=selO?window._buildCard(selO.x,selO.i,true,true):'<div class="detail-empty">בחר משרה מהרשימה כדי לראות פרטים</div>';
+    document.getElementById("detail").innerHTML=selO?window._buildCard(selO.x,selO.i,true,true):'<div class="detail-empty"><span class="de-icon material-symbols-rounded">work_outline</span><div class="de-text">בחר משרה מהרשימה</div><div class="de-sub">לחץ על משרה כדי לראות פרטים</div></div>';
   }else{
     document.getElementById("detail").innerHTML='';
     document.getElementById("container").innerHTML=list.map((x,i)=>window._buildCard(x,i,false,jobVisible(x))).join("");
@@ -1260,6 +1488,17 @@ function render(){
 }
 
 function selectJob(i){window._selIndex=i;render();}
+
+/* ── Navigation rail ── */
+function nr(section){
+  document.querySelectorAll('.nr-item').forEach(b=>b.classList.remove('active'));
+  const btn=document.getElementById('nr-'+section);
+  if(btn)btn.classList.add('active');
+  if(section==='analytics')openAnalytics();
+}
+function openSupport(){
+  showToast('💙 אתה עושה עבודה מצוינת — כל הגשה מקרבת אותך');
+}
 function buildRailRow(x,i,sel){
   const j=x.j,st=x.st,stage=x.stage;
   const fc=fitColor(j.fit_score),sc=stageColor(STAGES.find(s=>s.key===stage)?.hue||235);
@@ -1456,7 +1695,8 @@ function applyTheme(t){
   document.documentElement.setAttribute('data-theme',t);
   const ico=document.getElementById('theme-ico');
   if(ico)ico.textContent=(t==='dark')?'light_mode':'dark_mode';
-  const tc=document.querySelector('meta[name="theme-color"]:not([media])')||document.querySelector('meta[name="theme-color"]');
+  const ico2=document.getElementById('theme-ico2');
+  if(ico2)ico2.textContent=(t==='dark')?'light_mode':'dark_mode';
 }
 function initTheme(){
   let t=localStorage.getItem('theme');

@@ -394,24 +394,194 @@
       #app{max-width:1500px}
     }
     /* ===== MASTER–DETAIL (desktop ≥1024px) ===== */
+    #nav-rail{display:none}
+    #desktop-topbar{display:none}
+    #list-col{display:contents}
+    #list-search-bar{display:none}
     #detail{display:none}
     @media(min-width:1024px){
-      #work{display:grid;grid-template-columns:minmax(300px,360px) 1fr;gap:20px;align-items:start}
-      #container{display:flex!important;flex-direction:column;gap:8px!important;position:sticky;top:14px;max-height:calc(100vh - 28px);overflow-y:auto;padding:2px}
-      #detail{display:block;min-width:0}
-      #detail .job-card{box-shadow:0 2px 18px rgba(20,20,40,.09)}
-      #detail .job-card:hover{transform:none}
-      #detail .chevron{display:none}
-      .detail-empty{padding:80px 24px;text-align:center;color:var(--inkFaint);font-weight:700;font-size:.95rem;background:var(--surface-container);border-radius:28px}
-      .rail-row{display:flex;align-items:center;gap:11px;background:var(--surface-container);border-radius:16px;padding:10px 12px;cursor:pointer;transition:background .15s,transform .12s;border:2px solid transparent}
+      /* Full-height viewport app shell */
+      html{height:100%}
+      body{height:100%;overflow:hidden}
+
+      /* Nav rail — fixed, right side (RTL) */
+      #nav-rail{
+        display:flex!important;
+        position:fixed;right:0;top:0;bottom:0;width:80px;
+        background:var(--surface-container);
+        border-left:1px solid var(--lineSoft);
+        flex-direction:column;align-items:center;
+        padding:12px 0 16px;gap:2px;z-index:100;
+      }
+      .nr-item{
+        width:100%;display:flex;flex-direction:column;align-items:center;
+        padding:10px 8px 10px;gap:3px;cursor:pointer;
+        position:relative;border:none;background:none;
+        font-family:var(--font-ui);color:var(--inkSoft);
+        transition:color .15s;
+      }
+      .nr-lbl{font-size:.58rem;font-weight:600;line-height:1}
+      .nr-item .material-symbols-rounded{font-size:24px;position:relative;z-index:1}
+      .nr-item .nr-lbl{position:relative;z-index:1}
+      .nr-item::before{
+        content:'';position:absolute;
+        top:4px;right:12px;bottom:4px;left:12px;
+        border-radius:16px;background:transparent;transition:background .15s;
+      }
+      .nr-item:hover::before{background:rgba(0,0,0,.06)}
+      .nr-item.active{color:var(--on-secondary-container)}
+      .nr-item.active::before{background:var(--secondary-container)}
+      .nr-spacer{flex:1}
+      html[data-theme=dark] .nr-item:hover::before{background:rgba(255,255,255,.08)}
+
+      /* App shell: shift content right by nav rail width, full height */
+      #app{
+        margin-right:80px;
+        max-width:none;padding:0;
+        height:100vh;overflow:hidden;
+        display:grid;
+        grid-template-rows:auto 1fr;
+      }
+
+      /* Desktop top bar */
+      #desktop-topbar{
+        display:flex!important;
+        align-items:center;gap:16px;
+        padding:0 24px;height:64px;flex-shrink:0;
+        background:var(--surface);
+        border-bottom:1px solid var(--lineSoft);
+        position:relative;z-index:31;
+        box-shadow:0 1px 3px rgba(0,0,0,.06);
+      }
+      .dtb-title{
+        font-size:1.15rem;font-weight:800;color:var(--ink);
+        white-space:nowrap;
+      }
+      .dtb-stats{
+        display:flex;gap:8px;flex:1;
+        justify-content:center;
+      }
+      .dtb-stat{
+        display:flex;flex-direction:column;align-items:center;
+        padding:6px 16px;border-radius:12px;
+        background:var(--surface-container);
+        cursor:pointer;transition:background .15s;
+        border:1.5px solid transparent;
+        min-width:64px;
+      }
+      .dtb-stat:hover{background:var(--surface-container-high)}
+      .dtb-stat.active{background:var(--secondary-container);border-color:var(--primary)}
+      .dtb-stat .v{font-size:1.2rem;font-weight:800;color:var(--ink);line-height:1.1}
+      .dtb-stat .l{font-size:.58rem;font-weight:600;color:var(--inkFaint);margin-top:2px}
+      .dtb-stat.active .v{color:var(--on-secondary-container)}
+      .dtb-stat.active .l{color:var(--on-secondary-container);opacity:.8}
+      .dtb-actions{display:flex;align-items:center;gap:8px;margin-inline-start:auto}
+      .dtb-scan{
+        display:inline-flex;align-items:center;gap:6px;
+        background:var(--primary);color:#fff;border:none;
+        border-radius:20px;padding:10px 18px;font-size:.8rem;font-weight:700;
+        font-family:var(--font-ui);cursor:pointer;transition:all .15s;
+      }
+      .dtb-scan:hover{background:var(--accentDeep);box-shadow:0 2px 8px rgba(79,107,237,.35)}
+      .dtb-scan:disabled{opacity:.5;cursor:not-allowed}
+      .dtb-scan .material-symbols-rounded{font-size:18px}
+
+      /* Hide mobile hero + standalone FAB + standalone toolbar on desktop */
+      .hero{display:none!important}
+      .fab{display:none!important}
+      .toolbar{display:none!important}
+
+      /* Work area — fills remaining height */
+      #work{
+        display:grid!important;
+        grid-template-columns:320px 1fr;
+        gap:0!important;
+        height:100%;overflow:hidden;
+        align-items:stretch!important;
+      }
+
+      /* List column */
+      #list-col{
+        display:flex!important;flex-direction:column;
+        height:100%;overflow:hidden;
+        background:var(--surface-container);
+        border-left:1px solid var(--lineSoft);
+      }
+      #list-search-bar{
+        display:flex!important;
+        padding:10px 10px 6px;
+        background:var(--surface-container);
+        border-bottom:1px solid var(--lineSoft);
+        flex-shrink:0;
+        gap:8px;align-items:center;
+      }
+      #list-search-bar .search-wrap{flex:1}
+      #list-search-bar .search-inp{background:var(--surface-container-high)!important;font-size:.84rem!important}
+
+      /* List column: surface-container bg, full height scroll */
+      #container{
+        display:flex!important;flex-direction:column;
+        gap:2px!important;padding:8px!important;
+        position:static!important;
+        flex:1;overflow-y:auto;
+        background:var(--surface-container);
+      }
+
+      /* Rail rows — Google-grade dense list items */
+      .rail-row{
+        display:flex;align-items:center;gap:10px;
+        background:transparent;border-radius:12px;
+        padding:10px 12px;cursor:pointer;
+        transition:background .13s;border:1.5px solid transparent;
+        position:relative;
+      }
+      .rail-row::after{
+        content:'';position:absolute;inset:0;border-radius:inherit;
+        background:currentColor;opacity:0;transition:opacity .1s;pointer-events:none;
+      }
       .rail-row:hover{background:var(--surface-container-high)}
-      .rail-row.sel{background:var(--secondary-container);border-color:var(--primary)}
-      .rr-fit{width:40px;height:40px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.05rem;flex-shrink:0}
+      .rail-row:hover::after{opacity:.04}
+      .rail-row:active::after{opacity:.08}
+      .rail-row.sel{
+        background:var(--secondary-container);
+        border-color:rgba(79,107,237,.25);
+      }
+      .rail-row.sel::after{display:none}
+      .rr-fit{width:38px;height:38px;border-radius:11px;font-size:.98rem;display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0}
       .rr-text{flex:1;min-width:0}
-      .rr-co{font-weight:800;font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:ltr;text-align:right}
-      .rr-ti{font-size:.73rem;color:var(--inkSoft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:ltr;text-align:right;margin-top:1px}
+      .rr-co{font-weight:700;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:ltr;text-align:right}
+      .rr-ti{font-size:.72rem;color:var(--inkSoft);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:ltr;text-align:right}
+      .rr-date{font-size:.6rem;color:var(--inkFaint);margin-top:2px}
       .rr-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
       .rr-star{color:var(--star);font-size:.85rem;flex-shrink:0}
+
+      /* Detail pane */
+      #detail{
+        display:block;height:100%;overflow-y:auto;
+        background:var(--surface);min-width:0;
+      }
+      #detail .job-card{
+        box-shadow:none!important;border-radius:0!important;
+        background:transparent!important;
+      }
+      #detail .card-head{
+        padding:22px 28px 14px!important;
+        border-bottom:1px solid var(--lineSoft);
+        cursor:default!important;
+      }
+      #detail .card-body{padding:20px 28px 28px!important}
+      #detail .chevron{display:none!important}
+      #detail .job-card:active{transform:none!important}
+      #detail .job-card:hover{transform:none!important;box-shadow:none!important;background:transparent!important}
+
+      .detail-empty{
+        display:flex;flex-direction:column;align-items:center;justify-content:center;
+        height:100%;gap:12px;
+        color:var(--inkFaint);background:var(--surface);
+      }
+      .detail-empty .de-icon{font-size:3.5rem;opacity:.3}
+      .detail-empty .de-text{font-weight:700;font-size:.95rem}
+      .detail-empty .de-sub{font-size:.78rem;font-weight:400;opacity:.7}
     }
     /* keyboard-shortcut hint chip */
     .kbd{font-family:var(--font-mono);font-size:.62rem;background:var(--surface-container-highest);border-radius:6px;padding:1px 6px;color:var(--inkFaint);margin-inline-start:6px}
@@ -470,7 +640,42 @@
   </style>
 </head>
 <body>
+<nav id="nav-rail">
+  <button class="nr-item active" id="nr-jobs" onclick="nr('jobs')" title="משרות">
+    <span class="material-symbols-rounded">work</span>
+    <span class="nr-lbl">משרות</span>
+  </button>
+  <button class="nr-item" id="nr-analytics" onclick="nr('analytics')" title="אנליטיקה">
+    <span class="material-symbols-rounded">analytics</span>
+    <span class="nr-lbl">סטטיסטיקה</span>
+  </button>
+  <div class="nr-spacer"></div>
+  <button class="nr-item" id="nr-support" onclick="openSupport()" title="תמיכה רגשית">
+    <span class="material-symbols-rounded">favorite</span>
+    <span class="nr-lbl">תמיכה</span>
+  </button>
+  <button class="nr-item" id="nr-theme" onclick="toggleTheme()" title="מצב תצוגה">
+    <span class="material-symbols-rounded" id="theme-ico2">dark_mode</span>
+    <span class="nr-lbl">תצוגה</span>
+  </button>
+  <button class="nr-item" id="nr-settings" onclick="openSettings()" title="הגדרות">
+    <span class="material-symbols-rounded">settings</span>
+    <span class="nr-lbl">הגדרות</span>
+  </button>
+</nav>
 <div id="app">
+  <!-- DESKTOP TOP BAR -->
+  <div id="desktop-topbar">
+    <div class="dtb-title">Job Tracker</div>
+    <div class="dtb-stats" id="dtb-stats"></div>
+    <div class="dtb-actions">
+      <button class="dtb-scan" id="dtb-scan-btn" onclick="triggerScan()">
+        <span class="material-symbols-rounded">refresh</span>
+        סרוק עכשיו
+      </button>
+    </div>
+  </div>
+
   <!-- HERO -->
   <div class="hero">
     <div class="hero-top">
@@ -535,7 +740,16 @@
 
   <!-- CARDS -->
   <div id="work">
-    <div id="container" style="display:flex;flex-direction:column;gap:14px"></div>
+    <div id="list-col">
+      <div id="list-search-bar">
+        <div class="search-wrap" style="flex:1">
+          <span class="search-ico material-symbols-rounded">search</span>
+          <input class="search-inp" id="search-inp-d" type="text" placeholder="חיפוש…" oninput="onSearchDesktop(this)"/>
+          <button class="search-clear" id="search-clear-d" onclick="clearSearchDesktop()">✕</button>
+        </div>
+      </div>
+      <div id="container" style="display:flex;flex-direction:column;gap:14px"></div>
+    </div>
     <aside id="detail"></aside>
   </div>
 </div>
@@ -613,7 +827,7 @@
 </div>
 
 <script>
-const JOBS=[{"company": "Finout", "title": "Head of Revenue Operations", "location": "Tel Aviv / New York (Hybrid)", "url": "https://www.builtinnyc.com/job/head-revenue-operations/8178347", "job_type": "Full-time", "posted": "2026-01-12", "description": "Finout, a cloud cost management SaaS trusted by The New York Times, Wiz, and Lyft, seeks a Head of Revenue Operations to build and scale the operational backbone of its GTM engine. Reporting to the CRO, this hands-on leadership role requires 7+ years in RevOps/Sales Ops within high-growth B2B SaaS, experience scaling beyond $30M ARR, deep Salesforce administration and revenue analytics skills, and cross-functional leadership across Sales, Marketing, Finance, and HR, collaborating with the Tel Aviv HQ.", "fit_score": 9, "score_reason": "Omri's 15+ years in B2B SaaS RevOps with demonstrated expertise in Salesforce, pipeline forecasting, and GTM scaling directly matches Finout's need for a hands-on Head of RevOps. The Tel Aviv/NY hybrid role aligns perfectly with his location preferences and the fintech/cloud infrastructure domain is a natural extension of his B2B SaaS foundation.", "ai_opener": "Omri, I came across Finout's Head of RevOps role and your profile immediately stood out—your depth in scaling GTM operations within high-growth B2B SaaS aligns exceptionally well with what they're building. They're looking for someone to architect the operational backbone for a company trusted by The New York Times and Wiz, and your hands-on Salesforce and revenue analytics expertise, combined with your familiarity with the Tel Aviv tech scene, positions you uniquely for this CRO-reporting role.", "location_ok": true, "scan_date": "2026-06-06", "contact": {"name": "Fred Poor Jr", "title": "Head of Revenue Operations (hiring manager)", "email": "fred.poor@finout.io", "linkedin": "https://www.linkedin.com/in/fred-poor-jr-03221286/"}}, {"company": "Gong", "title": "RevOps Manager, Territory Strategy & Operations", "location": "Tel Aviv / Global", "url": "https://job-boards.greenhouse.io/gongio/jobs/4668642006", "job_type": "Full-time", "posted": "2026-04-09", "description": "Gong, a revenue intelligence platform, is hiring a RevOps Manager to redesign territory models and processes for global scalability. The role partners with Sales leadership, Strategy, and Finance to optimize territory compositions, analyze performance data, and support GTM planning cycles. Requires deep understanding of B2B SaaS go-to-market models and segmentation strategies, strong analytical skills with Excel/SQL/BI tools (Tableau, Retool), Salesforce proficiency, and experience with territory management tools like Fullcast, Pigment, or Anaplan.", "fit_score": 9, "score_reason": "Perfect alignment with Omri's RevOps expertise, B2B SaaS background, and Salesforce/analytics skill set. Territory strategy and GTM optimization are core RevOps competencies, and Gong's revenue intelligence platform directly matches his CAC/LTV and pipeline forecasting strengths.", "ai_opener": "Omri, your 15+ years scaling B2B SaaS RevOps caught my attention for Gong's Territory Strategy & Operations role. With your track record optimizing GTM models and Salesforce proficiency, you'd be the perfect fit to redesign Gong's global territory architecture—especially given how territory composition directly impacts the revenue intelligence insights Gong provides. I'd love to explore how your experience with pipeline forecasting and segmentation strategies could accelerate Gong's go-to-market execution.", "location_ok": true, "scan_date": "2026-06-06", "contact": null}, {"company": "Eve", "title": "Senior Manager, Revenue Operations", "location": "Remote", "url": "https://job-boards.greenhouse.io/eve/jobs/4243884009", "job_type": "Full-time", "posted": "2026-02-15", "description": "Eve, a legal tech company offering AI-driven solutions for plaintiff attorneys, seeks a Senior Manager of Revenue Operations to find and plug revenue leaks across the GTM motion. Requires 8–10+ years in RevOps, Sales Ops, or GTM Operations at high-growth B2B SaaS with 3–5 years of people leadership. Candidates should have hypergrowth experience, end-to-end rollout track record, an AI-native operating posture, and a bias toward decisive action, owning measurable revenue outcomes like speed-to-lead and pipeline conversion.", "fit_score": 9, "score_reason": "Omri's 15+ years in B2B SaaS RevOps, proven GTM expertise, and AI-native mindset align perfectly with Eve's need for a senior RevOps leader to optimize plaintiff attorney acquisition. The remote role, legal tech verticalization, and emphasis on pipeline conversion and measurable revenue outcomes play directly to his core strengths.", "ai_opener": "Omri here—I've spent 15 years building RevOps engines at high-growth B2B SaaS companies, and Eve's mission to democratize legal tech for plaintiff attorneys caught my attention. Your focus on finding and plugging revenue leaks mirrors exactly the GTM diagnostics I've done repeatedly: I've led end-to-end Salesforce/HubSpot rollouts, optimized speed-to-lead mechanics, and scaled pipeline conversion in hypergrowth environments. I'd love to explore how my track record owning measurable revenue outcomes could help you accelerate Eve's GTM motion.", "location_ok": true, "scan_date": "2026-06-06", "contact": null}, {"company": "Eve", "title": "Sales Strategy & Operations Manager", "location": "Remote", "url": "https://jobs.lever.co/Eve/c8d47161-2068-4087-95ff-ff54975bdc90", "job_type": "Full-time", "posted": "2026-02-20", "description": "Eve seeks an early RevOps hire to ensure its sales team operates at peak efficiency. You'll own systems, processes, and insights that help AEs move faster and stay compliant with GTM processes, partnering with Sales, Finance, and Marketing. Requires 4–7 years in Sales Operations, Revenue Operations, or Enablement at a SaaS company, deep B2B sales motion understanding, admin-level HubSpot or Salesforce fluency, and comfort with Outreach, Gong, and ZoomInfo. Early-stage or vertical SaaS startup experience is a plus.", "fit_score": 6, "score_reason": "Strong technical match on RevOps fundamentals, systems, and B2B SaaS expertise, but the 4-7 year requirement is significantly below Omri's 15+ year profile, suggesting this early-stage role may be underleveled for a senior executive seeking Head of RevOps positions.", "ai_opener": "Hi Eve team—I noticed you're building out RevOps from the ground up, and I'm drawn to companies betting on operational excellence as a competitive moat. With 15+ years scaling B2B SaaS GTM motions and deep fluency in Salesforce/HubSpot + tools like Outreach and Gong, I'm curious whether you'd benefit from someone who can architect systems and processes that scale beyond the early-stage phase.", "location_ok": true, "scan_date": "2026-06-06", "contact": null}, {"company": "Flex", "title": "Revenue Operations Manager - Systems", "location": "Remote", "url": "https://job-boards.greenhouse.io/flex/jobs/4693000005", "job_type": "Full-time", "posted": "2026-05-16", "description": "Flex seeks a Revenue Operations Manager to build and scale the operational backbone for its New Verticals division, expanding beyond rent into non-rent split-pay verticals. As the first dedicated RevOps hire for the division, you'll architect the GTM engine from scratch—Salesforce configuration, pipeline management, routing, reporting, and the full revenue tech stack. Requires 5+ years in RevOps/Sales Ops with 2 years senior capacity, deep Salesforce expertise, and familiarity with GTM systems like Outreach, LeanData, Clay, and HubSpot.", "fit_score": 8, "score_reason": "Excellent match on core RevOps requirements—15+ years B2B SaaS experience, Salesforce expertise, and proven GTM architecture skills align perfectly with building a revenue operations function from scratch. Remote location is ideal fit, and the fintech-adjacent (split-pay) vertical matches strong background, though lack of explicit Outreach/LeanData experience is minor gap.", "ai_opener": "I saw Flex is building out RevOps for New Verticals from the ground up—that's exactly the kind of greenfield GTM architecture I've scaled multiple times across B2B SaaS and fintech. With 15+ years architecting Salesforce-driven revenue engines and pipeline forecasting systems, I'm interested in how you're thinking about routing strategy and reporting infrastructure as you expand beyond rent into split-pay verticals.", "location_ok": true, "scan_date": "2026-06-06", "contact": null}, {"company": "Instrumentl", "title": "RevOps Manager", "location": "Remote", "url": "https://jobs.lever.co/Instrumentl/2a902562-f16b-458b-9b13-c62ee9e8a746", "job_type": "Full-time", "posted": "2026-04-15", "description": "Instrumentl, a YC-backed grant fundraising SaaS with 5,000+ nonprofit clients, seeks a RevOps Manager to own the technical infrastructure powering its revenue engine. This builder role involves architecting the CRM data model, integrating data sources, and leading technical implementation of AI tools across sales processes. Requires 3–5+ years in RevOps, Sales Ops, Marketing Ops, or GTM Systems at B2B SaaS, strong technical skills including SQL and APIs, CRM administration (HubSpot preferred), and data architecture experience.", "fit_score": 8, "score_reason": "Strong alignment on RevOps Manager role, B2B SaaS, HubSpot, technical infrastructure, and AI-native GTM capabilities. Minor gap: Instrumentl is earlier-stage (YC-backed, nonprofit focus) versus Omri's typical mid-market/enterprise fintech background, but the builder/architect nature of the role is ideal for his seniority.", "ai_opener": "Omri here—your RevOps Manager posting caught my attention because architecting CRM data models and leading AI implementation across sales processes is exactly the kind of technical RevOps work I've scaled at B2B SaaS companies. With 15+ years building revenue infrastructure and deep HubSpot expertise, I'm curious how Instrumentl is thinking about data strategy as you scale—happy to explore whether this role is the right fit.", "location_ok": true, "scan_date": "2026-06-06", "contact": null}, {"company": "Conveo", "title": "GTM Engineer", "location": "Remote", "url": "https://jobs.ashbyhq.com/conveo/4b39102c-253f-4e6c-ae1d-9b6013323e43", "job_type": "Full-time", "posted": "2026-04-07", "description": "Conveo, an AI research platform used by Unilever, Google, and Orange, is scaling 20x revenue in 2026 and seeks a GTM Engineer to replace manual workflows with purpose-built apps, pipelines, and AI-powered automations. You'll code, ship, and iterate on internal tools that make the GTM team highly effective—building lead scoring models that learn, attribution pipelines, faster onboarding flows, and AI agents that eliminate hours of manual work weekly across the B2B and consumer research platform.", "fit_score": 7, "score_reason": "Strong alignment with AI-native GTM, pipeline automation, and lead scoring expertise. However, the role emphasizes coding/shipping internal tools which leans more engineering-focused than traditional RevOps—better suited for a technical GTM Engineer than a RevOps executive.", "ai_opener": "Omri here—I've spent 15+ years scaling B2B SaaS GTM operations, and Conveo's vision of replacing manual workflows with AI-powered automations resonates deeply. Having built attribution pipelines and lead scoring models that actually learn, I'm intrigued by how you're leveraging AI to eliminate hours of manual work weekly. I'd love to explore whether my RevOps/GTM background could accelerate your 20x scaling roadmap.", "location_ok": true, "scan_date": "2026-06-06", "contact": null}, {"company": "Roboflow", "title": "RevOps GTM Engineer", "location": "Remote", "url": "https://jobs.ashbyhq.com/roboflow/c878667f-01c3-4c44-8f1e-07c8e03423df", "job_type": "Full-time", "posted": "2026-05-01", "description": "Roboflow seeks a GTM Engineer to support and extend its go-to-market systems, reporting to the Head of RevOps and working with business operations, sales, and cross-functional collaborators. This hands-on, execution-focused role involves implementing, customizing, and scaling Salesforce and the broader GTM tech stack—Outreach, ZoomInfo, Clay and more—while building custom tooling and AI-powered workflows. You'll build Salesforce functionality (Apex, LWC, Flows, custom objects) and implement GTM workflows, automation, and data models across systems.", "fit_score": 8, "score_reason": "Excellent match for a senior RevOps executive—GTM Engineer role at a growth-stage company with Salesforce customization, workflow automation, and AI-powered systems directly align with Omri's 15+ years B2B SaaS expertise and GTM engineering background. Remote position removes any location friction.", "ai_opener": "I've spent 15+ years building GTM engines at B2B SaaS companies, and Roboflow's approach to AI-native RevOps caught my attention—especially the integration of Salesforce, Outreach, and custom tooling. Your GTM Engineer role seems designed for someone who can bridge the gap between platform capabilities and business outcomes, which is exactly where I've driven the most impact in previous roles.", "location_ok": true, "scan_date": "2026-06-06", "contact": null}, {"company": "Postscript", "title": "GTM Automation Engineer", "location": "Remote", "url": "https://job-boards.greenhouse.io/postscript/jobs/8402727002", "job_type": "Full-time", "posted": "2026-02-03", "description": "Postscript seeks a GTM Automation Engineer to be one of the first AI-Native GTM Engineers, defining how companies use LLMs to automate operations. Requires 4+ years in Revenue Operations, Sales Engineering, or Business Systems with deep understanding of the B2B SaaS customer lifecycle. The role demands automation expertise building complex workflows handling real business logic, technical versatility (reading API docs, writing SQL, debugging Python with AI), and the ability to communicate technical constraints to VPs of Sales and Engineering.", "fit_score": 9, "score_reason": "Exceptional alignment: AI-native GTM, RevOps core competency, B2B SaaS expertise, and technical automation skills (SQL, Python, API integration) match Omri's senior profile perfectly. The role's focus on LLM-driven operations and complex workflow automation directly leverages his 15+ years of revenue operations strategy and execution.", "ai_opener": "Omri here—your GTM Automation Engineer role caught my attention because you're building exactly what the next generation of RevOps needs: AI-native automation at scale. With 15+ years defining revenue operations and GTM strategy in B2B SaaS, I've spent the last cycle watching teams struggle to operationalize LLMs effectively. I'd love to explore how we can help Postscript become the standard for intelligent GTM automation.", "location_ok": true, "scan_date": "2026-06-06", "contact": null}, {"company": "Cresta", "title": "Head of Demand Generation & Growth", "location": "United States (Remote)", "url": "https://job-boards.greenhouse.io/cresta/jobs/4969380008", "job_type": "Full-time", "posted": "2026-05-10", "description": "Cresta seeks a Head of Demand Generation & Growth with 7+ years in B2B SaaS marketing, including 3+ years in a growth leadership role. The role requires a proven track record owning pipeline and revenue targets, deep expertise in paid acquisition, SEO, website optimization, and full-funnel marketing, plus experience with enterprise buyer journeys and ABM motions. Proficiency with Google Ads, LinkedIn Ads, GA4, HubSpot, Salesforce, Clay, n8n, SEMrush, and dashboarding tools like Looker or Tableau is required.", "fit_score": 6, "score_reason": "Strong alignment on B2B SaaS, HubSpot/Salesforce expertise, and revenue ownership; however, this is primarily a demand generation/marketing leadership role emphasizing paid acquisition and full-funnel marketing rather than core RevOps/GTM operations. Omri's RevOps background is valuable but not the primary skill set this role prioritizes.", "ai_opener": "Hi [Hiring Manager], I came across Cresta's Head of Demand Generation & Growth role and was impressed by your AI-native approach to customer engagement. As a RevOps leader with 15+ years in B2B SaaS, I've built end-to-end pipeline architecture and owned revenue targets across HubSpot and Salesforce ecosystems, which should translate well to owning the marketing-to-revenue pipeline you're building. I'd love to explore how RevOps-informed growth strategy could accelerate your acquisition efficiency.", "location_ok": true, "scan_date": "2026-06-06", "contact": null}, {"company": "saas.group", "title": "Head of Sales and Marketing (B2B SaaS)", "location": "Remote (Global)", "url": "https://job-boards.eu.greenhouse.io/saasgroup/jobs/4716993101", "job_type": "Full-time", "posted": "2025-11-24", "description": "saas.group, a fully-remote SaaS portfolio company with 350+ colleagues across 50+ countries, seeks a Head of Sales & Marketing to lead all commercial activities for one of its brands. You'll own the full Sales & Marketing strategy across acquisition, activation, closing, retention, and expansion, driving pipeline through multi-channel marketing. Requires 7–10+ years of B2B SaaS commercial experience with exposure to both Sales and Marketing, a track record scaling revenue engines in SMB/mid-market SaaS, and deep understanding of SaaS metrics.", "fit_score": 8, "score_reason": "Excellent alignment with Omri's 15+ years B2B SaaS RevOps/GTM expertise and target roles as Head of Revenue Operations/Growth. Role spans Sales & Marketing strategy with pipeline forecasting and SaaS metrics—core strengths. Remote global structure matches location preferences perfectly.", "ai_opener": "Hi [Hiring Manager], I noticed saas.group is scaling commercial operations across 50+ countries with a fully-remote structure—exactly the global GTM complexity I've thrived in. With 15+ years leading B2B SaaS revenue engines (from pipeline forecasting to CAC/LTV optimization), I've consistently built and scaled commercial strategies that drive acquisition through expansion. I'd love to explore how we could build out the sales and marketing engine for one of your portfolio brands.", "location_ok": true, "scan_date": "2026-06-06", "contact": null}, {"company": "Iru", "title": "Manager, GTM Operations", "location": "Remote", "url": "https://jobs.lever.co/iru/61e68cd1-59ef-4411-a36d-c23fa4cfa9cb", "job_type": "Full-time", "posted": "2026-05-01", "description": "Iru seeks a Manager, GTM Operations to lead the RevOps function responsible for the systems, data, and processes that keep its revenue engine accurate and scalable. This player-coach role supports Sales, Sales Development, Customer Success, Solutions Engineering, and Marketing, leading a small growing team while staying hands-on. Requires 5–8 years in Revenue Operations or GTM Operations in B2B SaaS, deep HubSpot and/or Salesforce proficiency, strong analytical skills, and familiarity with workflow tools like n8n or Zapier.", "fit_score": 9, "score_reason": "Exceptional match: Manager-level GTM Operations role perfectly aligns with Omri's senior RevOps expertise, player-coach leadership style, and deep HubSpot/Salesforce proficiency. The multi-functional support scope (Sales, SDR, CS, SE, Marketing) and focus on systems/data/processes directly leverage his 15+ years of B2B SaaS revenue engine building.", "ai_opener": "Hi [Hiring Manager], I came across Iru's Manager, GTM Operations role and it immediately resonated with my experience building scalable revenue operations functions at scale. Over 15+ years in B2B SaaS, I've led exactly this type of player-coach role—architecting HubSpot/Salesforce ecosystems, designing forecasting frameworks, and aligning Sales, SDR, CS, and Marketing around unified data and processes. I'd love to explore how I can help Iru accelerate its revenue engine's accuracy and scalability.", "location_ok": true, "scan_date": "2026-06-06", "contact": null}, {"company": "Madison Logic", "title": "Revenue Operations Manager (Sales & Customer Experience)", "location": "Remote", "url": "https://job-boards.greenhouse.io/madisonlogicinc/jobs/4136495009", "job_type": "Full-time", "posted": "2026-04-01", "description": "Madison Logic seeks a Revenue Operations Manager focused on operating model and strategy across sales and customer experience. Requires 5–7 years in Sales Operations, Customer Success Operations, or Revenue Operations (B2B SaaS preferred), with demonstrated experience supporting both new-business sales (AEs/SDRs) and post-sale CS/AM teams. Candidates need strong Salesforce power-user skills, analytical capability with Excel/Google Sheets and SQL or BI tools, and a proven track record using AI and automation to improve GTM performance.", "fit_score": 8, "score_reason": "Omri's 15+ years in B2B SaaS RevOps directly exceeds the 5-7 year requirement, with proven expertise in Salesforce, pipeline forecasting, and AI-native GTM strategies. The remote structure and focus on sales+CS operations alignment are strong matches, though the role appears slightly narrower in scope than typical Head of RevOps positions Omri targets.", "ai_opener": "Madison Logic's focus on operating model strategy across sales and customer experience caught my attention—it's exactly where I've driven the most impact over the past 15 years in B2B SaaS. I've built RevOps functions that simultaneously optimized AE/SDR productivity and CS/AM unit economics using Salesforce automation and AI-driven forecasting, and I'm curious how you're thinking about bridging those two sides of the revenue org.", "location_ok": true, "scan_date": "2026-06-06", "contact": null}, {"company": "saas.group", "title": "Sales Operations Specialist", "location": "Remote (Global)", "url": "https://job-boards.eu.greenhouse.io/saasgroup/jobs/4709272101", "job_type": "Full-time", "posted": "2026-03-15", "description": "saas.group seeks a Sales Operations Specialist reporting to the Head of Enterprise Sales to enable the enterprise sales team to accelerate deal closure, secure renewals, and drive revenue growth. You'll optimize sales processes, manage sales tools and data, and maintain playbooks, battle cards, and pricing guides. Requires 5+ years within a B2B SaaS sales team, strong understanding of B2B sales processes, 5+ years hands-on HubSpot CRM experience including data integrity and workflow automation, and excellent analytical skills.", "fit_score": 6, "score_reason": "Strong technical fit with HubSpot expertise and B2B SaaS background, but role is Sales Operations Specialist (IC/individual contributor level) rather than leadership position Omri targets. Title and scope suggest mid-level rather than senior executive responsibilities despite remote flexibility.", "ai_opener": "Hi saas.group team—I noticed you're building out enterprise sales operations with a focus on process optimization and HubSpot-driven enablement. With 15+ years scaling GTM and RevOps functions across B2B SaaS, I've architected similar sales operations frameworks that accelerated deal velocity and renewals. Happy to discuss how enterprise-grade ops strategy could amplify your sales team's impact.", "location_ok": true, "scan_date": "2026-06-06", "contact": null}, {"company": "Plus500", "title": "Senior Operations Manager", "location": "Israel", "url": "https://www.plus500.com/careers", "job_type": "Full-time", "posted": "2026-05-20", "description": "Revenue Operations role at Plus500 — leading global fintech/trading platform.", "fit_score": 9, "score_reason": "Direct match — global fintech, senior RevOps scope, Israeli HQ.", "ai_opener": "📅 ראיון וידאו: 4/6 בשעה 14:00–14:30 • Google Meet: meet.google.com/hzf-ovyy-fwt • מגייסת: Bashan Zagagi", "location_ok": true, "scan_date": "2026-06-03", "initial_status": "interview", "initial_status_date": "2026-06-04", "initial_rounds": [{"date": "2026-06-04", "interviewer": "Plus500 Recruiting", "stage": "ראיון מקצועי", "outcome": "pending", "note": "Video interview • Google Meet hzf-ovyy-fwt • 14:00"}], "contact": null}, {"company": "Gambit Security", "title": "GTM / Revenue Operations", "location": "Israel", "url": "https://gambit.security", "job_type": "Full-time", "posted": "2026-05-30", "description": "Intro call with Mor Ben-Kalifa from Gambit Security on June 3, 17:30–18:00.", "fit_score": 8, "score_reason": "Security startup — GTM/RevOps scope, Israeli ecosystem.", "ai_opener": "📅 Intro call: 3/6 בשעה 17:30–18:00 • Mor Ben-Kalifa (mor.benkalifa@gambit.security)", "location_ok": true, "scan_date": "2026-06-03", "initial_status": "interview", "initial_status_date": "2026-06-03", "initial_rounds": [{"date": "2026-06-03", "interviewer": "Mor Ben-Kalifa", "stage": "טלפוני / HR", "outcome": "passed", "note": "Intro • mor.benkalifa@gambit.security • 17:30"}], "contact": null}, {"company": "Sauce", "title": "Head of GTM Engineering", "location": "Israel / Remote", "url": "https://www.saucelabs.com/careers", "job_type": "Full-time", "posted": "2026-05-25", "description": "Head of GTM Engineering. Recruiter screen June 1.", "fit_score": 9, "score_reason": "GTM Engineering leadership — exact title match.", "ai_opener": "✅ Recruiter Screen היה ב-1/6 בשעה 12:00–12:30. ממתין לשלב הבא.", "location_ok": true, "scan_date": "2026-06-03", "initial_status": "interview", "initial_status_date": "2026-06-01", "initial_rounds": [{"date": "2026-06-01", "interviewer": "Vladimir Slavkovski", "stage": "טלפוני / HR", "outcome": "passed", "note": "Recruiter Screen • vladimir.slavkovski@getsauce.com • 12:00"}], "contact": null}, {"company": "GoTribal.ai", "title": "Head of Marketing", "location": "Remote", "url": "https://gotribal.ai/careers", "job_type": "Full-time", "posted": "2026-05-26", "description": "Applied May 26, company responded May 27.", "fit_score": 7, "score_reason": "Marketing leadership — GTM/RevOps overlap.", "ai_opener": "⏳ הגשתי 26/5 • החברה ענתה 27/5 שיסקרו. ממתין.", "location_ok": true, "scan_date": "2026-06-03", "initial_status": "applied", "initial_status_date": "2026-05-26", "contact": null}, {"company": "Charm Security (Team8)", "title": "GTM Engineer", "location": "Israel / Remote", "url": "https://www.charmsecurity.com/careers", "job_type": "Full-time", "posted": "2026-05-28", "description": "GTM Engineer at Charm Security (Team8). Applied May 30.", "fit_score": 8, "score_reason": "GTM Engineer title match, Team8 pedigree.", "ai_opener": "⏳ הגשתי 30/5 • קיבלתי auto-response. ממתין.", "location_ok": true, "scan_date": "2026-06-03", "initial_status": "applied", "initial_status_date": "2026-05-30", "contact": null}, {"company": "Connecteam", "title": "Revenue Operations", "location": "Israel", "url": "https://connecteam.com/careers", "job_type": "Full-time", "posted": "2026-05-29", "description": "Revenue Operations. Applied May 31.", "fit_score": 7, "score_reason": "RevOps at growing Israeli B2B SaaS.", "ai_opener": "⏳ הגשתי 31/5 • קיבלתי auto-response. ממתין.", "location_ok": true, "scan_date": "2026-06-03", "initial_status": "applied", "initial_status_date": "2026-05-31", "contact": null}, {"company": "AppsFlyer", "title": "Revenue Operations Manager", "location": "Herzliya, Israel", "url": "https://www.appsflyer.com/careers", "job_type": "Full-time", "posted": "2026-05-20", "description": "Revenue Operations Manager at AppsFlyer. Applied May 26.", "fit_score": 8, "score_reason": "RevOps Manager at Israeli SaaS unicorn.", "ai_opener": "⏳ הגשתי 26/5 • קיבלתי אישור קבלת מועמדות. ממתין.", "location_ok": true, "scan_date": "2026-06-03", "initial_status": "applied", "initial_status_date": "2026-05-26", "contact": null}, {"company": "MAËLYS", "title": "Director of CRM and Retention", "location": "Israel", "url": "https://maelyscosmetics.com/careers", "job_type": "Full-time", "posted": "2026-05-20", "description": "Director of CRM and Retention. Contact: Reut Levin. Applied May 26.", "fit_score": 6, "score_reason": "CRM/Retention leadership — D2C beauty, adjacent to RevOps.", "ai_opener": "⏳ הגשתי 26/5 • יצרה קשר Reut Levin. ממתין.", "location_ok": true, "scan_date": "2026-06-03", "initial_status": "applied", "initial_status_date": "2026-05-26", "contact": null}, {"company": "Base44", "title": "Revenue Operations", "location": "Israel", "url": "https://base44.com/careers", "job_type": "Full-time", "posted": "2026-05-20", "description": "Revenue Operations at Base44 (via Wix). Applied May 26.", "fit_score": 7, "score_reason": "RevOps at Israeli startup with Wix backing.", "ai_opener": "⏳ הגשתי 26/5 • קיבלתי אישור מ-Base44/Wix. ממתין.", "location_ok": true, "scan_date": "2026-06-03", "initial_status": "applied", "initial_status_date": "2026-05-26", "contact": null}, {"company": "OurRitual", "title": "AI Operations Lead", "location": "Remote", "url": "https://www.ourritual.com/careers", "job_type": "Full-time", "posted": "2026-05-18", "description": "AI Operations Lead at OurRitual. Applied May 25 via Ashby.", "fit_score": 7, "score_reason": "AI Operations — wellness vertical, GTM engineering overlap.", "ai_opener": "⏳ הגשתי 25/5 • קיבלתי אישור מ-Ashby. ממתין.", "location_ok": true, "scan_date": "2026-06-03", "initial_status": "applied", "initial_status_date": "2026-05-25", "contact": null}, {"company": "Playtika", "title": "Director of Marketing", "location": "Israel", "url": "https://www.playtika.com/careers", "job_type": "Full-time", "posted": "2026-05-18", "description": "SM - Director of Marketing at Playtika. Applied May 25.", "fit_score": 5, "score_reason": "Marketing Director at mobile gaming — adjacent, consumer focused.", "ai_opener": "⏳ הגשתי 25/5. ממתין.", "location_ok": true, "scan_date": "2026-06-03", "initial_status": "applied", "initial_status_date": "2026-05-25", "contact": null}, {"company": "ZyG", "title": "B2C Go-to-market", "location": "Israel", "url": "https://www.zyg.ai/careers", "job_type": "Full-time", "posted": "2026-05-18", "description": "B2C Go-to-market at ZyG. Applied May 25.", "fit_score": 6, "score_reason": "GTM role — B2C focus.", "ai_opener": "⏳ הגשתי 25/5. ממתין.", "location_ok": true, "scan_date": "2026-06-03", "initial_status": "applied", "initial_status_date": "2026-05-25", "contact": null}, {"company": "SysAid", "title": "Revenue Operations", "location": "Israel", "url": "https://www.sysaid.com/careers", "job_type": "Full-time", "posted": "2026-05-18", "description": "Revenue Operations at SysAid ITSM platform. Applied May 25.", "fit_score": 7, "score_reason": "RevOps at Israeli B2B SaaS — ITSM vertical.", "ai_opener": "⏳ הגשתי 25/5. ממתין.", "location_ok": true, "scan_date": "2026-06-03", "initial_status": "applied", "initial_status_date": "2026-05-25", "contact": null}, {"company": "Swimm", "title": "Head of Marketing (AI-Native)", "location": "Israel / Remote", "url": "https://swimm.io/careers", "job_type": "Full-time", "posted": "2026-05-18", "description": "AI-Native Head of Marketing at Swimm. Applied May 25.", "fit_score": 6, "score_reason": "Marketing Head — developer tools, AI-native GTM.", "ai_opener": "⏳ הגשתי 25/5. ממתין.", "location_ok": true, "scan_date": "2026-06-03", "initial_status": "applied", "initial_status_date": "2026-05-25", "contact": null}, {"company": "Ocean Security", "title": "Marketing Manager", "location": "Israel", "url": "https://ocean.security/careers", "job_type": "Full-time", "posted": "2026-05-18", "description": "Marketing Manager - IL at Ocean Security. Applied May 25.", "fit_score": 5, "score_reason": "Marketing Manager — below seniority level.", "ai_opener": "⏳ הגשתי 25/5. ממתין.", "location_ok": true, "scan_date": "2026-06-03", "initial_status": "applied", "initial_status_date": "2026-05-25", "contact": null}, {"company": "MDalgorithms Inc.", "title": "Growth Marketer", "location": "Remote", "url": "https://www.workatastartup.com/companies/mdalgorithms", "job_type": "Full-time", "posted": "2026-05-20", "description": "Growth Marketer for Consumer AI Healthcare Startup via YC. Applied May 26.", "fit_score": 5, "score_reason": "Growth Marketer — consumer health AI, far from core B2B RevOps.", "ai_opener": "⏳ הגשתי 26/5 דרך YC. ממתין.", "location_ok": true, "scan_date": "2026-06-03", "initial_status": "applied", "initial_status_date": "2026-05-26", "contact": null}, {"company": "Cyolo", "title": "Director of Revenue Operations", "location": "Israel", "url": "https://cyolo.io/careers", "job_type": "Full-time", "posted": "2026-05-15", "description": "Director of Revenue Operations at Cyolo. Rejected June 3.", "fit_score": 7, "score_reason": "RevOps director — cybersecurity vertical.", "ai_opener": "❌ קיבלתי דחייה ב-3/6.", "location_ok": true, "scan_date": "2026-06-03", "initial_status": "rejected", "initial_status_date": "2026-06-03", "contact": null}, {"company": "Agora", "title": "VP Marketing", "location": "Israel / Remote", "url": "https://www.agora.io/careers", "job_type": "Full-time", "posted": "2026-05-20", "description": "VP Marketing at Agora. Rejected May 31.", "fit_score": 5, "score_reason": "Marketing VP — adjacent. נדחה.", "ai_opener": "❌ קיבלתי דחייה ב-31/5.", "location_ok": true, "scan_date": "2026-06-03", "initial_status": "rejected", "initial_status_date": "2026-05-31", "contact": null}, {"company": "NEEMA", "title": "VP Growth", "location": "Israel", "url": "https://neema.io/careers", "job_type": "Full-time", "posted": "2026-05-18", "description": "VP Growth at NEEMA fintech. Rejected May 29.", "fit_score": 6, "score_reason": "Growth VP — fintech. נדחה.", "ai_opener": "❌ קיבלתי דחייה ב-29/5.", "location_ok": true, "scan_date": "2026-06-03", "initial_status": "rejected", "initial_status_date": "2026-05-29", "contact": null}, {"company": "AGEERA", "title": "Head of Marketing", "location": "Tel Aviv District, Israel (Hybrid)", "url": "https://www.linkedin.com/jobs/", "job_type": "Full-time", "posted": "2026-06-03", "description": "Head of Marketing at AGEERA — Energy Storage Systems company. Applied June 3. Resume downloaded by employer.", "fit_score": 7, "score_reason": "Marketing leadership — energy/cleantech vertical, hybrid Tel Aviv.", "ai_opener": "🔥 המעסיק הוריד את קורות החיים! הגשתי 3/6.", "location_ok": true, "scan_date": "2026-06-03", "initial_status": "applied", "initial_status_date": "2026-06-03", "contact": null}, {"company": "Gefen Recruitment", "title": "Global Digital Marketing Director", "location": "Lev HaSharon Regional Council (Hybrid)", "url": "https://www.linkedin.com/jobs/", "job_type": "Full-time", "posted": "2026-05-20", "description": "Global Digital Marketing Director via Gefen Recruitment. Applied June 3.", "fit_score": 6, "score_reason": "Marketing Director via recruitment firm — global digital focus.", "ai_opener": "⏳ הגשתי 3/6. ממתין לחזרה.", "location_ok": true, "scan_date": "2026-06-03", "initial_status": "applied", "initial_status_date": "2026-06-03", "contact": null}, {"company": "Team8 Fintech", "title": "Marketing Manager", "location": "Tel Aviv-Yafo (On-site)", "url": "https://www.linkedin.com/jobs/", "job_type": "Full-time", "posted": "2026-03-01", "description": "Marketing Manager at Team8 Fintech. Applied ~3 months ago. No longer accepting applications.", "fit_score": 6, "score_reason": "Team8 portfolio — fintech marketing, applied 3 months ago.", "ai_opener": "⏳ הגשתי לפני ~3 חודשים. המשרה סגורה.", "location_ok": true, "scan_date": "2026-06-03", "initial_status": "applied", "initial_status_date": "2026-03-01", "contact": null}, {"company": "Connecteam", "title": "Senior Lifecycle & Automation Manager", "location": "Tel Aviv-Yafo (Hybrid)", "url": "https://connecteam.com/careers", "job_type": "Full-time", "posted": "2026-06-01", "description": "Senior Lifecycle & Automation Manager at Connecteam. Applied June 1 (2d ago from June 3).", "fit_score": 7, "score_reason": "Lifecycle & Automation — RevOps/GTM automation expertise match at Israeli SaaS.", "ai_opener": "⏳ הגשתי 1/6. ממתין לחזרה.", "location_ok": true, "scan_date": "2026-06-03", "initial_status": "applied", "initial_status_date": "2026-06-01", "contact": null}, {"company": "enso", "title": "Head of Growth (B2B)", "location": "Tel Aviv District, Israel (Hybrid)", "url": "https://www.linkedin.com/jobs/", "job_type": "Full-time", "posted": "2026-05-27", "description": "Head of Growth (B2B) at enso. Applied ~1 week ago. Application viewed by employer.", "fit_score": 8, "score_reason": "Head of Growth B2B — strong GTM/RevOps alignment, Tel Aviv startup.", "ai_opener": "👁️ המעסיק צפה במועמדות! הגשתי ~27/5.", "location_ok": true, "scan_date": "2026-06-03", "initial_status": "applied", "initial_status_date": "2026-05-27", "contact": null}, {"company": "Undisclosed", "title": "Marketing Team Lead", "location": "Haifa (On-site)", "url": "https://www.linkedin.com/jobs/", "job_type": "Full-time", "posted": "2026-05-20", "description": "Marketing Team Lead at undisclosed company in Haifa. Applied June 1 (3d ago).", "fit_score": 5, "score_reason": "Marketing Team Lead — Haifa on-site, undisclosed company.", "ai_opener": "⏳ הגשתי 1/6. חברה לא גלויה.", "location_ok": true, "scan_date": "2026-06-03", "initial_status": "applied", "initial_status_date": "2026-06-01", "contact": null}, {"company": "iLeadX", "title": "Director of Marketing Operations", "location": "Tel Aviv District, Israel (Hybrid)", "url": "https://www.linkedin.com/jobs/", "job_type": "Full-time", "posted": "2026-05-27", "description": "Director of Marketing Operations via iLeadX Executive Search. Applied ~1 week ago.", "fit_score": 8, "score_reason": "Marketing Ops Director — executive search firm, strong RevOps/GTM alignment.", "ai_opener": "⏳ הגשתי ~27/5 דרך iLeadX Executive Search. ממתין.", "location_ok": true, "scan_date": "2026-06-03", "initial_status": "applied", "initial_status_date": "2026-05-27", "contact": null}, {"company": "SmartUp Academy (Tickchak)", "title": "General Manager, Growth & Monetization", "location": "Raanana (Hybrid)", "url": "https://www.linkedin.com/jobs/", "job_type": "Full-time", "posted": "2026-05-29", "description": "General Manager, Growth & Monetization at SmartUp Academy / Tickchak. Applied 5d ago. Resume downloaded. Interview with Yair Fradkin on June 3, 13:15–13:45 via Zoom.", "fit_score": 9, "score_reason": "GM Growth & Monetization — exact seniority match, resume downloaded, interview secured.", "ai_opener": "📅 ראיון Zoom: 3/6 13:15–13:45 עם Yair Fradkin • 🔥 קורות החיים הורדו על ידי המעסיק!", "location_ok": true, "scan_date": "2026-06-03", "initial_status": "interview", "initial_status_date": "2026-06-03", "initial_rounds": [{"date": "2026-06-03", "interviewer": "Yair Fradkin", "stage": "ראיון מקצועי", "outcome": "pending", "note": "GM, Growth & Monetization • Zoom • yair@smartupacademy.org • 13:15"}], "contact": null}, {"company": "Undisclosed", "title": "AI Growth Marketing Manager", "location": "Tel Aviv District, Israel (Hybrid)", "url": "https://www.linkedin.com/jobs/", "job_type": "Full-time", "posted": "2026-05-27", "description": "AI Growth Marketing Manager at undisclosed company. Applied ~1 week ago. Application viewed.", "fit_score": 7, "score_reason": "AI Growth Marketing — AI-native GTM alignment, application viewed.", "ai_opener": "👁️ המעסיק צפה במועמדות! הגשתי ~27/5.", "location_ok": true, "scan_date": "2026-06-03", "initial_status": "applied", "initial_status_date": "2026-05-27", "contact": null}, {"company": "GBO International Financial Services", "title": "Growth & Funnel Manager (B2B Digital Marketing)", "location": "Tel Aviv District, Israel (Hybrid)", "url": "https://www.linkedin.com/jobs/", "job_type": "Full-time", "posted": "2026-05-27", "description": "Growth & Funnel Manager B2B at GBO International Financial Services. Applied ~1 week ago. Application viewed.", "fit_score": 7, "score_reason": "B2B Growth/Funnel — fintech/financial services, application viewed.", "ai_opener": "👁️ המעסיק צפה במועמדות! הגשתי ~27/5.", "location_ok": true, "scan_date": "2026-06-03", "initial_status": "applied", "initial_status_date": "2026-05-27", "contact": null}, {"company": "New Feldman (ניו פלדמן)", "title": "מנהל/ת שיווק", "location": "Haifa (On-site)", "url": "https://www.linkedin.com/jobs/", "job_type": "Full-time", "posted": "2026-05-27", "description": "מנהל/ת שיווק at New Feldman. Applied ~1 week ago.", "fit_score": 6, "score_reason": "Marketing Manager — Haifa on-site, local market.", "ai_opener": "⏳ הגשתי ~27/5. ממתין.", "location_ok": true, "scan_date": "2026-06-03", "initial_status": "applied", "initial_status_date": "2026-05-27", "contact": null}, {"company": "Variant (a16z SR006)", "title": "Founding Marketing", "location": "Tel Aviv District, Israel (On-site)", "url": "https://www.linkedin.com/jobs/", "job_type": "Full-time", "posted": "2026-05-13", "description": "Founding Marketing role at Variant — a16z Scout Fund SR006 backed company. Applied ~1 week ago. Application viewed.", "fit_score": 8, "score_reason": "Founding Marketing at a16z-backed startup — high-impact early role, application viewed.", "ai_opener": "👁️ המעסיק צפה במועמדות! חברה של a16z. הגשתי ~27/5.", "location_ok": true, "scan_date": "2026-06-03", "initial_status": "applied", "initial_status_date": "2026-05-27", "contact": null}, {"company": "BYO Inc", "title": "Marketing Manager", "location": "Tel Aviv District, Israel (On-site)", "url": "https://www.linkedin.com/jobs/", "job_type": "Full-time", "posted": "2026-05-13", "description": "Marketing Manager at BYO Inc. Applied ~1 week ago.", "fit_score": 6, "score_reason": "Marketing Manager — Tel Aviv on-site.", "ai_opener": "⏳ הגשתי ~27/5. ממתין.", "location_ok": true, "scan_date": "2026-06-03", "initial_status": "applied", "initial_status_date": "2026-05-27", "contact": null}, {"company": "Slang.ai", "title": "Revenue Operations Director", "location": "Remote", "url": "https://www.linkedin.com/jobs/view/revenue-operations-director-at-slang-ai-4385608313", "job_type": "Full-time", "posted": "2026-06-03", "description": "Own the design, execution, and evolution of Slang.ai's entire revenue engine. Partner closely with the VP of Revenue and senior leadership to translate growth goals into scalable systems, operating across Sales, Marketing, Customer Experience, Finance, Product, and People Ops. Slang.ai is a leading voice AI provider for the restaurant industry.", "fit_score": 9, "score_reason": "Exceptional match — senior RevOps Director owning full revenue engine across Sales/Marketing/CX/Finance. $150-160K remote, aligns perfectly with Omri's 15+ years B2B SaaS RevOps leadership.", "ai_opener": "Omri here — I've spent 15+ years building and scaling revenue engines at B2B SaaS companies, and Slang.ai's challenge of operationalizing a fast-growing AI platform resonates deeply. Owning the full GTM stack across Sales, Marketing, and CX is exactly the kind of cross-functional RevOps leadership I thrive in.", "location_ok": true, "scan_date": "2026-06-03", "contact": {"name": "Anastasiya Hillebrand", "email": "anastasiya.hillebrand@slang.ai"}, "salary": "$150,000–$160,000", "initial_status": "saved"}, {"company": "Valsoft Corporation", "title": "GTM Engineer", "location": "Remote (Europe/UK)", "url": "https://jobs.workable.com/view/f49rwAHfNbEGox6dJAAKSS/remote-gtm-engineer-in-united-kingdom-at-valsoft-corporation", "job_type": "Full-time", "posted": "2026-06-01", "description": "Build and operate AI systems that drive pipeline, conversion, and revenue expansion autonomously. Deploy agentic AI tools to automate the RevOps pipeline, work closely with Marketing, Sales, and Customer Experience. Reports to VP of Sales with dotted line to Engineering.", "fit_score": 8, "score_reason": "Strong match on GTM Engineer title and AI-native RevOps automation focus. Remote EU-friendly.", "ai_opener": "Omri here — building AI-driven GTM systems that automate pipeline and revenue workflows is exactly what I've been focused on. Your mandate to deploy agentic AI across RevOps aligns perfectly with my 15+ years scaling GTM infrastructure.", "location_ok": true, "scan_date": "2026-06-03", "contact": null, "initial_status": "saved"}, {"company": "Remote.com", "title": "GTM Engineer, Revenue Operations", "location": "Remote EMEA", "url": "https://www.linkedin.com/jobs/view/gtm-engineer-revenue-operations-at-remote-4229105154", "job_type": "Full-time", "posted": "2026-05-28", "description": "Design, manage, and scale Remote's GTM technology. Work cross-functionally with individual contributors and executives to ensure the GTM tech stack supports the revenue organization at scale.", "fit_score": 8, "score_reason": "Strong match — GTM Engineer role at a globally recognized remote-first company, EMEA-eligible including Israel.", "ai_opener": "Omri here — I've spent 15+ years designing and scaling GTM tech stacks for distributed revenue organizations. Remote.com's mission to enable global employment aligns with the cross-functional RevOps work I love most.", "location_ok": true, "scan_date": "2026-06-03", "contact": null, "initial_status": "saved"}, {"company": "Glopal", "title": "Head of Growth Marketing (B2B SaaS)", "location": "Remote (Global)", "url": "https://startup.jobs/head-of-growth-marketing-b2b-saas-remote-glopal-7595192", "job_type": "Full-time", "posted": "2026-05-30", "description": "Own the lead number and work with Sales to define qualified pipeline. Build demand gen engine using HubSpot, Clay, Salesloft/Lemlist. 5+ years B2B SaaS Marketing, scale-up environment. Measures success in Qualified Pipeline, not traffic. Hands-on, extreme ownership culture.", "fit_score": 9, "score_reason": "Exceptional match — Head of Growth owning full pipeline generation in B2B SaaS scale-up. HubSpot/Clay/Salesloft stack aligns with Omri's expertise.", "ai_opener": "Omri here — owning the lead number and building a pipeline machine from the ground up in a B2B SaaS scale-up is exactly my zone. I've built demand gen engines with HubSpot and Clay at multiple companies and I know what it means to measure success in qualified pipeline, not vanity metrics.", "location_ok": true, "scan_date": "2026-06-03", "contact": null, "initial_status": "saved"}, {"company": "Convoso", "title": "Sr. Director of Revenue Operations & Business Analytics", "location": "Remote (USA)", "url": "https://jobgether.com/offer/696b9d0a96ae97ba4ad70154-remote-sr-director-of-revenue-operations-business-analytics", "job_type": "Full-time", "posted": "2026-06-02", "description": "Design, operate, and continuously improve systems, processes, and insights powering revenue performance across Marketing, Sales, Customer Success, Product, and Finance. Own revenue data and truth, improve forecast and pipeline predictability, establish operating cadence for scale. Senior hands-on leadership role.", "fit_score": 9, "score_reason": "Exceptional match — Sr. Director RevOps + Business Analytics, full GTM ownership, $160-175K. Cross-functional leadership across all revenue functions.", "ai_opener": "Omri here — owning revenue data and truth across Marketing, Sales, CS, and Finance while building forecast predictability is the exact work I've done for 15+ years. The intersection of RevOps execution and business analytics is where I create the most leverage.", "location_ok": true, "scan_date": "2026-06-03", "contact": null, "salary": "$160,000–$175,000", "initial_status": "saved"}, {"company": "Theator", "title": "Growth Marketing Lead", "location": "Tel Aviv, Israel", "url": "https://www.crunchbase.com/organization/theator", "job_type": "Full-time", "posted": "2026-06-01", "description": "Own how Theator shows up in the market. Turn product and engineering outcomes into market momentum, demand, and qualified leads. Translate complex AI surgical platform capabilities into simple outcome-driven stories. Own channel strategy: LinkedIn, email, partnerships, communities, events. AI fluency required — actively use AI to create leverage. High autonomy, fast-moving startup.", "fit_score": 8, "score_reason": "Strong match — Growth Marketing Lead at AI healthtech startup in Tel Aviv. High autonomy, AI-native, full-funnel ownership. Israel-based.", "ai_opener": "Omri here — turning complex product capabilities into clear market momentum is exactly what I do. At Theator specifically, I'm drawn to the challenge of making surgical AI impossible to ignore in a market where credibility and proof points are everything.", "location_ok": true, "scan_date": "2026-06-03", "contact": null, "initial_status": "saved"}, {"company": "Neon Security", "title": "Revenue Operations / GTM", "location": "Israel", "url": "https://neonsecurity.ai", "job_type": "Full-time", "posted": "2026-05-20", "description": "Cybersecurity startup. ראיון התקיים עם Inna.", "fit_score": 8, "score_reason": "סטארטאפ סייבר — התאמה ל-RevOps/GTM.", "ai_opener": "📅 ראיון 30 דק׳ עם Inna: 27/5 בשעה 09:30 • Google Meet: meet.google.com/gjy-zbbg-ybm • inna@neonsecurity.ai", "location_ok": true, "scan_date": "2026-05-27", "initial_status": "interview", "initial_status_date": "2026-05-27", "initial_rounds": [{"date": "2026-05-27", "interviewer": "Inna", "stage": "טלפוני / HR", "outcome": "passed", "note": "30 min • Google Meet gjy-zbbg-ybm • inna@neonsecurity.ai • 09:30"}], "contact": null}];
+const JOBS=__JOBS_JSON__;
 
 /* ── new badge ── */
 const latestScan=JOBS.reduce((max,j)=>(j.scan_date||'')>max?(j.scan_date||''):max,'');
@@ -886,7 +1100,9 @@ function setSort(b){
 }
 function setAgeFilter(b){fAge=b.dataset.age;document.querySelectorAll("[data-age]").forEach(c=>c.classList.remove("on"));b.classList.add("on");render();}
 function onSearch(inp){fQ=inp.value.trim().toLowerCase();document.getElementById("search-clear").classList.toggle("show",!!fQ);render();}
-function clearSearch(){fQ="";const i=document.getElementById("search-inp");i.value="";document.getElementById("search-clear").classList.remove("show");render();}
+function clearSearch(){fQ="";const i=document.getElementById("search-inp");i.value="";document.getElementById("search-clear").classList.remove("show");const id=document.getElementById("search-inp-d");if(id)id.value="";const icd=document.getElementById("search-clear-d");if(icd)icd.classList.remove("show");render();}
+function onSearchDesktop(inp){fQ=inp.value.trim().toLowerCase();const icd=document.getElementById("search-clear-d");if(icd)icd.classList.toggle("show",!!fQ);render();}
+function clearSearchDesktop(){fQ="";const id=document.getElementById("search-inp-d");if(id)id.value="";const icd=document.getElementById("search-clear-d");if(icd)icd.classList.remove("show");render();}
 
 /* ── collapse / expand ── */
 function toggleCard(el){el.classList.toggle("open");}
@@ -1056,8 +1272,20 @@ function closeAnalytics(){document.getElementById("sheet").classList.remove("sho
 /* ── RENDER ── */
 function render(){
   const stats=computeStats();
-  document.getElementById("hero-meta").textContent=`Jun 06, 2026 · ${stats.total} משרות פעילות`;
+  document.getElementById("hero-meta").textContent=`__LAST_UPDATED__ · ${stats.total} משרות פעילות`;
   document.getElementById("hero-coach").textContent=coachLine(stats);
+
+  /* ── Desktop top-bar stats chips ── */
+  const dtbEl=document.getElementById("dtb-stats");
+  if(dtbEl){
+    const statItems=[
+      {v:stats.total,l:'משרות',stage:'all'},
+      {v:stats.by.applied||0,l:'הוגשו',stage:'applied'},
+      {v:stats.by.interview||0,l:'ראיונות',stage:'interview'},
+      {v:stats.by.offer||0,l:'הצעות',stage:'offer'},
+    ];
+    dtbEl.innerHTML=statItems.map(s=>`<button class="dtb-stat${fStage===s.stage?' active':''}" onclick="setFunnelFilter('${s.stage}')"><span class="v">${s.v}</span><span class="l">${s.l}</span></button>`).join('');
+  }
 
   const funnelStages=STAGES.filter(s=>s.key!=="rejected");
   const maxCount=Math.max(1,...funnelStages.map(s=>stats.by[s.key]||0));
@@ -1245,7 +1473,7 @@ function render(){
     if(!vis.some(o=>o.i===window._selIndex))window._selIndex=vis.length?vis[0].i:-1;
     document.getElementById("container").innerHTML=vis.map(o=>buildRailRow(o.x,o.i,o.i===window._selIndex)).join("");
     const selO=vis.find(o=>o.i===window._selIndex);
-    document.getElementById("detail").innerHTML=selO?window._buildCard(selO.x,selO.i,true,true):'<div class="detail-empty">בחר משרה מהרשימה כדי לראות פרטים</div>';
+    document.getElementById("detail").innerHTML=selO?window._buildCard(selO.x,selO.i,true,true):'<div class="detail-empty"><span class="de-icon material-symbols-rounded">work_outline</span><div class="de-text">בחר משרה מהרשימה</div><div class="de-sub">לחץ על משרה כדי לראות פרטים</div></div>';
   }else{
     document.getElementById("detail").innerHTML='';
     document.getElementById("container").innerHTML=list.map((x,i)=>window._buildCard(x,i,false,jobVisible(x))).join("");
@@ -1260,6 +1488,17 @@ function render(){
 }
 
 function selectJob(i){window._selIndex=i;render();}
+
+/* ── Navigation rail ── */
+function nr(section){
+  document.querySelectorAll('.nr-item').forEach(b=>b.classList.remove('active'));
+  const btn=document.getElementById('nr-'+section);
+  if(btn)btn.classList.add('active');
+  if(section==='analytics')openAnalytics();
+}
+function openSupport(){
+  showToast('💙 אתה עושה עבודה מצוינת — כל הגשה מקרבת אותך');
+}
 function buildRailRow(x,i,sel){
   const j=x.j,st=x.st,stage=x.stage;
   const fc=fitColor(j.fit_score),sc=stageColor(STAGES.find(s=>s.key===stage)?.hue||235);
@@ -1456,7 +1695,8 @@ function applyTheme(t){
   document.documentElement.setAttribute('data-theme',t);
   const ico=document.getElementById('theme-ico');
   if(ico)ico.textContent=(t==='dark')?'light_mode':'dark_mode';
-  const tc=document.querySelector('meta[name="theme-color"]:not([media])')||document.querySelector('meta[name="theme-color"]');
+  const ico2=document.getElementById('theme-ico2');
+  if(ico2)ico2.textContent=(t==='dark')?'light_mode':'dark_mode';
 }
 function initTheme(){
   let t=localStorage.getItem('theme');
