@@ -267,6 +267,19 @@
     .modal-close{background:var(--surface-container-highest);border:none;width:38px;height:38px;border-radius:50%;font-size:1.1rem;cursor:pointer;color:var(--inkSoft)}
     .modal-body{padding:6px 20px 16px;overflow-y:auto;white-space:pre-wrap;font-size:.8rem;line-height:1.55;color:var(--ink);font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
     .modal-foot{padding:14px 20px;display:flex;gap:9px}
+    /* live chat */
+    .modal-body.chat{white-space:normal;font-family:var(--font-ui);font-size:.92rem;display:flex;flex-direction:column;gap:12px}
+    .chat-msg{max-width:88%;padding:10px 14px;border-radius:18px;line-height:1.5;white-space:pre-wrap;word-break:break-word}
+    .chat-msg.user{align-self:flex-start;background:var(--primary-container);color:var(--on-primary-container);border-bottom-right-radius:6px}
+    .chat-msg.ai{align-self:flex-end;background:var(--surfaceVariant,#eef0f5);color:var(--ink);border-bottom-left-radius:6px}
+    .chat-msg.typing{opacity:.6;font-style:italic}
+    .chat-msg.err{align-self:center;background:#ffd7d7;color:#8b0000;font-size:.82rem;text-align:center}
+    .m-chatbar{display:flex;gap:8px;align-items:flex-end;padding:10px 16px;border-top:1px solid var(--line,#e3e5ec)}
+    .m-chatbar textarea{flex:1;resize:none;max-height:140px;border:1px solid var(--line,#d8dae2);border-radius:18px;padding:10px 14px;font-family:var(--font-ui);font-size:16px;line-height:1.4;background:var(--surface,#fff);color:var(--ink)}
+    .m-send{flex:0 0 auto;width:42px;height:42px;border:none;border-radius:50%;background:var(--primary,#4F6BED);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .m-send:disabled{opacity:.45;cursor:not-allowed}
+    html[data-theme="dark"] .chat-msg.ai{background:#2a2d36}
+    html[data-theme="dark"] .m-chatbar textarea{background:#1f2229;border-color:#3a3d47}
     .modal-foot .act-btn{min-width:0}
 
     /* analytics */
@@ -558,6 +571,10 @@
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
     <div class="modal-body" id="m-body"></div>
+    <div class="m-chatbar" id="m-chatbar" style="display:none">
+      <textarea id="m-chatinput" rows="1" placeholder="כתוב הודעה… (Enter לשליחה)" oninput="autoGrow(this)" onkeydown="chatKey(event)"></textarea>
+      <button class="m-send" id="m-send" onclick="sendChat()"><span class="material-symbols-rounded">send</span></button>
+    </div>
     <div class="modal-foot" id="m-foot">
       <button class="act-btn act-cv" onclick="copyModalText()">העתק 📋</button>
       <button class="act-btn act-open" id="m-pdf-btn" onclick="printCV()">PDF 🖨️</button>
@@ -603,6 +620,13 @@
       <div class="d-hint">העלה קובץ זה לתיקיית job_search/ כדי לשנות את חיפוש המשרות</div>
     </div>
     <div class="d-tab-panel" id="dtab-connect">
+      <div class="d-section">
+        <div class="d-lbl">🔑 Anthropic API Key — לצ'אט חי בתוך המערכת</div>
+        <input class="d-inp" id="api-key-inp" type="password" placeholder="sk-ant-..." autocomplete="off"/>
+        <button class="d-btn primary" onclick="saveApiKey()" style="margin-top:6px">שמור מפתח</button>
+        <div class="d-status" id="api-key-status"></div>
+        <div class="d-hint">נשמר רק בדפדפן שלך (localStorage), לא נשלח לשום מקום חוץ מ-Anthropic. בלי מפתח — הכפתורים מעתיקים פרומפט במקום לפתוח צ'אט.</div>
+      </div>
       <div class="d-section">
         <div class="d-lbl">GitHub Token</div>
         <input class="d-inp" id="gh-token-inp" type="password" placeholder="ghp_..." autocomplete="off"/>
@@ -941,8 +965,88 @@ function openCV(i){
   document.getElementById("m-pdf-btn").style.display="";
   document.getElementById("modal").classList.add("show");
 }
-function closeModal(){document.getElementById("modal").classList.remove("show");}
+function closeModal(){document.getElementById("modal").classList.remove("show");document.getElementById("m-chatbar").style.display="none";const b=document.getElementById("m-body");b.className="modal-body";}
 function copyModalText(){navigator.clipboard.writeText(_cvText).then(()=>showToast(_modalMode==="cv"?"קורות חיים הועתקו!":"הפרומפט הועתק — הדבק ב-Claude.ai"));}
+
+/* ══════════ LIVE CHAT ENGINE (direct Anthropic API) ══════════ */
+const CHAT_MODEL="claude-sonnet-4-6";
+function getApiKey(){return localStorage.getItem('anthropic_key')||'';}
+function saveApiKey(){
+  const v=document.getElementById('api-key-inp').value.trim();
+  if(v){localStorage.setItem('anthropic_key',v);document.getElementById('api-key-status').textContent='מפתח שמור ✓ — הכפתורים יפתחו צ\'אט חי';showToast('מפתח API נשמר');}
+  else{localStorage.removeItem('anthropic_key');document.getElementById('api-key-status').textContent='';showToast('מפתח הוסר');}
+}
+let _chat={system:"",messages:[],busy:false};
+function autoGrow(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,140)+'px';}
+function chatKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}}
+function appendMsg(role,text,cls){
+  const body=document.getElementById('m-body');
+  const d=document.createElement('div');
+  d.className='chat-msg '+(cls||role);
+  d.textContent=text;
+  body.appendChild(d);body.scrollTop=body.scrollHeight;
+  return d;
+}
+async function callClaude(){
+  const key=getApiKey();
+  const res=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:CHAT_MODEL,max_tokens:1500,system:_chat.system,messages:_chat.messages})
+  });
+  if(!res.ok){const t=await res.text();throw new Error(res.status+' '+t.slice(0,200));}
+  const data=await res.json();
+  return (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n').trim();
+}
+async function runChatTurn(){
+  _chat.busy=true;
+  const send=document.getElementById('m-send');if(send)send.disabled=true;
+  const typing=appendMsg('ai','מקליד…','ai typing');
+  try{
+    const reply=await callClaude();
+    typing.remove();
+    _chat.messages.push({role:'assistant',content:reply});
+    appendMsg('ai',reply);
+  }catch(err){
+    typing.remove();
+    appendMsg('ai','אופס — קריאה ל-Claude נכשלה. בדוק שהמפתח תקין בהגדרות.\n\n'+err.message,'err');
+  }finally{
+    _chat.busy=false;const s=document.getElementById('m-send');if(s)s.disabled=false;
+  }
+}
+function sendChat(){
+  if(_chat.busy)return;
+  const inp=document.getElementById('m-chatinput');
+  const text=inp.value.trim();if(!text)return;
+  inp.value='';autoGrow(inp);
+  _chat.messages.push({role:'user',content:text});
+  appendMsg('user',text);
+  runChatTurn();
+}
+/* Launch: if API key present → live chat; else → copy-prompt fallback */
+function launchChat({title,sub,system,kickoff,fallbackText,pdf}){
+  document.getElementById('m-title').textContent=title;
+  document.getElementById('m-sub').textContent=sub||'';
+  const body=document.getElementById('m-body');
+  const bar=document.getElementById('m-chatbar');
+  const foot=document.getElementById('m-foot');
+  if(getApiKey()){
+    _modalMode='chat';
+    _chat={system:system,messages:[],busy:false};
+    body.className='modal-body chat';body.innerHTML='';
+    bar.style.display='flex';foot.style.display='none';
+    document.getElementById('modal').classList.add('show');
+    if(kickoff){_chat.messages.push({role:'user',content:kickoff});runChatTurn();}
+    setTimeout(()=>document.getElementById('m-chatinput').focus(),120);
+  }else{
+    // fallback: show the prompt for copy
+    _modalMode='prompt';_cvText=fallbackText||(system+'\n\n'+(kickoff||''));
+    body.className='modal-body';body.textContent=_cvText;
+    bar.style.display='none';foot.style.display='flex';
+    document.getElementById('m-pdf-btn').style.display=pdf?'':'none';
+    document.getElementById('modal').classList.add('show');
+  }
+}
 function copyCV(){copyModalText();}
 function downloadCV(){
   const b=new Blob([_cvText],{type:"text/plain;charset=utf-8"}),a=document.createElement("a");
@@ -971,8 +1075,8 @@ function printCV(){
 /* ── FEATURE: interview prep prompt ── */
 function openPrep(i){
   const j=window._sorted[i],cvData=getCV();
-  _modalMode="prep";_cvCompany=j.company;
-  _cvText=`אתה מאמן קריירה בכיר. הכן אותי לראיון בעברית.
+  _cvCompany=j.company;
+  const prompt=`אתה מאמן קריירה בכיר. הכן אותי לראיון בעברית.
 
 ## המשרה
 חברה: ${j.company}
@@ -991,11 +1095,13 @@ ${cvData.summary}
 4. דגל אדום אחד שכדאי לי להימנע ממנו
 
 תן תשובה מובנית וקצרה.`;
-  document.getElementById("m-title").textContent="🎯 הכנה לראיון — "+j.company;
-  document.getElementById("m-sub").textContent=j.title;
-  document.getElementById("m-body").textContent=_cvText;
-  document.getElementById("m-pdf-btn").style.display="none";
-  document.getElementById("modal").classList.add("show");
+  launchChat({
+    title:"🎯 הכנה לראיון — "+j.company,
+    sub:j.title,
+    system:"אתה מאמן קריירה בכיר ב-RevOps/GTM. ענה בעברית, מובנה וקצר. אחרי ההכנה, הזמן את המשתמש לשאול שאלות המשך או לתרגל.",
+    kickoff:prompt,
+    fallbackText:prompt
+  });
 }
 
 /* ── FEATURE: interactive interview practice (stage-aware, emotionally supportive) ── */
@@ -1020,8 +1126,8 @@ const STAGE_GUIDE={
 function openPractice(i){
   const j=window._sorted[i],cvData=getCV();
   const stage=currentStage(j);
-  _modalMode="practice";_cvCompany=j.company;
-  _cvText=`אתה מאמן ראיונות בכיר וגם מאמן מנטלי. אנהל איתך **סימולציית ראיון אינטראקטיבית** בעברית — שאלה, התשובה שלי, ואז הפידבק שלך. עבור אחת-אחת, לא הכל ביחד.
+  _cvCompany=j.company;
+  const sysPrompt=`אתה מאמן ראיונות בכיר וגם מאמן מנטלי. אנהל איתך **סימולציית ראיון אינטראקטיבית** בעברית — שאלה, התשובה שלי, ואז הפידבק שלך. עבור אחת-אחת, לא הכל ביחד.
 
 ## השלב שאני מתאמן עליו: ${stage}
 ${STAGE_GUIDE[stage]||""}
@@ -1050,18 +1156,20 @@ ${cvData.summary}
 אתה מאמן שמעצים, לא שובר. גם כשאתה מבקר — תעשה את זה בצורה שמשאירה אותי עם ביטחון ואנרגיה לראיון. הזכר לי כמה כבר הגעתי. המטרה היא שאצא מהתרגול חזק יותר, לא מותש.
 
 תתחיל עכשיו עם השאלה הראשונה.`;
-  document.getElementById("m-title").textContent="🎙️ תרגול ראיון — "+j.company;
-  document.getElementById("m-sub").textContent=stage+" · "+j.title;
-  document.getElementById("m-body").textContent=_cvText;
-  document.getElementById("m-pdf-btn").style.display="none";
-  document.getElementById("modal").classList.add("show");
+  launchChat({
+    title:"🎙️ תרגול ראיון — "+j.company,
+    sub:stage+" · "+j.title,
+    system:sysPrompt,
+    kickoff:"אני מוכן. תתחיל בבקשה בשאלה הראשונה.",
+    fallbackText:sysPrompt
+  });
 }
 
 /* ── FEATURE: company dossier prompt ── */
 function openDossier(i){
   const j=window._sorted[i];
-  _modalMode="dossier";_cvCompany=j.company;
-  _cvText=`חקור עבורי את החברה הבאה והכן דוסייר תמציתי בעברית (השתמש בחיפוש אינטרנט עדכני).
+  _cvCompany=j.company;
+  const prompt=`חקור עבורי את החברה הבאה והכן דוסייר תמציתי בעברית.
 
 חברה: ${j.company}
 ${j.url?`קישור: ${j.url}`:""}
@@ -1070,17 +1178,19 @@ ${j.url?`קישור: ${j.url}`:""}
 1. מה החברה עושה (משפט-שניים)
 2. שלב/גיוס: כמה גייסו, סבב אחרון, משקיעים בולטים
 3. גודל: מספר עובדים משוער, איפה הם ממוקמים
-4. 2-3 חדשות / אירועים אחרונים (12 חודשים)
+4. 2-3 חדשות / אירועים אחרונים
 5. תרבות ומוניטין כמעסיק
 6. למה זה רלוונטי למישהו מתחום RevOps/GTM
 7. דגל אדום אחד אם יש
 
-תן תשובה קצרה ומדויקת עם מקורות.`;
-  document.getElementById("m-title").textContent="🏢 דוסייר חברה — "+j.company;
-  document.getElementById("m-sub").textContent=j.title;
-  document.getElementById("m-body").textContent=_cvText;
-  document.getElementById("m-pdf-btn").style.display="none";
-  document.getElementById("modal").classList.add("show");
+תן תשובה קצרה ומדויקת. אם אין לך מידע עדכני על פרט מסוים — ציין זאת בכנות.`;
+  launchChat({
+    title:"🏢 דוסייר חברה — "+j.company,
+    sub:j.title,
+    system:"אתה אנליסט שמכין דוסיירים על חברות הייטק. ענה בעברית, תמציתי ומדויק. אם חסר לך מידע עדכני, אמור זאת — אל תמציא. הזמן את המשתמש לשאול שאלות המשך.",
+    kickoff:prompt,
+    fallbackText:prompt
+  });
 }
 
 /* ── FEATURE: pipeline analytics ── */
@@ -1187,14 +1297,14 @@ ${trackerSummary}
 }
 
 function openSupport(){
-  const cvData=getCV();
-  _modalMode="support";_cvCompany="";
-  _cvText=_supportPrompt("");
-  document.getElementById("m-title").textContent="💙 תמיכה רגשית";
-  document.getElementById("m-sub").textContent="שיחה עם מאמן מנטלי — הדבק ל-Claude";
-  document.getElementById("m-body").textContent=_cvText;
-  document.getElementById("m-pdf-btn").style.display="none";
-  document.getElementById("modal").classList.add("show");
+  const sys=_supportPrompt("");
+  launchChat({
+    title:"💙 תמיכה רגשית",
+    sub:"שיחה עם מאמן מנטלי",
+    system:sys,
+    kickoff:"היי.",
+    fallbackText:sys
+  });
 }
 
 function openJobSupport(i){
@@ -1204,13 +1314,14 @@ function openJobSupport(i){
   const lastRound=rounds.length?rounds[rounds.length-1]:null;
   const stageCtx=lastRound?`\n- שלב נוכחי בחברה הזו: ${lastRound.stage} (${lastRound.outcome==="pending"?"ממתין לתשובה":lastRound.outcome==="passed"?"עבר ✅":"נדחה ❌"})`:"";
   const jobCtx=`\n\nהקשר ספציפי — חברה: ${j.company} | תפקיד: ${j.title} | סטטוס: ${st.status||"שמור"}${stageCtx}`;
-  _modalMode="support";_cvCompany=j.company;
-  _cvText=_supportPrompt(jobCtx);
-  document.getElementById("m-title").textContent="💙 תמיכה — "+j.company;
-  document.getElementById("m-sub").textContent=j.title+" · "+j.location;
-  document.getElementById("m-body").textContent=_cvText;
-  document.getElementById("m-pdf-btn").style.display="none";
-  document.getElementById("modal").classList.add("show");
+  const sys=_supportPrompt(jobCtx);
+  launchChat({
+    title:"💙 תמיכה — "+j.company,
+    sub:j.title+" · "+j.location,
+    system:sys,
+    kickoff:"היי.",
+    fallbackText:sys
+  });
 }
 
 /* ── RENDER ── */
@@ -1471,12 +1582,13 @@ ${cvData.summary}
 
 טון: מקצועי אך אנושי. לא תבניתי. לא buzzwords ריקים.`;
 
-  navigator.clipboard.writeText(prompt).then(()=>{
-    const orig=btn.innerHTML;
-    btn.textContent="הועתק! ✓";btn.classList.add("copied");
-    showToast("פרומפט למכתב הועתק — הדבק ב-Claude.ai");
-    setTimeout(()=>{btn.innerHTML=orig;btn.classList.remove("copied");},2200);
-  }).catch(()=>showToast("ההעתקה נכשלה"));
+  launchChat({
+    title:"✉️ מכתב מקדים — "+j.company,
+    sub:j.title,
+    system:"אתה כותב מכתבי מקדים מקצועיים בעברית. טון אנושי, לא תבניתי, בלי buzzwords ריקים. אחרי שתכתוב, הצע למשתמש לחדד או לקצר.",
+    kickoff:prompt,
+    fallbackText:prompt
+  });
 }
 function shareWA(i){
   const j=window._sorted[i],c=j.contact;
@@ -1556,6 +1668,9 @@ function openSettings(tab){
   const tk=localStorage.getItem('gh_token')||'';
   document.getElementById('gh-token-inp').value=tk;
   document.getElementById('gh-token-status').textContent=tk?'Token שמור ✓':'';
+  const ak=getApiKey();
+  document.getElementById('api-key-inp').value=ak;
+  document.getElementById('api-key-status').textContent=ak?'מפתח שמור ✓ — הכפתורים פותחים צ\'אט חי':'';
   if(tab)switchDrawerTabByKey(tab);
 }
 function closeSettings(){
