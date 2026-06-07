@@ -48,12 +48,12 @@ git push        → GitHub Pages (live URL, always current)
 ```
 
 **2. The Automation**
-GitHub Actions runs the pipeline 3× daily (Sun–Thu). A second workflow deploys `docs/` to GitHub Pages. Total cost: $0 for compute.
+GitHub Actions runs the pipeline 3× daily (Sun–Thu). A second workflow deploys `docs/` to GitHub Pages.
 
 **3. The Tracker**
 A single HTML file, Material 3 design, mobile-first, works offline as a PWA. Every job card has: fit score, status (saved / applied / interview / offer / rejected), interview rounds with dates and interviewers, notes — and a full set of AI-powered tools built directly into each card.
 
-**Model split:** Opus for search (quality matters — you need real URLs, not hallucinations), Haiku for scoring (fast, cheap, runs on 14 jobs per cycle). This alone cuts API cost by ~80%.
+**Model split:** Opus for search (quality matters — you need real URLs, not hallucinations), Haiku for scoring (fast, runs on 14 jobs per cycle).
 
 ---
 
@@ -198,8 +198,6 @@ This took two hours to build. It should have been in version one.
 | Passed interviews | 3 (Neon Security, Sauce, Gambit Security) |
 | Rejections | 3 (Cyolo, Agora, NEEMA) |
 | Jobs found automatically by pipeline | 13 |
-| API cost (10 days) | **$25** |
-
 13 out of 52 jobs came from the automated scanner. The other 39 I added manually — LinkedIn, referrals, direct outreach. The system augments the search; it doesn't replace the human part.
 
 ---
@@ -276,7 +274,7 @@ Ask me before any significant architectural decision. Start with onboarding.
 
 ### The 4 Setup Steps
 
-1. **Get an Anthropic API key** — `console.anthropic.com` → add $20–50 credit → create key. (Pay-as-you-go. Not Claude Pro. I spent $25 in 10 days of heavy use.)
+1. **Get an Anthropic API key** — `console.anthropic.com` → create key. Pay-as-you-go, no subscription.
 
 2. **Paste the prompt above into Claude Code** — answer the onboarding questions about your roles and experience.
 
@@ -295,8 +293,8 @@ Ask me before any significant architectural decision. Start with onboarding.
 **1. Single source of truth is not a philosophy — it's a constraint you enforce in code.**
 The moment my pipeline and my manual data lived in two places, I lost data. One JSON file. One read path. One write path. Anything else is a bug waiting to happen.
 
-**2. Split your models by task, not by budget.**
-Opus for search (URL quality matters — hallucinated links waste your time). Haiku for scoring (42 calls per day at a fraction of the cost, negligible quality difference for this task). The split saves ~80% on API costs.
+**2. Split your models by task.**
+Opus for search — URL quality matters, hallucinated links waste your time. Haiku for scoring — fast, runs 42 calls per day, negligible quality difference for this task.
 
 **3. The emotional features matter as much as the analytical ones.**
 I built the emotional support chat because I needed it, not because it was on my roadmap. Job searching is genuinely hard emotionally. A system that helps you track conversion rates but ignores the human experience of rejection is only half a product.
@@ -315,9 +313,7 @@ If you want to build your own: the prompt above is exactly what built mine.
 👉 **Repo (open source):** github.com/omriki55/family-chores-admin
 👉 **Live tracker:** omriki55.github.io/family-chores-admin
 
-The architecture is public. The data is yours — your GitHub, your API key.
-
-**A note on cost:** I spent $25 over 10 days of active use — automated scans 3× daily, plus every dossier, prep session, voice practice, and chat adds to the bill. If you use the AI features heavily (like I do), budget ~$50–75/month. If you only run the pipeline and skip the chat features, it's closer to $5–10/month. The cost scales exactly with how much you use it — no subscription, no minimum.
+The architecture is public. The data is yours — your GitHub, your API key, pay as you go.
 
 If you build it and hit a wall — reach out. Happy to share.
 
