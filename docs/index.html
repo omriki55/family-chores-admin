@@ -2524,7 +2524,7 @@ function render(){
   const stats=computeStats();
   const gEl=document.getElementById("hero-greeting");
   if(gEl){const h=new Date().getHours();const g=h<5?"לילה טוב":h<12?"בוקר טוב":h<17?"צהריים טובים":h<21?"ערב טוב":"לילה טוב";gEl.textContent=`${g}, עומרי 👋`;}
-  document.getElementById("hero-meta").textContent=`Jun 08, 2026 · ${stats.total} משרות פעילות`;
+  document.getElementById("hero-meta").textContent=`Jun 09, 2026 · ${stats.total} משרות פעילות`;
   document.getElementById("hero-coach").textContent=coachLine(stats);
 
   /* ── Desktop top-bar stats chips ── */
