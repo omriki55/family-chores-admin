@@ -9,6 +9,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet"/>
+  <script src="./supabase-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     /* ===== CSS VARIABLES ===== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -60,6 +62,62 @@
     }
     .lang-toggle:hover { background: var(--surface-container); border-color: var(--primary); }
     .lang-toggle .material-symbols-rounded { font-size: 16px; }
+
+    /* ===== AUTH ===== */
+    .auth-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(17,20,45,.45);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .auth-overlay.open { display: flex; }
+    .auth-modal {
+      background: var(--surface);
+      border-radius: 24px;
+      box-shadow: var(--e3);
+      padding: 32px 28px;
+      width: 100%;
+      max-width: 400px;
+      animation: fadeSlide .25s ease;
+    }
+    .auth-tabs { display: flex; gap: 8px; margin-bottom: 24px; }
+    .auth-tab {
+      flex: 1;
+      padding: 10px;
+      border-radius: 100px;
+      border: 1.5px solid var(--line);
+      background: transparent;
+      font-family: 'Heebo', sans-serif;
+      font-size: .95rem; font-weight: 600;
+      color: var(--ink-soft);
+      cursor: pointer;
+      transition: background .15s, color .15s, border-color .15s;
+    }
+    .auth-tab.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .auth-error { display: none; font-size: .85rem; font-weight: 600; color: #ba1a1a; margin-top: 10px; }
+    .auth-submit {
+      width: 100%;
+      margin-top: 22px;
+      background: var(--primary); color: #fff; border: none;
+      padding: 13px; border-radius: 100px;
+      font-family: 'Heebo', sans-serif; font-size: 1rem; font-weight: 700;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .auth-submit:hover { background: var(--primary-dark); }
+    .auth-close {
+      position: absolute; top: 14px; inset-inline-end: 16px;
+      background: none; border: none; cursor: pointer;
+      color: var(--ink-faint); font-size: 22px;
+    }
+    .user-chip {
+      display: none;
+      align-items: center; gap: 8px;
+      font-size: .9rem; font-weight: 600; color: var(--ink);
+    }
+    .user-chip .material-symbols-rounded { font-size: 18px; color: var(--primary); }
 
     body {
       font-family: 'Heebo', sans-serif;
@@ -766,6 +824,19 @@
       <span class="material-symbols-rounded">language</span>
       <span id="lang-toggle-label">עברית</span>
     </button>
+    <span class="user-chip" id="user-chip">
+      <span class="material-symbols-rounded">account_circle</span>
+      <span id="user-chip-name"></span>
+    </span>
+    <a href="./admin.html" class="topbar-link" id="admin-link" style="display:none" data-i18n="nav.admin">Admin</a>
+    <button class="lang-toggle" id="auth-open-btn" style="display:none" onclick="openAuth('login')">
+      <span class="material-symbols-rounded">login</span>
+      <span data-i18n="auth.login">Log in</span>
+    </button>
+    <button class="lang-toggle" id="auth-logout-btn" style="display:none" onclick="doLogout()">
+      <span class="material-symbols-rounded">logout</span>
+      <span data-i18n="auth.logout">Log out</span>
+    </button>
     <a href="./index.html" class="topbar-link" data-i18n="nav.tracker">Open Tracker</a>
     <a href="#setup" class="btn-primary-sm">
       <span class="material-symbols-rounded" style="font-size:16px">rocket_launch</span>
@@ -1065,6 +1136,27 @@
   </div>
 </footer>
 
+<!-- AUTH MODAL -->
+<div class="auth-overlay" id="auth-overlay" onclick="if(event.target===this)closeAuth()">
+  <div class="auth-modal" style="position:relative">
+    <button class="auth-close" onclick="closeAuth()" aria-label="Close">✕</button>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')" data-i18n="auth.login">Log in</button>
+      <button class="auth-tab" id="tab-signup" onclick="switchAuthTab('signup')" data-i18n="auth.signup">Sign up</button>
+    </div>
+    <label class="field-label" for="auth-username" data-i18n="auth.username">Username</label>
+    <input type="text" id="auth-username" autocomplete="username" autocapitalize="off" spellcheck="false"/>
+    <label class="field-label" for="auth-password" data-i18n="auth.password">Password</label>
+    <input type="password" id="auth-password" autocomplete="current-password"/>
+    <div id="auth-name-wrap" style="display:none">
+      <label class="field-label" for="auth-fullname" data-i18n="auth.fullname">Full name (optional)</label>
+      <input type="text" id="auth-fullname"/>
+    </div>
+    <p class="auth-error" id="auth-error"></p>
+    <button class="auth-submit" id="auth-submit" onclick="submitAuth()" data-i18n="auth.login">Log in</button>
+  </div>
+</div>
+
 <script>
   // ===== WIZARD STATE =====
   let currentStep = 1;
@@ -1170,6 +1262,8 @@
     };
 
     document.getElementById('config-output').textContent = JSON.stringify(config, null, 2);
+    saveProfileFromWizard(config);
+    logEvent('config_generated', { roles: roles.length });
   }
 
   function updateGithubLinks(ghUser) {
@@ -1201,6 +1295,122 @@
     // Open the file editor in their forked repo
     const editorUrl = `https://github.com/${ghUser}/${ghRepo}/edit/main/job_search/config.json`;
     window.open(editorUrl, '_blank');
+  }
+
+  // ===== SUPABASE: AUTH / ANALYTICS / CONTENT =====
+  const sb = (window.SUPABASE_URL && window.SUPABASE_ANON_KEY && window.supabase)
+    ? window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY)
+    : null;
+  const AUTH_EMAIL_DOMAIN = 'users.jobfinder.local';
+  let currentUser = null;
+  let authMode = 'login';
+
+  function logEvent(event, meta) {
+    if (!sb) return;
+    try { sb.from('events').insert({ event, meta: meta || {}, user_id: currentUser ? currentUser.id : null }).then(() => {}); } catch (e) {}
+  }
+
+  function openAuth(mode) { switchAuthTab(mode || 'login'); document.getElementById('auth-overlay').classList.add('open'); }
+  function closeAuth() { document.getElementById('auth-overlay').classList.remove('open'); document.getElementById('auth-error').style.display = 'none'; }
+  function switchAuthTab(mode) {
+    authMode = mode;
+    document.getElementById('tab-login').classList.toggle('active', mode === 'login');
+    document.getElementById('tab-signup').classList.toggle('active', mode === 'signup');
+    document.getElementById('auth-name-wrap').style.display = mode === 'signup' ? 'block' : 'none';
+    const submit = document.getElementById('auth-submit');
+    submit.textContent = t(mode === 'signup' ? 'auth.signup' : 'auth.login');
+    document.getElementById('auth-error').style.display = 'none';
+  }
+  function authError(msg) {
+    const el = document.getElementById('auth-error');
+    el.textContent = msg; el.style.display = 'block';
+  }
+
+  async function submitAuth() {
+    if (!sb) return;
+    const username = document.getElementById('auth-username').value.trim().toLowerCase();
+    const password = document.getElementById('auth-password').value;
+    if (!/^[a-z0-9_-]{3,24}$/.test(username)) return authError(t('auth.badUsername'));
+    if (password.length < 6) return authError(t('auth.badPassword'));
+    const email = username + '@' + AUTH_EMAIL_DOMAIN;
+    try {
+      if (authMode === 'signup') {
+        const fullName = document.getElementById('auth-fullname').value.trim();
+        const { data, error } = await sb.auth.signUp({ email, password, options: { data: { username, full_name: fullName } } });
+        if (error) return authError(error.message);
+        if (fullName && data.user) await sb.from('profiles').update({ full_name: fullName }).eq('user_id', data.user.id);
+        logEvent('signup', { username });
+      } else {
+        const { error } = await sb.auth.signInWithPassword({ email, password });
+        if (error) return authError(t('auth.loginFailed'));
+        logEvent('login', { username });
+      }
+      closeAuth();
+      refreshAuthUi();
+    } catch (e) { authError(String(e.message || e)); }
+  }
+
+  async function doLogout() {
+    if (!sb) return;
+    await sb.auth.signOut();
+    refreshAuthUi();
+  }
+
+  async function refreshAuthUi() {
+    if (!sb) return;
+    const { data } = await sb.auth.getUser();
+    currentUser = data && data.user ? data.user : null;
+    const loggedIn = !!currentUser;
+    document.getElementById('auth-open-btn').style.display = loggedIn ? 'none' : 'inline-flex';
+    document.getElementById('auth-logout-btn').style.display = loggedIn ? 'inline-flex' : 'none';
+    document.getElementById('user-chip').style.display = loggedIn ? 'inline-flex' : 'none';
+    if (loggedIn) {
+      const username = (currentUser.user_metadata && currentUser.user_metadata.username) || '';
+      document.getElementById('user-chip-name').textContent = username;
+      const { data: prof } = await sb.from('profiles').select('role').eq('user_id', currentUser.id).single();
+      document.getElementById('admin-link').style.display = (prof && prof.role === 'admin') ? 'inline' : 'none';
+    } else {
+      document.getElementById('admin-link').style.display = 'none';
+    }
+  }
+
+  async function saveProfileFromWizard(config) {
+    if (!sb || !currentUser) return;
+    try {
+      await sb.from('profiles').update({
+        full_name: config.name || null,
+        github_username: window._ghUser || null,
+        roles: config.roles || [],
+        location: config.location || null,
+        profile_summary: config.profile_summary || null,
+        updated_at: new Date().toISOString()
+      }).eq('user_id', currentUser.id);
+    } catch (e) {}
+  }
+
+  async function applyRemoteContent() {
+    if (!sb) return;
+    try {
+      const { data } = await sb.from('site_content').select('key,value');
+      if (!data || !data.length) return;
+      for (const row of data) {
+        const m = row.key.match(/^(en|he):(.+)$/);
+        if (!m) continue;
+        if (m[1] === 'he') I18N.he[m[2]] = row.value;
+        else EN_DEFAULTS[m[2]] = row.value;
+      }
+      applyLang(currentLang);
+    } catch (e) {}
+  }
+
+  function initSupabase() {
+    if (!sb) return;
+    refreshAuthUi();
+    applyRemoteContent();
+    if (!sessionStorage.getItem('visit_logged')) {
+      sessionStorage.setItem('visit_logged', '1');
+      logEvent('visit', { lang: currentLang, ref: document.referrer || null });
+    }
   }
 
   // ===== CV UPLOAD & PARSE =====
@@ -1298,6 +1508,7 @@
       if (!filled) throw new Error('nothing extracted');
       st.style.color = 'var(--success)';
       st.textContent = t('cv.done');
+      logEvent('cv_uploaded', { filled });
     } catch (e) {
       st.style.color = '#ba1a1a';
       st.textContent = t('cv.fail');
@@ -1321,6 +1532,16 @@
     he: {
       'nav.tracker': 'פתיחת הטרקר',
       'nav.start': 'להתחלה',
+      'nav.admin': 'ניהול',
+      'auth.login': 'התחברות',
+      'auth.signup': 'הרשמה',
+      'auth.logout': 'יציאה',
+      'auth.username': 'שם משתמש',
+      'auth.password': 'סיסמה',
+      'auth.fullname': 'שם מלא (אופציונלי)',
+      'auth.badUsername': 'שם משתמש: 3–24 תווים, אותיות באנגלית/מספרים/מקף בלבד.',
+      'auth.badPassword': 'הסיסמה צריכה להיות באורך 6 תווים לפחות.',
+      'auth.loginFailed': 'שם המשתמש או הסיסמה שגויים.',
       'hero.badge': 'קוד פתוח · מופעל על ידי Claude AI',
       'hero.title': 'מנוע חיפוש העבודה <span class="accent">מבוסס ה-AI</span> שלכם —<br/>מוכן תוך דקות',
       'hero.sub': 'מגדירים פעם אחת, וה-AI האישי שלכם עוקב אחרי משרות, מדרג התאמה, מכין לראיונות ושומר על המוטיבציה — אוטומטית, כל יום.',
@@ -1424,6 +1645,9 @@
     EN_DEFAULTS['cv.parsing'] = 'Reading your CV…';
     EN_DEFAULTS['cv.done'] = '✅ Pre-filled! Review the fields in the next steps and adjust if needed.';
     EN_DEFAULTS['cv.fail'] = "Couldn't extract details from the file — please fill in manually.";
+    EN_DEFAULTS['auth.badUsername'] = 'Username: 3–24 chars, letters/numbers/dash only.';
+    EN_DEFAULTS['auth.badPassword'] = 'Password must be at least 6 characters.';
+    EN_DEFAULTS['auth.loginFailed'] = 'Wrong username or password.';
   }
 
   function applyLang(lang) {
@@ -1458,6 +1682,7 @@
     if (!saved) saved = (navigator.language || '').startsWith('he') ? 'he' : 'en';
     if (saved === 'he') applyLang('he');
   })();
+  initSupabase();
 </script>
 </body>
 </html>

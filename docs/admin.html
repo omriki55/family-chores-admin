@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>JobSearch AI — ניהול</title>
+  <meta name="robots" content="noindex"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet"/>
+  <script src="./supabase-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #4F6BED; --primary-dark: #3a52c9;
+      --primary-container: #dde1ff; --canvas: #fbf8ff; --surface: #ffffff;
+      --surface-container: #f0edf5; --ink: #1b1b21; --ink-soft: #46464f;
+      --ink-faint: #74747e; --line: #c7c5d0; --line-soft: #e2e0ea;
+      --success: #1a7a45; --success-bg: #d4f0e2; --danger: #ba1a1a;
+      --e2: 0 2px 6px rgba(17,20,45,.06), 0 4px 12px rgba(17,20,45,.07);
+    }
+    body { font-family: 'Heebo', sans-serif; background: var(--canvas); color: var(--ink); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    .topbar {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(251,248,255,.92); backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--line-soft);
+      height: 60px; padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo { font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 8px; text-decoration: none; }
+    .topbar-actions { display: flex; align-items: center; gap: 10px; }
+    .btn {
+      border: 1.5px solid var(--line); background: transparent; color: var(--ink-soft);
+      padding: 7px 16px; border-radius: 100px; font-family: 'Heebo', sans-serif;
+      font-size: .9rem; font-weight: 600; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: background .15s, border-color .15s;
+    }
+    .btn:hover { background: var(--surface-container); border-color: var(--primary); }
+    .btn-primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    main { max-width: 1100px; margin: 0 auto; padding: 32px 24px 80px; }
+    h1 { font-size: 1.7rem; font-weight: 800; margin-bottom: 4px; }
+    .sub { color: var(--ink-faint); font-size: .92rem; margin-bottom: 28px; }
+    h2 { font-size: 1.15rem; font-weight: 700; margin: 36px 0 14px; display: flex; align-items: center; gap: 8px; }
+    h2 .material-symbols-rounded { color: var(--primary); font-size: 22px; }
+
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; }
+    .card {
+      background: var(--surface); border: 1px solid var(--line-soft); border-radius: 18px;
+      padding: 18px 20px; box-shadow: var(--e2);
+    }
+    .card .num { font-size: 2rem; font-weight: 900; color: var(--primary); line-height: 1.2; }
+    .card .lbl { font-size: .85rem; color: var(--ink-soft); font-weight: 500; }
+
+    .panel { background: var(--surface); border: 1px solid var(--line-soft); border-radius: 18px; box-shadow: var(--e2); overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+    th, td { text-align: start; padding: 10px 16px; border-bottom: 1px solid var(--line-soft); }
+    th { background: var(--surface-container); font-weight: 700; font-size: .82rem; color: var(--ink-soft); }
+    tr:last-child td { border-bottom: none; }
+    .tag { background: var(--primary-container); color: var(--primary-dark); border-radius: 100px; padding: 2px 10px; font-size: .78rem; font-weight: 700; }
+    .tag.admin { background: var(--success-bg); color: var(--success); }
+
+    .chart { display: flex; align-items: flex-end; gap: 6px; height: 140px; padding: 18px 20px 8px; }
+    .bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
+    .bar { width: 100%; max-width: 34px; background: var(--primary); border-radius: 6px 6px 0 0; min-height: 2px; transition: height .3s; }
+    .bar-lbl { font-size: .65rem; color: var(--ink-faint); white-space: nowrap; }
+    .bar-num { font-size: .7rem; font-weight: 700; color: var(--ink-soft); }
+
+    .content-row { padding: 16px 20px; border-bottom: 1px solid var(--line-soft); }
+    .content-row:last-child { border-bottom: none; }
+    .content-row label { display: block; font-size: .82rem; font-weight: 700; color: var(--ink-soft); margin-bottom: 6px; }
+    .content-row textarea {
+      width: 100%; min-height: 56px; padding: 10px 14px;
+      border: 1.5px solid var(--line); border-radius: 12px;
+      font-family: 'Heebo', sans-serif; font-size: .92rem; color: var(--ink);
+      background: var(--canvas); outline: none; resize: vertical;
+    }
+    .content-row textarea:focus { border-color: var(--primary); }
+    .content-actions { padding: 14px 20px; display: flex; gap: 10px; align-items: center; }
+    .save-ack { color: var(--success); font-weight: 700; font-size: .85rem; display: none; }
+
+    /* gate */
+    .gate { max-width: 380px; margin: 12vh auto; background: var(--surface); border: 1px solid var(--line-soft); border-radius: 22px; box-shadow: var(--e2); padding: 32px 28px; }
+    .gate h1 { font-size: 1.3rem; margin-bottom: 16px; }
+    .gate label { display: block; font-size: .85rem; font-weight: 600; color: var(--ink-soft); margin: 14px 0 6px; }
+    .gate input { width: 100%; padding: 11px 14px; border: 1.5px solid var(--line); border-radius: 12px; font-family: 'Heebo', sans-serif; font-size: .95rem; background: var(--canvas); outline: none; }
+    .gate input:focus { border-color: var(--primary); }
+    .gate .err { color: var(--danger); font-size: .85rem; font-weight: 600; margin-top: 10px; display: none; }
+    .hidden { display: none !important; }
+    .loading { text-align: center; color: var(--ink-faint); padding: 60px 0; }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="logo" href="./landing.html">
+    <span class="material-symbols-rounded">work</span>
+    JobSearch AI · ניהול
+  </a>
+  <div class="topbar-actions">
+    <span id="admin-user" style="font-size:.9rem;font-weight:600;color:var(--ink-soft)"></span>
+    <button class="btn" id="logout-btn" onclick="logout()" style="display:none">
+      <span class="material-symbols-rounded" style="font-size:16px">logout</span> יציאה
+    </button>
+  </div>
+</header>
+
+<!-- NOT CONFIGURED -->
+<div class="gate hidden" id="no-config">
+  <h1>Supabase לא מוגדר</h1>
+  <p style="font-size:.9rem;color:var(--ink-soft)">מלאו את <code>docs/supabase-config.js</code> עם ה-URL וה-anon key של הפרויקט, והריצו את <code>docs/supabase-setup.sql</code> ב-SQL Editor.</p>
+</div>
+
+<!-- LOGIN GATE -->
+<div class="gate hidden" id="gate">
+  <h1>כניסת מנהל</h1>
+  <label for="g-user">שם משתמש</label>
+  <input id="g-user" type="text" autocapitalize="off" spellcheck="false"/>
+  <label for="g-pass">סיסמה</label>
+  <input id="g-pass" type="password"/>
+  <p class="err" id="g-err"></p>
+  <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:20px;padding:12px" onclick="gateLogin()">התחברות</button>
+</div>
+
+<!-- NOT ADMIN -->
+<div class="gate hidden" id="not-admin">
+  <h1>אין הרשאה</h1>
+  <p style="font-size:.9rem;color:var(--ink-soft)">המשתמש המחובר אינו מנהל. כדי להפוך למנהל, הריצו ב-SQL Editor:</p>
+  <pre style="background:var(--surface-container);border-radius:10px;padding:10px;font-size:.78rem;direction:ltr;text-align:left;margin-top:10px;overflow-x:auto">update public.profiles set role = 'admin'
+where username = 'YOUR_USERNAME';</pre>
+</div>
+
+<!-- DASHBOARD -->
+<main class="hidden" id="dash">
+  <h1>לוח ניהול</h1>
+  <p class="sub" id="dash-sub">נתונים חיים מ-Supabase</p>
+
+  <div class="cards" id="stat-cards"></div>
+
+  <h2><span class="material-symbols-rounded">monitoring</span>פעילות 14 הימים האחרונים</h2>
+  <div class="panel"><div class="chart" id="chart"></div></div>
+
+  <h2><span class="material-symbols-rounded">category</span>אירועים לפי סוג (30 יום)</h2>
+  <div class="panel">
+    <table id="events-table"><thead><tr><th>אירוע</th><th>כמות</th></tr></thead><tbody></tbody></table>
+  </div>
+
+  <h2><span class="material-symbols-rounded">group</span>משתמשים רשומים</h2>
+  <div class="panel">
+    <table id="users-table">
+      <thead><tr><th>שם משתמש</th><th>שם מלא</th><th>GitHub</th><th>תפקידים</th><th>הרשאה</th><th>נרשם</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <h2><span class="material-symbols-rounded">edit_note</span>עריכת תוכן דף הנחיתה</h2>
+  <div class="panel">
+    <div id="content-rows"></div>
+    <div class="content-actions">
+      <button class="btn btn-primary" onclick="saveContent()">
+        <span class="material-symbols-rounded" style="font-size:16px">save</span> שמירת תוכן
+      </button>
+      <span class="save-ack" id="save-ack">✅ נשמר — הדף הציבורי יתעדכן בטעינה הבאה</span>
+    </div>
+  </div>
+</main>
+
+<div class="loading" id="loading">טוען…</div>
+
+<script>
+  const AUTH_EMAIL_DOMAIN = 'users.jobfinder.local';
+  const sb = (window.SUPABASE_URL && window.SUPABASE_ANON_KEY && window.supabase)
+    ? window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY)
+    : null;
+
+  // Editable landing keys: [storageKey, label]
+  const CONTENT_KEYS = [
+    ['he:hero.title', 'כותרת ראשית (עברית, מותר HTML)'],
+    ['en:hero.title', 'Hero title (English, HTML allowed)'],
+    ['he:hero.sub', 'תת-כותרת (עברית)'],
+    ['en:hero.sub', 'Hero subtitle (English)'],
+    ['he:features.sub', 'תיאור יכולות (עברית)'],
+    ['en:features.sub', 'Features subtitle (English)']
+  ];
+
+  function show(id) {
+    for (const x of ['no-config','gate','not-admin','dash','loading'])
+      document.getElementById(x).classList.toggle('hidden', x !== id);
+  }
+
+  async function init() {
+    if (!sb) return show('no-config');
+    const { data } = await sb.auth.getUser();
+    if (!data || !data.user) return show('gate');
+    await afterLogin(data.user);
+  }
+
+  async function gateLogin() {
+    const u = document.getElementById('g-user').value.trim().toLowerCase();
+    const p = document.getElementById('g-pass').value;
+    const err = document.getElementById('g-err');
+    err.style.display = 'none';
+    const { data, error } = await sb.auth.signInWithPassword({ email: u + '@' + AUTH_EMAIL_DOMAIN, password: p });
+    if (error) { err.textContent = 'שם המשתמש או הסיסמה שגויים.'; err.style.display = 'block'; return; }
+    await afterLogin(data.user);
+  }
+
+  async function logout() { await sb.auth.signOut(); location.reload(); }
+
+  async function afterLogin(user) {
+    show('loading');
+    const username = (user.user_metadata && user.user_metadata.username) || '';
+    document.getElementById('admin-user').textContent = username;
+    document.getElementById('logout-btn').style.display = 'inline-flex';
+    const { data: prof } = await sb.from('profiles').select('role').eq('user_id', user.id).single();
+    if (!prof || prof.role !== 'admin') return show('not-admin');
+    await loadDashboard();
+    show('dash');
+  }
+
+  function fmtDate(s) { return new Date(s).toLocaleDateString('he-IL', { day: 'numeric', month: 'short' }); }
+
+  async function loadDashboard() {
+    const since30 = new Date(Date.now() - 30 * 864e5).toISOString();
+    const since14 = new Date(Date.now() - 14 * 864e5).toISOString();
+    const since7 = new Date(Date.now() - 7 * 864e5).toISOString();
+
+    const [{ data: users }, { data: ev30 }] = await Promise.all([
+      sb.from('profiles').select('username,full_name,github_username,roles,role,created_at').order('created_at', { ascending: false }),
+      sb.from('events').select('event,created_at').gte('created_at', since30).order('created_at', { ascending: true }).limit(5000)
+    ]);
+
+    // Stat cards
+    const totalUsers = (users || []).length;
+    const newUsers7 = (users || []).filter(u => u.created_at >= since7).length;
+    const counts = {};
+    for (const e of (ev30 || [])) counts[e.event] = (counts[e.event] || 0) + 1;
+    const cards = [
+      [totalUsers, 'משתמשים רשומים'],
+      [newUsers7, 'נרשמו ב-7 ימים'],
+      [counts['visit'] || 0, 'ביקורים (30 יום)'],
+      [counts['cv_uploaded'] || 0, 'קו"ח הועלו (30 יום)'],
+      [counts['config_generated'] || 0, 'קונפיגים נוצרו (30 יום)']
+    ];
+    document.getElementById('stat-cards').innerHTML = cards
+      .map(c => '<div class="card"><div class="num">' + c[0] + '</div><div class="lbl">' + c[1] + '</div></div>').join('');
+
+    // 14-day chart
+    const days = [];
+    for (let i = 13; i >= 0; i--) {
+      const d = new Date(Date.now() - i * 864e5);
+      days.push({ key: d.toISOString().slice(0, 10), lbl: d.toLocaleDateString('he-IL', { day: 'numeric', month: 'numeric' }), n: 0 });
+    }
+    for (const e of (ev30 || [])) {
+      if (e.created_at < since14) continue;
+      const k = e.created_at.slice(0, 10);
+      const day = days.find(d => d.key === k);
+      if (day) day.n++;
+    }
+    const max = Math.max(1, ...days.map(d => d.n));
+    document.getElementById('chart').innerHTML = days.map(d =>
+      '<div class="bar-wrap"><span class="bar-num">' + (d.n || '') + '</span><div class="bar" style="height:' + Math.round(d.n / max * 100) + '%"></div><span class="bar-lbl">' + d.lbl + '</span></div>'
+    ).join('');
+
+    // Events by type
+    document.querySelector('#events-table tbody').innerHTML =
+      Object.entries(counts).sort((a, b) => b[1] - a[1])
+        .map(e => '<tr><td>' + esc(e[0]) + '</td><td>' + e[1] + '</td></tr>').join('') ||
+      '<tr><td colspan="2" style="color:var(--ink-faint)">אין אירועים עדיין</td></tr>';
+
+    // Users table
+    document.querySelector('#users-table tbody').innerHTML =
+      (users || []).map(u =>
+        '<tr><td><strong>' + esc(u.username) + '</strong></td><td>' + esc(u.full_name || '—') +
+        '</td><td>' + esc(u.github_username || '—') +
+        '</td><td>' + esc((u.roles || []).slice(0, 3).join(', ') || '—') +
+        '</td><td><span class="tag' + (u.role === 'admin' ? ' admin' : '') + '">' + (u.role === 'admin' ? 'מנהל' : 'משתמש') + '</span>' +
+        '</td><td>' + fmtDate(u.created_at) + '</td></tr>').join('') ||
+      '<tr><td colspan="6" style="color:var(--ink-faint)">אין משתמשים עדיין</td></tr>';
+
+    // Content editor
+    const { data: content } = await sb.from('site_content').select('key,value');
+    const map = {};
+    for (const r of (content || [])) map[r.key] = r.value;
+    document.getElementById('content-rows').innerHTML = CONTENT_KEYS.map(k =>
+      '<div class="content-row"><label>' + esc(k[1]) + ' <span style="color:var(--ink-faint);font-weight:400">(' + k[0] + ')</span></label>' +
+      '<textarea data-key="' + k[0] + '" placeholder="ריק = ברירת המחדל מהקוד">' + esc(map[k[0]] || '') + '</textarea></div>'
+    ).join('');
+  }
+
+  async function saveContent() {
+    const rows = [...document.querySelectorAll('#content-rows textarea')];
+    for (const ta of rows) {
+      const key = ta.dataset.key;
+      const value = ta.value.trim();
+      if (value) await sb.from('site_content').upsert({ key, value, updated_at: new Date().toISOString() });
+      else await sb.from('site_content').delete().eq('key', key);
+    }
+    const ack = document.getElementById('save-ack');
+    ack.style.display = 'inline';
+    setTimeout(() => { ack.style.display = 'none'; }, 4000);
+  }
+
+  function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+
+  document.getElementById('g-pass').addEventListener('keydown', e => { if (e.key === 'Enter') gateLogin(); });
+  init();
+</script>
+</body>
+</html>
