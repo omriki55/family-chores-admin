@@ -54,6 +54,13 @@
       --error:#ba1a1a;
       --error-container:#ffdad6;
       --radius:28px;
+      /* elevation — soft, layered, Apple-like depth */
+      --e1:0 1px 2px rgba(17,20,45,.04),0 1px 3px rgba(17,20,45,.05);
+      --e2:0 2px 6px rgba(17,20,45,.05),0 4px 12px rgba(17,20,45,.06);
+      --e3:0 6px 16px rgba(17,20,45,.08),0 12px 28px rgba(17,20,45,.09);
+      --e-nav:0 -1px 0 var(--lineSoft),0 -8px 24px rgba(17,20,45,.05);
+      /* motion */
+      --ease:cubic-bezier(.2,.7,.3,1);
       --font-display:'Heebo','Roboto Flex',system-ui,sans-serif;
       --font-ui:'Heebo','Roboto Flex',system-ui,sans-serif;
       --font-mono:'Roboto Flex',ui-monospace,monospace;
@@ -64,7 +71,7 @@
     .material-symbols-rounded{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;line-height:1;letter-spacing:normal;text-transform:none;white-space:nowrap;font-variation-settings:'FILL' 0,'wght' 400,'opsz' 24;vertical-align:middle;-webkit-font-feature-settings:'liga'}
 
     /* ===== APP SHELL ===== */
-    #app{max-width:560px;margin:0 auto;padding:14px 14px 100px;display:flex;flex-direction:column;gap:14px}
+    #app{max-width:560px;margin:0 auto;padding:14px 14px calc(84px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px}
 
     /* ===== HERO (primary container) ===== */
     .hero{background:var(--primary-container);color:var(--on-primary-container);border-radius:32px;padding:22px 24px;display:flex;flex-direction:column;gap:14px}
@@ -77,6 +84,9 @@
     .sheet-btn:hover,.scan-btn:hover,.settings-btn:hover{background:#fff}
     .scan-btn:disabled{opacity:.5;cursor:not-allowed}
     .scan-btn .material-symbols-rounded,.settings-btn .material-symbols-rounded,.sheet-btn .material-symbols-rounded{font-size:19px}
+    .support-btn{background:rgba(255,210,220,.7) !important;color:#8b0033 !important}
+    .support-btn:hover{background:#ffd2dc !important}
+    .act-support{background:#ffd2dc;color:#8b0033}
 
     /* funnel */
     .funnel{display:flex;justify-content:space-between;align-items:flex-end;gap:4px}
@@ -133,16 +143,17 @@
     .card-text{flex:1;min-width:0;padding-left:6px}
     .card-company{font-weight:800;font-size:1.2rem;letter-spacing:-.3px;color:var(--ink);direction:ltr;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .card-role{font-size:.82rem;color:var(--inkSoft);font-weight:500;direction:ltr;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
-    .card-posted{font-size:.7rem;color:var(--inkFaint);margin-top:3px;direction:rtl;text-align:right}
+    .card-posted{font-size:.68rem;color:var(--inkFaint);direction:rtl;text-align:right}
+    .card-meta-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:8px}
     .card-head-right{display:flex;flex-direction:column;align-items:flex-start;gap:5px;flex-shrink:0}
     .next-pill{background:var(--secondary-container);color:var(--on-secondary-container);border-radius:999px;padding:4px 10px;font-size:.65rem;font-weight:600;display:inline-flex;align-items:center;gap:3px;white-space:nowrap}
     .s-pill{border-radius:999px;padding:5px 11px;font-size:.68rem;font-weight:700;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;background:var(--s-bg);color:var(--s-fg)}
     .s-dot{width:6px;height:6px;border-radius:50%;background:var(--s-solid);flex-shrink:0}
     /* fit score — big tonal rounded square */
-    .fit-mark{display:flex;flex-direction:column;align-items:center;justify-content:center;width:54px;height:54px;border-radius:18px;background:var(--f-bg);flex-shrink:0}
-    .fit-num{font-weight:800;font-size:1.45rem;line-height:1;color:var(--f-fg)}
-    .fit-lbl{font-size:.46rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--f-fg);opacity:.7;margin-top:1px}
-    .chevron{font-size:.8rem;color:var(--inkFaint);transition:transform .25s cubic-bezier(.2,.7,.3,1);flex-shrink:0}
+    .fit-mark{display:flex;flex-direction:column;align-items:center;justify-content:center;width:52px;height:52px;border-radius:17px;background:var(--f-bg);flex-shrink:0}
+    .fit-num{font-weight:800;font-size:1.5rem;line-height:1;color:var(--f-fg);font-feature-settings:'tnum'}
+    .fit-lbl{display:none}
+    .chevron{font-size:22px;color:var(--inkFaint);transition:transform .25s var(--ease);flex-shrink:0;line-height:1}
     .job-card.open .chevron{transform:rotate(180deg)}
     .follow-badge{font-size:.64rem;background:#fef0d8;color:#7a5900;border-radius:999px;padding:3px 9px;font-weight:700;white-space:nowrap}
     .new-badge{background:var(--primary);color:#fff;border-radius:999px;padding:3px 9px;font-size:.64rem;font-weight:700;white-space:nowrap}
@@ -229,6 +240,7 @@
     .act-letter{background:var(--success-container);color:#0c3a22}
     .act-prep{background:var(--tertiary-container);color:var(--on-tertiary-container)}
     .act-dossier{background:#d7e3ff;color:#0b4ba0}
+    .act-practice{background:#ffe0ec;color:#a01050}
 
     /* dismiss section */
     .dismiss-toggle{background:none;border:none;font-size:.74rem;color:var(--inkFaint);cursor:pointer;padding:4px 0;font-family:var(--font-ui);text-align:right;direction:rtl}
@@ -243,19 +255,51 @@
     .undismiss-link:hover{color:var(--ink)}
     .dismissed-banner{background:var(--error-container);border-radius:999px;padding:7px 14px;font-size:.72rem;color:#5c0d0d;display:flex;align-items:center;justify-content:space-between;gap:8px}
 
+    /* ===== CHAT-DISABLED NOTICE (no API key) ===== */
+    .chat-disabled-note{background:var(--primary-container);color:var(--on-primary-container);border-radius:18px;padding:14px 16px;font-size:.82rem;line-height:1.5;margin-bottom:14px;display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+    .cdn-btn{background:var(--primary);color:#fff;border:none;border-radius:999px;padding:10px 18px;font-size:.8rem;font-weight:700;font-family:var(--font-ui);cursor:pointer;transition:filter .14s}
+    .cdn-btn:hover{filter:brightness(.95)}
+    .cdn-btn:active{transform:scale(.97)}
+
+    /* ===== RESEARCH REPORT (dossier) ===== */
+    .rp-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:48px 24px;text-align:center;color:var(--inkSoft);font-size:.9rem;font-weight:600}
+    .rp-loading-sub{font-size:.76rem;color:var(--inkFaint);font-weight:400}
+    .add-url-btn{background:var(--primary-container)!important;color:var(--on-primary-container)!important;font-weight:700}
+    .add-url-btn:hover{background:var(--accentSoft)!important}
+    .rp-spin{width:34px;height:34px;border-radius:50%;border:3px solid var(--lineSoft);border-top-color:var(--primary);animation:fabSpin .8s linear infinite}
+    @keyframes fabSpin{to{transform:rotate(360deg)}}
+    .rp-err{padding:32px 22px;text-align:center;color:var(--error);font-size:.86rem;line-height:1.6}
+    .modal-body .rp-h{font-size:.96rem;font-weight:800;color:var(--ink);margin:16px 0 6px;letter-spacing:-.2px}
+    .modal-body .rp-h:first-child{margin-top:0}
+    .modal-body .rp-p{font-size:.86rem;line-height:1.65;color:var(--inkSoft);margin:4px 0;direction:rtl;text-align:right;white-space:normal}
+    .modal-body .rp-ul{margin:4px 18px 8px 0;padding:0;display:flex;flex-direction:column;gap:5px}
+    .modal-body .rp-ul li{font-size:.86rem;line-height:1.55;color:var(--inkSoft);direction:rtl;text-align:right}
+    .modal-body .rp-num{display:flex;gap:10px;align-items:flex-start;margin:8px 0;direction:rtl;text-align:right}
+    .modal-body .rp-num .rp-n{flex-shrink:0;width:23px;height:23px;border-radius:50%;background:var(--secondary-container);color:var(--on-secondary-container);display:flex;align-items:center;justify-content:center;font-size:.74rem;font-weight:800}
+    .modal-body .rp-num>span:last-child{font-size:.86rem;line-height:1.55;color:var(--inkSoft);padding-top:1px}
+    .modal-body .rp-sp{height:6px}
+    .modal-body b{color:var(--ink);font-weight:700}
+    .modal-body a{color:var(--primary);text-decoration:none}
+
+    /* ===== EMPTY STATE ===== */
+    .list-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px;padding:56px 28px;animation:cardIn .4s var(--ease)}
+    .le-icon{font-size:3.4rem;color:var(--primary);opacity:.55;font-variation-settings:'FILL' 1,'wght' 300,'opsz' 48}
+    .le-title{font-weight:800;font-size:1.05rem;color:var(--ink);letter-spacing:-.2px;margin-top:4px}
+    .le-sub{font-size:.82rem;color:var(--inkFaint);line-height:1.5;max-width:280px}
+    .empty-cta{margin-top:10px;background:var(--secondary-container);color:var(--on-secondary-container);border:none;border-radius:999px;padding:11px 22px;font-size:.82rem;font-weight:700;font-family:var(--font-ui);cursor:pointer;transition:filter .14s}
+    .empty-cta:hover{filter:brightness(.96)}
+    .empty-cta:active{transform:scale(.96)}
+
     /* ===== TOAST ===== */
     #toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--toast-bg);color:#fff;border-radius:999px;padding:13px 24px;font-size:.84rem;font-weight:600;font-family:var(--font-ui);z-index:999;transition:transform .3s cubic-bezier(.2,.7,.3,1),opacity .3s;pointer-events:none;box-shadow:0 6px 24px rgba(0,0,0,.22);opacity:0;white-space:nowrap}
     #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 
     /* ===== EXTENDED FAB ===== */
-    .fab{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--primary);color:#fff;border:none;border-radius:20px;padding:16px 26px;font-size:.9rem;font-weight:700;font-family:var(--font-ui);box-shadow:0 6px 20px rgba(79,107,237,.45);display:flex;align-items:center;gap:9px;cursor:pointer;z-index:50;transition:transform .12s}
-    .fab:active{transform:translateX(-50%) scale(.96)}
-    .fab .material-symbols-rounded{font-size:22px}
 
     /* ===== MODAL (CV + Analytics + Prep) ===== */
     #modal,#sheet{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1000;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(3px)}
     #modal.show,#sheet.show{display:flex}
-    .modal-card{background:var(--surface);width:100%;max-width:560px;max-height:90vh;border-radius:28px 28px 0 0;display:flex;flex-direction:column;overflow:hidden}
+    .modal-card{background:var(--surface);width:100%;max-width:560px;max-height:90vh;border-radius:28px 28px 0 0;display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--e3)}
     @media(min-width:560px){#modal,#sheet{align-items:center}.modal-card{border-radius:28px}}
     .modal-head{padding:18px 20px;display:flex;justify-content:space-between;align-items:center}
     .modal-head h3{font-size:1.1rem;font-weight:800}
@@ -263,7 +307,81 @@
     .modal-close{background:var(--surface-container-highest);border:none;width:38px;height:38px;border-radius:50%;font-size:1.1rem;cursor:pointer;color:var(--inkSoft)}
     .modal-body{padding:6px 20px 16px;overflow-y:auto;white-space:pre-wrap;font-size:.8rem;line-height:1.55;color:var(--ink);font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
     .modal-foot{padding:14px 20px;display:flex;gap:9px}
+    /* live chat */
+    .modal-body.chat{white-space:normal;font-family:var(--font-ui);font-size:.92rem;display:flex;flex-direction:column;gap:12px}
+    .chat-msg{max-width:88%;padding:10px 14px;border-radius:18px;line-height:1.5;white-space:pre-wrap;word-break:break-word}
+    .chat-msg.user{align-self:flex-start;background:var(--primary-container);color:var(--on-primary-container);border-bottom-right-radius:6px}
+    .chat-msg.ai{align-self:flex-end;background:var(--surfaceVariant,#eef0f5);color:var(--ink);border-bottom-left-radius:6px}
+    .chat-msg.typing{opacity:.6;font-style:italic}
+    .chat-msg.err{align-self:center;background:#ffd7d7;color:#8b0000;font-size:.82rem;text-align:center}
+    .m-chatbar{display:flex;gap:8px;align-items:flex-end;padding:10px 16px;border-top:1px solid var(--line,#e3e5ec)}
+    .m-chatbar textarea{flex:1;resize:none;max-height:140px;border:1px solid var(--line,#d8dae2);border-radius:18px;padding:10px 14px;font-family:var(--font-ui);font-size:16px;line-height:1.4;background:var(--surface,#fff);color:var(--ink)}
+    .m-send{flex:0 0 auto;width:42px;height:42px;border:none;border-radius:50%;background:var(--primary,#4F6BED);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .m-send:disabled{opacity:.45;cursor:not-allowed}
+    html[data-theme="dark"] .chat-msg.ai{background:#2a2d36}
+    html[data-theme="dark"] .m-chatbar textarea{background:#1f2229;border-color:#3a3d47}
     .modal-foot .act-btn{min-width:0}
+    /* ── Practice Setup ── */
+    .psetup{display:flex;flex-direction:column;gap:18px;padding:6px 20px 20px;overflow-y:auto}
+    .psetup-section{display:flex;flex-direction:column;gap:8px}
+    .psetup-lbl{font-size:.72rem;font-weight:700;color:var(--inkFaint);display:flex;align-items:center;gap:6px}
+    .psetup-lbl .material-symbols-rounded{font-size:16px}
+    .lang-chips{display:flex;gap:8px}
+    .lang-chip{flex:1;padding:14px 10px;border-radius:18px;border:2px solid var(--line);background:var(--surface-container);font-family:var(--font-ui);font-size:.92rem;font-weight:700;cursor:pointer;transition:all .13s;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px}
+    .lang-chip .flag{font-size:1.6rem}
+    .lang-chip .lname{font-size:.72rem;font-weight:600;color:var(--inkSoft)}
+    .lang-chip.on{border-color:var(--primary);background:var(--primary-container);color:var(--on-primary-container)}
+    .lang-chip.on .lname{color:var(--on-primary-container)}
+    .stage-chips{display:flex;gap:6px;flex-wrap:wrap}
+    .stage-chip{padding:8px 13px;border-radius:999px;border:1.5px solid var(--line);background:transparent;font-family:var(--font-ui);font-size:.76rem;font-weight:600;cursor:pointer;color:var(--inkSoft);transition:all .12s}
+    .stage-chip.on{border-color:var(--primary);background:var(--secondary-container);color:var(--on-secondary-container)}
+    .interviewer-row{display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap}
+    .iview-chip{padding:8px 13px;border-radius:999px;border:1.5px solid var(--line);background:transparent;font-family:var(--font-ui);font-size:.76rem;font-weight:600;cursor:pointer;color:var(--inkSoft);transition:all .12s;display:flex;align-items:center;gap:5px}
+    .iview-chip.on{border-color:var(--primary);background:var(--secondary-container);color:var(--on-secondary-container)}
+    .iview-manual{flex:1;min-width:140px;border:1.5px solid var(--line);border-radius:14px;padding:9px 13px;font-size:.84rem;font-family:var(--font-ui);color:var(--ink);background:var(--surface-container);outline:none;transition:box-shadow .15s;direction:rtl}
+    .iview-manual:focus{box-shadow:0 0 0 2px var(--primary);border-color:var(--primary)}
+    .psetup-start{background:var(--primary);color:#fff;border:none;border-radius:999px;padding:14px 28px;font-size:.92rem;font-weight:800;font-family:var(--font-ui);cursor:pointer;align-self:stretch;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px}
+    .psetup-start:hover{background:var(--accentDeep);box-shadow:0 4px 16px rgba(79,107,237,.35)}
+    .psetup-start .material-symbols-rounded{font-size:20px}
+    .psetup-btns{display:flex;gap:10px}
+    .psetup-start-voice{flex:0 0 auto;background:var(--success-container);color:#0c3a22;border:none;border-radius:999px;padding:14px 22px;font-size:.92rem;font-weight:800;font-family:var(--font-ui);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:7px}
+    .psetup-start-voice:hover{filter:brightness(.96);box-shadow:0 4px 14px rgba(46,107,70,.3)}
+    .psetup-start-voice .material-symbols-rounded{font-size:20px}
+    html[data-theme=dark] .psetup-start-voice{background:var(--success-container);color:#b3f1c7}
+
+    /* ── Voice call overlay ── */
+    #voice-overlay{position:fixed;inset:0;height:100dvh;z-index:2000;background:linear-gradient(160deg,#0f1c3a 0%,#1a2d50 60%,#0e1a2e 100%);display:none;flex-direction:column;align-items:center;justify-content:space-between;gap:32px;overflow-y:auto;padding:max(24px,env(safe-area-inset-top)) 16px max(32px,calc(env(safe-area-inset-bottom) + 24px))}
+    #voice-overlay.show{display:flex}
+    .vo-top-block{display:flex;flex-direction:column;align-items:center;gap:24px;flex:1;justify-content:center}
+    .vo-company{color:rgba(255,255,255,.55);font-size:.82rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+    .vo-stage{color:rgba(255,255,255,.35);font-size:.72rem;margin-top:2px;text-align:center}
+    .vo-avatar-wrap{position:relative;display:flex;align-items:center;justify-content:center;width:140px;height:140px}
+    .vo-ring{position:absolute;inset:0;border-radius:50%;border:2px solid rgba(255,255,255,.15);animation:voRing 2s ease-in-out infinite}
+    .vo-ring:nth-child(2){animation-delay:.4s;inset:-14px;opacity:.5}
+    .vo-ring:nth-child(3){animation-delay:.8s;inset:-28px;opacity:.25}
+    @keyframes voRing{0%,100%{transform:scale(1);opacity:var(--o,.4)}50%{transform:scale(1.05);opacity:calc(var(--o,.4)*1.6)}}
+    .vo-avatar-wrap.speaking .vo-ring{border-color:rgba(100,180,255,.6);animation-name:voRingActive}
+    @keyframes voRingActive{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+    .vo-avatar-wrap.listening .vo-ring{border-color:rgba(100,220,140,.55);animation-name:voRingListen}
+    @keyframes voRingListen{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+    .vo-circle{width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.1);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;border:1.5px solid rgba(255,255,255,.2);transition:background .4s}
+    .vo-avatar-wrap.speaking .vo-circle{background:rgba(79,130,220,.35)}
+    .vo-avatar-wrap.listening .vo-circle{background:rgba(46,160,80,.3)}
+    .vo-circle .material-symbols-rounded{font-size:2.8rem;color:#fff}
+    .vo-who{color:#fff;font-size:1rem;font-weight:700;text-align:center;min-height:1.4em}
+    .vo-interim{color:rgba(255,255,255,.5);font-size:.82rem;text-align:center;max-width:320px;min-height:2.4em;line-height:1.45;padding:0 16px}
+    .vo-last-ai{color:rgba(255,255,255,.7);font-size:.78rem;text-align:center;max-width:340px;min-height:2.4em;line-height:1.45;padding:0 16px;font-style:italic}
+    .vo-controls{display:flex;gap:20px;align-items:center;margin-top:auto;padding-top:16px}
+    .vo-btn{width:64px;height:64px;border-radius:50%;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;font-size:0}
+    .vo-btn .material-symbols-rounded{font-size:26px;color:#fff}
+    .vo-mute{background:rgba(255,255,255,.15);backdrop-filter:blur(6px)}
+    .vo-mute:hover{background:rgba(255,255,255,.25)}
+    .vo-mute.muted{background:rgba(220,80,80,.6)}
+    .vo-end{background:#e53935;box-shadow:0 4px 18px rgba(229,57,53,.5)}
+    .vo-end:hover{background:#c62828;box-shadow:0 6px 24px rgba(229,57,53,.6)}
+    .vo-skip{background:rgba(255,255,255,.1);backdrop-filter:blur(6px)}
+    .vo-skip:hover{background:rgba(255,255,255,.2)}
+    .vo-no-support{color:rgba(255,255,255,.7);font-size:.84rem;text-align:center;padding:0 24px;line-height:1.6}
 
     /* analytics */
     .an-body{padding:6px 20px 20px;overflow-y:auto;display:flex;flex-direction:column;gap:16px}
@@ -285,8 +403,7 @@
     /* ===== SETTINGS DRAWER ===== */
     .drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:199;display:none;backdrop-filter:blur(2px)}
     .drawer-overlay.show{display:block}
-    .drawer{position:fixed;top:0;left:0;bottom:0;width:min(400px,95vw);background:var(--surface);box-shadow:-4px 0 24px rgba(0,0,0,.12);z-index:200;transform:translateX(-100%);transition:transform .3s cubic-bezier(.2,.7,.3,1);display:flex;flex-direction:column}
-    .drawer.open{transform:translateX(0)}
+    /* drawer positioning handled below in RTL section */
     .drawer-head{padding:18px 20px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
     .drawer-head h3{font-size:1.1rem;font-weight:800;color:var(--ink)}
     .drawer-close{background:var(--surface-container-highest);border:none;width:38px;height:38px;border-radius:50%;font-size:1.1rem;cursor:pointer;color:var(--inkSoft);flex-shrink:0}
@@ -308,6 +425,28 @@
     .d-tab-panel.on{display:flex}
     .d-status{font-size:.72rem;color:var(--inkFaint);margin-top:2px}
 
+    /* Hide funnel + momentum chips on mobile — toolbar stage-chips are the single filter */
+    @media(max-width:1023px){.funnel,.m-chips{display:none}}
+
+    /* Secondary filter collapse on mobile */
+    .secondary-filters{display:flex;flex-direction:column;gap:12px}
+    @media(max-width:1023px){
+      .secondary-filters{display:none}
+      .secondary-filters.open{display:flex}
+      .filters-toggle-chip{background:transparent;border:1px solid var(--line);color:var(--inkSoft);border-radius:999px;padding:8px 14px;font-size:.76rem;font-weight:600;font-family:var(--font-ui);cursor:pointer;display:inline-flex;align-items:center;gap:5px;outline:none;flex-shrink:0;transition:all .12s}
+      .filters-toggle-chip.open{background:var(--secondary-container);color:var(--on-secondary-container);border-color:transparent}
+    }
+    @media(min-width:1024px){
+      .filters-toggle-chip{display:none}
+    }
+
+    /* Bottom nav pill active indicator */
+    .mbn-item{position:relative}
+    .mbn-item::before{content:'';position:absolute;top:4px;right:12px;bottom:4px;left:12px;border-radius:16px;background:transparent;transition:background .15s}
+    .mbn-item.active::before{background:var(--secondary-container)}
+    .mbn-item .material-symbols-rounded,.mbn-item span:last-child{position:relative;z-index:1}
+    .mbn-item span:last-child{font-size:.62rem}
+
     @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 
     /* ===== MOBILE OPTIMISATIONS ===== */
@@ -315,7 +454,6 @@
     .search-inp,.notes-ta,.round-inp,.round-sel,.round-note,.d-inp,.d-ta{font-size:16px}
     /* respect notch / home-indicator safe areas */
     #app{padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right))}
-    .fab{bottom:max(22px,calc(env(safe-area-inset-bottom) + 14px))}
     #toast{bottom:max(90px,calc(env(safe-area-inset-bottom) + 80px))}
     /* smooth momentum scroll for chip rows */
     .filter-row{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px}
@@ -335,8 +473,9 @@
       .search-row{gap:8px}
       .sort-seg{width:100%}
       .job-card{border-radius:24px}
-      .card-head{padding:15px 16px;gap:11px}
+      .card-head{padding:15px 16px;gap:8px}
       .card-company{font-size:1.1rem}
+      .card-text{flex:1;min-width:0}
       .fit-mark{width:48px;height:48px;border-radius:15px}
       .fit-num{font-size:1.25rem}
       .card-body{padding:0 16px 16px}
@@ -346,8 +485,19 @@
       .act-open{grid-column:span 2}
       .act-dismiss{grid-column:span 2}
       .step-btn{padding:11px 3px;font-size:.72rem}
-      .fab{padding:15px 22px;font-size:.88rem}
       .modal-card{max-height:92vh}
+      /* touch targets */
+      .star-btn{padding:8px;margin:-8px}
+      .round-del{width:40px;height:40px;display:flex;align-items:center;justify-content:center}
+      .sf-chip,.fit-chip{min-height:44px}
+      .sort-btn,.exp-btn{min-height:40px}
+      .modal-close,.drawer-close{width:44px;height:44px}
+      .search-clear{width:40px;height:40px;display:flex;align-items:center;justify-content:center;left:6px}
+      /* tiny text floors */
+      .fit-lbl{font-size:.55rem}
+      .new-badge,.follow-badge{font-size:.7rem}
+      .next-pill{font-size:.7rem}
+      .card-posted{font-size:.7rem}
     }
     @media(max-width:340px){
       .stepper{flex-wrap:wrap}
@@ -355,7 +505,7 @@
     }
 
     /* ===== STICKY TOOLBAR ===== */
-    .toolbar{position:sticky;top:8px;z-index:30;box-shadow:0 2px 14px rgba(20,20,40,.06)}
+    .toolbar{position:sticky;top:8px;z-index:30;box-shadow:var(--e2)}
 
     /* ===== DESKTOP / MAC WIDE LAYOUT ===== */
     @media(hover:hover) and (pointer:fine){
@@ -365,7 +515,6 @@
       .job-card.open:hover{transform:none}
       .act-btn:hover,.d-btn:hover,.step-btn:hover,.chan-btn:hover,.sf-chip:hover,.fit-chip:hover,.sort-btn:hover,.exp-btn:hover,.round-add:hover,.clink:hover{filter:brightness(.97)}
       .sheet-btn:hover,.scan-btn:hover,.settings-btn:hover{background:#fff}
-      .fab:hover{box-shadow:0 8px 26px rgba(79,107,237,.55);transform:translateX(-50%) translateY(-1px)}
       .modal-close:hover,.drawer-close:hover{filter:brightness(.94)}
       /* scrollbars — subtle, Apple-like */
       *::-webkit-scrollbar{width:10px;height:10px}
@@ -381,9 +530,6 @@
       .f-count{font-size:2.2rem}
       #container{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:18px;align-items:start}
       .job-card{align-self:start;transition:background .2s,transform .18s cubic-bezier(.2,.7,.3,1),box-shadow .2s}
-      /* desktop FAB → bottom-right corner (Material) */
-      .fab{left:auto;right:32px;transform:none;border-radius:18px}
-      .fab:active{transform:scale(.96)}
       .toolbar{top:14px}
       /* roomier cards */
       .card-head{padding:20px 22px}
@@ -394,30 +540,257 @@
       #app{max-width:1500px}
     }
     /* ===== MASTER–DETAIL (desktop ≥1024px) ===== */
+    #nav-rail{display:none}
+    #desktop-topbar{display:none}
+    #list-col{display:contents}
+    #list-search-bar{display:none}
     #detail{display:none}
     @media(min-width:1024px){
-      #work{display:grid;grid-template-columns:minmax(300px,360px) 1fr;gap:20px;align-items:start}
-      #container{display:flex!important;flex-direction:column;gap:8px!important;position:sticky;top:14px;max-height:calc(100vh - 28px);overflow-y:auto;padding:2px}
-      #detail{display:block;min-width:0}
-      #detail .job-card{box-shadow:0 2px 18px rgba(20,20,40,.09)}
-      #detail .job-card:hover{transform:none}
-      #detail .chevron{display:none}
-      .detail-empty{padding:80px 24px;text-align:center;color:var(--inkFaint);font-weight:700;font-size:.95rem;background:var(--surface-container);border-radius:28px}
-      .rail-row{display:flex;align-items:center;gap:11px;background:var(--surface-container);border-radius:16px;padding:10px 12px;cursor:pointer;transition:background .15s,transform .12s;border:2px solid transparent}
+      /* Full-height viewport app shell */
+      html{height:100%}
+      body{height:100%;overflow:hidden}
+
+      /* Nav rail — fixed, right side (RTL) */
+      #nav-rail{
+        display:flex!important;
+        position:fixed;right:0;top:0;bottom:0;width:80px;
+        background:var(--surface-container);
+        border-left:1px solid var(--lineSoft);
+        flex-direction:column;align-items:center;
+        padding:12px 0 16px;gap:2px;z-index:100;
+      }
+      .nr-item{
+        width:100%;display:flex;flex-direction:column;align-items:center;
+        padding:10px 8px 10px;gap:3px;cursor:pointer;
+        position:relative;border:none;background:none;
+        font-family:var(--font-ui);color:var(--inkSoft);
+        transition:color .15s;
+      }
+      .nr-lbl{font-size:.58rem;font-weight:600;line-height:1}
+      .nr-item .material-symbols-rounded{font-size:24px;position:relative;z-index:1}
+      .nr-item .nr-lbl{position:relative;z-index:1}
+      .nr-item::before{
+        content:'';position:absolute;
+        top:4px;right:12px;bottom:4px;left:12px;
+        border-radius:16px;background:transparent;transition:background .15s;
+      }
+      .nr-item:hover::before{background:rgba(0,0,0,.06)}
+      .nr-item.active{color:var(--on-secondary-container)}
+      .nr-item.active::before{background:var(--secondary-container)}
+      .nr-spacer{flex:1}
+      html[data-theme=dark] .nr-item:hover::before{background:rgba(255,255,255,.08)}
+
+      /* App shell: shift content right by nav rail width, full height */
+      #app{
+        margin-right:80px;
+        max-width:none;padding:0;
+        height:100vh;overflow:hidden;
+        display:grid;
+        grid-template-rows:auto 1fr;
+      }
+
+      /* Desktop top bar */
+      #desktop-topbar{
+        display:flex!important;
+        align-items:center;gap:16px;
+        padding:0 24px;height:64px;flex-shrink:0;
+        background:var(--surface);
+        border-bottom:1px solid var(--lineSoft);
+        position:relative;z-index:31;
+        box-shadow:0 1px 3px rgba(0,0,0,.06);
+      }
+      .dtb-title{
+        font-size:1.15rem;font-weight:800;color:var(--ink);
+        white-space:nowrap;
+      }
+      .dtb-stats{
+        display:flex;gap:8px;flex:1;
+        justify-content:center;
+      }
+      .dtb-stat{
+        display:flex;flex-direction:column;align-items:center;
+        padding:6px 16px;border-radius:12px;
+        background:var(--surface-container);
+        cursor:pointer;transition:background .15s;
+        border:1.5px solid transparent;
+        min-width:64px;
+      }
+      .dtb-stat:hover{background:var(--surface-container-high)}
+      .dtb-stat.active{background:var(--secondary-container);border-color:var(--primary)}
+      .dtb-stat .v{font-size:1.2rem;font-weight:800;color:var(--ink);line-height:1.1}
+      .dtb-stat .l{font-size:.58rem;font-weight:600;color:var(--inkFaint);margin-top:2px}
+      .dtb-stat.active .v{color:var(--on-secondary-container)}
+      .dtb-stat.active .l{color:var(--on-secondary-container);opacity:.8}
+      .dtb-actions{display:flex;align-items:center;gap:8px;margin-inline-start:auto}
+
+      /* Hide mobile-only elements on desktop */
+      .hero{display:none!important}
+      /* Toolbar stays visible — now lives inside #list-col */
+      .toolbar{
+        border-radius:0!important;
+        box-shadow:none!important;
+        position:sticky!important;top:0!important;
+        z-index:20!important;
+        border-bottom:1px solid var(--lineSoft);
+        background:var(--surface-container)!important;
+        padding:10px 12px!important;
+        gap:8px!important;
+        flex-shrink:0;
+      }
+      .toolbar .filter-row{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+      .toolbar .filter-row::-webkit-scrollbar{display:none}
+
+      /* Work area — fills remaining height */
+      #work{
+        display:grid!important;
+        grid-template-columns:320px 1fr;
+        gap:0!important;
+        height:100%;overflow:hidden;
+        align-items:stretch!important;
+      }
+
+      /* List column */
+      #list-col{
+        display:flex!important;flex-direction:column;
+        height:100%;overflow:hidden;
+        background:var(--surface-container);
+        border-left:1px solid var(--lineSoft);
+      }
+      #list-search-bar{
+        display:none!important;
+        padding:10px 10px 6px;
+        background:var(--surface-container);
+        border-bottom:1px solid var(--lineSoft);
+        flex-shrink:0;
+        gap:8px;align-items:center;
+      }
+      #list-search-bar .search-wrap{flex:1}
+      #list-search-bar .search-inp{background:var(--surface-container-high)!important;font-size:.84rem!important}
+
+      /* List column: surface-container bg, full height scroll */
+      #container{
+        display:flex!important;flex-direction:column;
+        gap:2px!important;padding:8px!important;
+        position:static!important;
+        flex:1;overflow-y:auto;
+        background:var(--surface-container);
+      }
+
+      /* Rail rows — Google-grade dense list items */
+      .rail-row{
+        display:flex;align-items:center;gap:10px;
+        background:transparent;border-radius:12px;
+        padding:10px 12px;cursor:pointer;
+        transition:background .13s;border:1.5px solid transparent;
+        position:relative;
+      }
+      .rail-row::after{
+        content:'';position:absolute;inset:0;border-radius:inherit;
+        background:currentColor;opacity:0;transition:opacity .1s;pointer-events:none;
+      }
       .rail-row:hover{background:var(--surface-container-high)}
-      .rail-row.sel{background:var(--secondary-container);border-color:var(--primary)}
-      .rr-fit{width:40px;height:40px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.05rem;flex-shrink:0}
+      .rail-row:hover::after{opacity:.04}
+      .rail-row:active::after{opacity:.08}
+      .rail-row.sel{
+        background:var(--secondary-container);
+        border-color:rgba(79,107,237,.25);
+      }
+      .rail-row.sel::after{display:none}
+      .rr-fit{width:38px;height:38px;border-radius:11px;font-size:.98rem;display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0}
       .rr-text{flex:1;min-width:0}
-      .rr-co{font-weight:800;font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:ltr;text-align:right}
-      .rr-ti{font-size:.73rem;color:var(--inkSoft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:ltr;text-align:right;margin-top:1px}
+      .rr-co{font-weight:700;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:ltr;text-align:right}
+      .rr-ti{font-size:.72rem;color:var(--inkSoft);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:ltr;text-align:right}
+      .rr-date{font-size:.6rem;color:var(--inkFaint);margin-top:2px}
       .rr-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
       .rr-star{color:var(--star);font-size:.85rem;flex-shrink:0}
+
+      /* Detail pane */
+      #detail{
+        display:block;height:100%;overflow-y:auto;
+        background:var(--surface);min-width:0;
+      }
+      #detail .job-card{
+        box-shadow:none!important;border-radius:0!important;
+        background:transparent!important;
+      }
+      #detail .card-head{
+        padding:22px 28px 14px!important;
+        border-bottom:1px solid var(--lineSoft);
+        cursor:default!important;
+      }
+      #detail .card-body{padding:20px 28px 28px!important}
+      #detail .chevron{display:none!important}
+      #detail .job-card:active{transform:none!important}
+      #detail .job-card:hover{transform:none!important;box-shadow:none!important;background:transparent!important}
+
+      .detail-empty{
+        display:flex;flex-direction:column;align-items:center;justify-content:center;
+        height:100%;gap:12px;
+        color:var(--inkFaint);background:var(--surface);
+      }
+      .detail-empty .de-icon{font-size:3.5rem;opacity:.3}
+      .detail-empty .de-text{font-weight:700;font-size:.95rem}
+      .detail-empty .de-sub{font-size:.78rem;font-weight:400;opacity:.7}
     }
     /* keyboard-shortcut hint chip */
     .kbd{font-family:var(--font-mono);font-size:.62rem;background:var(--surface-container-highest);border-radius:6px;padding:1px 6px;color:var(--inkFaint);margin-inline-start:6px}
     @media(max-width:859px){.kbd{display:none}}
     /* keyboard accessibility */
     :focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:8px}
+
+    /* ===== MOBILE BOTTOM NAV BAR ===== */
+    #mobile-bottom-nav{
+      display:none;
+      position:fixed;bottom:0;left:0;right:0;
+      background:color-mix(in srgb,var(--surface-container) 88%,transparent);
+      -webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);
+      border-top:1px solid var(--lineSoft);
+      padding:6px 0 env(safe-area-inset-bottom);
+      box-shadow:var(--e-nav);
+      z-index:100;
+      flex-direction:row;
+      justify-content:space-around;
+      align-items:stretch;
+    }
+    @media(max-width:1023px){
+      #mobile-bottom-nav{display:flex}
+    }
+    @media(min-width:1024px){
+      #mobile-bottom-nav{display:none!important}
+    }
+    .mbn-item{
+      flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      gap:4px;padding:6px 4px;min-height:54px;
+      border:none;background:none;
+      font-family:var(--font-ui);font-size:.62rem;font-weight:600;
+      color:var(--inkFaint);cursor:pointer;
+      transition:color .2s var(--ease);
+      -webkit-tap-highlight-color:transparent;
+      touch-action:manipulation;
+    }
+    /* M3 active indicator: tonal pill behind the icon */
+    .mbn-item .material-symbols-rounded{
+      font-size:24px;line-height:1;padding:4px 18px;border-radius:999px;
+      transition:background .25s var(--ease),color .2s var(--ease);
+    }
+    .mbn-item:active .material-symbols-rounded{background:var(--surface-container-highest)}
+    .mbn-item.active{color:var(--on-secondary-container)}
+    .mbn-item.active .material-symbols-rounded{background:var(--secondary-container);color:var(--on-secondary-container);font-variation-settings:'FILL' 1,'wght' 500,'opsz' 24}
+
+    /* ===== MODAL / SHEET SAFE-AREA PADDING ===== */
+    .modal-foot{padding-bottom:max(14px,calc(env(safe-area-inset-bottom) + 8px))}
+    .m-chatbar{padding-bottom:max(10px,calc(env(safe-area-inset-bottom) + 4px))}
+    .psetup{padding-bottom:max(20px,calc(env(safe-area-inset-bottom) + 14px))}
+
+    /* ===== TOAST ===== */
+    /* (already positioned; add overflow wrapping) */
+    @media(max-width:600px){
+      #toast{max-width:calc(100vw - 32px);white-space:normal;text-align:center}
+    }
+
+    /* ===== DRAWER: open from RIGHT (RTL-correct) ===== */
+    .drawer{position:fixed;top:0;right:0;left:auto;bottom:0;width:min(400px,95vw);background:var(--surface);box-shadow:var(--e3);z-index:200;transform:translateX(100%);transition:transform .35s var(--ease);display:flex;flex-direction:column}
+    .drawer.open{transform:translateX(0)}
 
     /* ===== DARK MODE (Material 3 dark palette) — toggled via [data-theme] on <html> ===== */
     html[data-theme="dark"]{
@@ -458,91 +831,163 @@
     html[data-theme="dark"] .act-open,
     html[data-theme="dark"] .chan-btn.on,
     html[data-theme="dark"] .step-btn.on,
-    html[data-theme="dark"] .fab,
     html[data-theme="dark"] .d-btn.primary,
     html[data-theme="dark"] .new-badge{color:#001257}
     html[data-theme="dark"] .act-wa{background:var(--success-container);color:#b3f1c7}
     html[data-theme="dark"] .act-dismiss,
     html[data-theme="dark"] .dismiss-btn{background:var(--error-container);color:#ffdad6}
     html[data-theme="dark"] .act-dossier{background:#1f3a5f;color:#cfe0ff}
+    html[data-theme="dark"] .act-practice{background:#5f1f3a;color:#ffcfe0}
     html[data-theme="dark"] .round-card.r-passed{background:#1d4a30}
     html[data-theme="dark"] .round-card.r-rejected{background:#5c1414}
   </style>
 </head>
 <body>
+<nav id="nav-rail">
+  <button class="nr-item active" id="nr-jobs" onclick="nr('jobs')" title="משרות">
+    <span class="material-symbols-rounded">work</span>
+    <span class="nr-lbl">משרות</span>
+  </button>
+  <button class="nr-item" id="nr-analytics" onclick="nr('analytics')" title="אנליטיקה">
+    <span class="material-symbols-rounded">analytics</span>
+    <span class="nr-lbl">סטטיסטיקה</span>
+  </button>
+  <div class="nr-spacer"></div>
+  <button class="nr-item" id="nr-support" onclick="openSupport()" title="תמיכה רגשית">
+    <span class="material-symbols-rounded">favorite</span>
+    <span class="nr-lbl">תמיכה</span>
+  </button>
+  <button class="nr-item" id="nr-theme" onclick="toggleTheme()" title="מצב תצוגה">
+    <span class="material-symbols-rounded" id="theme-ico2">dark_mode</span>
+    <span class="nr-lbl">תצוגה</span>
+  </button>
+  <button class="nr-item" id="nr-settings" onclick="openSettings()" title="הגדרות">
+    <span class="material-symbols-rounded">settings</span>
+    <span class="nr-lbl">הגדרות</span>
+  </button>
+</nav>
 <div id="app">
+  <!-- DESKTOP TOP BAR -->
+  <div id="desktop-topbar">
+    <div class="dtb-title">Job Tracker</div>
+    <div class="dtb-stats" id="dtb-stats"></div>
+    <div class="dtb-actions"></div>
+  </div>
+
   <!-- HERO -->
   <div class="hero">
     <div class="hero-top">
       <div>
-        <div class="hero-greeting">בוקר טוב, עומרי 👋</div>
+        <div class="hero-greeting" id="hero-greeting">שלום, עומרי 👋</div>
         <div class="hero-meta" id="hero-meta"></div>
       </div>
-      <div class="hero-actions">
-        <button class="settings-btn" onclick="toggleTheme()" id="theme-btn" title="מצב תצוגה"><span class="material-symbols-rounded" id="theme-ico">dark_mode</span></button>
-        <button class="settings-btn" onclick="openAnalytics()" title="ניתוח"><span class="material-symbols-rounded">analytics</span></button>
-        <button class="settings-btn" onclick="openSettings()" title="הגדרות"><span class="material-symbols-rounded">settings</span></button>
       </div>
-    </div>
     <div class="hero-coach" id="hero-coach"></div>
     <div class="funnel" id="funnel"></div>
     <div class="m-chips" id="m-chips"></div>
   </div>
 
-  <!-- TOOLBAR -->
-  <div class="toolbar">
-    <div class="search-row">
-      <div class="search-wrap">
-        <span class="search-ico material-symbols-rounded">search</span>
-        <input class="search-inp" id="search-inp" type="text" placeholder="חיפוש חברה או תפקיד…" oninput="onSearch(this)"/>
-        <button class="search-clear" id="search-clear" onclick="clearSearch()">✕</button>
-      </div>
-      <div class="sort-seg">
-        <button class="sort-btn" data-val="score" onclick="setSort(this)">התאמה</button>
-        <button class="sort-btn on" data-val="posted" onclick="setSort(this)">עדכני</button>
-        <button class="sort-btn" data-val="az" onclick="setSort(this)">A–Z</button>
-      </div>
-    </div>
-    <div class="filter-row">
-      <button class="sf-chip on-all" data-stage="all" onclick="setStageFilter(this)"><span class="material-symbols-rounded" style="font-size:17px">tune</span>הכל <span class="n" id="fc-all"></span></button>
-      <button class="sf-chip" data-stage="saved" onclick="setStageFilter(this)" style="--f-bg:#dde1ff;--f-fg:#001257;--f-solid:#4F6BED">שמורות <span class="n" id="fc-saved"></span></button>
-      <button class="sf-chip" data-stage="applied" onclick="setStageFilter(this)" style="--f-bg:#d7e3ff;--f-fg:#0b4ba0;--f-solid:#0b66c2">הוגשו <span class="n" id="fc-applied"></span></button>
-      <button class="sf-chip" data-stage="interview" onclick="setStageFilter(this)" style="--f-bg:#ffd8e8;--f-fg:#31101d;--f-solid:#9c4267">ראיונות <span class="n" id="fc-interview"></span></button>
-      <button class="sf-chip" data-stage="offer" onclick="setStageFilter(this)" style="--f-bg:#b3f1c7;--f-fg:#0c3a22;--f-solid:#2e6b46">הצעות <span class="n" id="fc-offer"></span></button>
-      <button class="sf-chip" data-stage="rejected" onclick="setStageFilter(this)" style="--f-bg:#ffdad6;--f-fg:#5c0d0d;--f-solid:#ba1a1a">נדחה <span class="n" id="fc-rejected"></span></button>
-      <button class="sf-chip" data-stage="starred" onclick="setStageFilter(this)">⭐ נבחרות</button>
-      <button class="sf-chip" data-stage="dismissed" onclick="setStageFilter(this)" style="--f-bg:#ffdad6;--f-fg:#5c0d0d;--f-solid:#ba1a1a">🗑️ ארכיון <span class="n" id="fc-dismissed"></span></button>
-    </div>
-    <div class="filter-row">
-      <span class="filter-lbl">ציון</span>
-      <button class="fit-chip on" data-fit="all" onclick="setFitFilter(this)">הכל</button>
-      <button class="fit-chip" data-fit="high" onclick="setFitFilter(this)">8+</button>
-      <button class="fit-chip" data-fit="mid" onclick="setFitFilter(this)">5–7</button>
-      <span class="filter-lbl" style="margin-right:6px">תאריך</span>
-      <button class="fit-chip on" data-age="all" onclick="setAgeFilter(this)">הכל <span id="age-all" class="n"></span></button>
-      <button class="fit-chip" data-age="day" onclick="setAgeFilter(this)">24ש <span id="age-day" class="n"></span></button>
-      <button class="fit-chip" data-age="week" onclick="setAgeFilter(this)">שבוע <span id="age-week" class="n"></span></button>
-      <button class="fit-chip" data-age="month" onclick="setAgeFilter(this)">חודש <span id="age-month" class="n"></span></button>
-    </div>
-    <div class="exp-row">
-      <span class="exp-count" id="count-lbl"></span>
-      <div class="exp-btns">
-        <button class="exp-btn" onclick="expandAll()">פתח הכל</button>
-        <button class="exp-btn" onclick="collapseAll()">סגור הכל</button>
-      </div>
-    </div>
-  </div>
-
   <!-- CARDS -->
   <div id="work">
-    <div id="container" style="display:flex;flex-direction:column;gap:14px"></div>
+    <div id="list-col">
+      <!-- TOOLBAR — lives here so desktop can show it inside the list column -->
+      <div class="toolbar">
+        <div class="search-row">
+          <div class="search-wrap">
+            <span class="search-ico material-symbols-rounded">search</span>
+            <input class="search-inp" id="search-inp" type="text" placeholder="חיפוש חברה או תפקיד…" oninput="onSearch(this)"/>
+            <button class="search-clear" id="search-clear" onclick="clearSearch()">✕</button>
+          </div>
+          <div class="sort-seg">
+            <button class="sort-btn" data-val="score" onclick="setSort(this)">התאמה</button>
+            <button class="sort-btn on" data-val="posted" onclick="setSort(this)">עדכני</button>
+            <button class="sort-btn" data-val="az" onclick="setSort(this)">A–Z</button>
+          </div>
+        </div>
+        <div class="filter-row">
+          <button class="sf-chip on-all" data-stage="all" onclick="setStageFilter(this)"><span class="material-symbols-rounded" style="font-size:17px">tune</span>הכל <span class="n" id="fc-all"></span></button>
+          <button class="sf-chip" data-stage="saved" onclick="setStageFilter(this)" style="--f-bg:#dde1ff;--f-fg:#001257;--f-solid:#4F6BED">שמורות <span class="n" id="fc-saved"></span></button>
+          <button class="sf-chip" data-stage="applied" onclick="setStageFilter(this)" style="--f-bg:#d7e3ff;--f-fg:#0b4ba0;--f-solid:#0b66c2">הוגשו <span class="n" id="fc-applied"></span></button>
+          <button class="sf-chip" data-stage="interview" onclick="setStageFilter(this)" style="--f-bg:#ffd8e8;--f-fg:#31101d;--f-solid:#9c4267">ראיונות <span class="n" id="fc-interview"></span></button>
+          <button class="sf-chip" data-stage="offer" onclick="setStageFilter(this)" style="--f-bg:#b3f1c7;--f-fg:#0c3a22;--f-solid:#2e6b46">הצעות <span class="n" id="fc-offer"></span></button>
+          <button class="sf-chip" data-stage="rejected" onclick="setStageFilter(this)" style="--f-bg:#ffdad6;--f-fg:#5c0d0d;--f-solid:#ba1a1a">נדחה <span class="n" id="fc-rejected"></span></button>
+          <button class="sf-chip" data-stage="starred" onclick="setStageFilter(this)">⭐ נבחרות</button>
+          <button class="sf-chip" data-stage="dismissed" onclick="setStageFilter(this)" style="--f-bg:#ffdad6;--f-fg:#5c0d0d;--f-solid:#ba1a1a">🗑️ ארכיון <span class="n" id="fc-dismissed"></span></button>
+          <button class="filters-toggle-chip" id="filters-toggle" onclick="toggleFilters()"><span class="material-symbols-rounded" style="font-size:16px">tune</span>מסננים</button>
+        </div>
+        <div class="secondary-filters" id="secondary-filters">
+        <div class="filter-row">
+          <span class="filter-lbl">ציון</span>
+          <button class="fit-chip on" data-fit="all" onclick="setFitFilter(this)">הכל</button>
+          <button class="fit-chip" data-fit="high" onclick="setFitFilter(this)">8+</button>
+          <button class="fit-chip" data-fit="mid" onclick="setFitFilter(this)">5–7</button>
+          <span class="filter-lbl" style="margin-right:6px">תאריך</span>
+          <button class="fit-chip on" data-age="all" onclick="setAgeFilter(this)">הכל <span id="age-all" class="n"></span></button>
+          <button class="fit-chip" data-age="day" onclick="setAgeFilter(this)">24ש <span id="age-day" class="n"></span></button>
+          <button class="fit-chip" data-age="week" onclick="setAgeFilter(this)">שבוע <span id="age-week" class="n"></span></button>
+          <button class="fit-chip" data-age="month" onclick="setAgeFilter(this)">חודש <span id="age-month" class="n"></span></button>
+        </div>
+        <div class="exp-row">
+          <span class="exp-count" id="count-lbl"></span>
+          <div class="exp-btns">
+            <button class="exp-btn" onclick="expandAll()">פתח הכל</button>
+            <button class="exp-btn" onclick="collapseAll()">סגור הכל</button>
+            <button class="exp-btn add-url-btn" onclick="openAddByUrl()" title="הוסף משרה לפי לינק"><span class="material-symbols-rounded" style="font-size:16px;vertical-align:-3px">add_link</span> הוסף לינק</button>
+          </div>
+        </div>
+        </div>
+      </div>
+      <div id="container" style="display:flex;flex-direction:column;gap:14px"></div>
+    </div>
     <aside id="detail"></aside>
+  </div>
+</div>
+
+<!-- VOICE CALL OVERLAY -->
+<div id="voice-overlay">
+  <div class="vo-top-block">
+    <div class="vo-company" id="vo-company"></div>
+    <div class="vo-stage" id="vo-stage"></div>
+    <div class="vo-avatar-wrap" id="vo-avatar-wrap">
+      <div class="vo-ring" style="--o:.4"></div>
+      <div class="vo-ring" style="--o:.25"></div>
+      <div class="vo-ring" style="--o:.12"></div>
+      <div class="vo-circle"><span class="material-symbols-rounded" id="vo-icon">smart_toy</span></div>
+    </div>
+    <div class="vo-who" id="vo-who">מתחיל...</div>
+    <div class="vo-last-ai" id="vo-last-ai"></div>
+    <div class="vo-interim" id="vo-interim"></div>
+    <div class="vo-no-support" id="vo-no-support" style="display:none"></div>
+  </div>
+  <div class="vo-controls">
+    <button class="vo-btn vo-skip" onclick="voiceSkip()" title="דלג / המשך"><span class="material-symbols-rounded">skip_next</span></button>
+    <button class="vo-btn vo-end" onclick="endVoiceCall()" title="סיום שיחה"><span class="material-symbols-rounded">call_end</span></button>
+    <button class="vo-btn vo-mute" id="vo-mute-btn" onclick="toggleVoiceMute()" title="השתק"><span class="material-symbols-rounded" id="vo-mute-ico">mic</span></button>
   </div>
 </div>
 
 <div id="toast"></div>
 
-<button class="fab" onclick="triggerScan()" id="scan-btn"><span class="material-symbols-rounded">refresh</span>סרוק עכשיו</button>
+
+<!-- MOBILE BOTTOM NAV (hidden on desktop ≥1024px) -->
+<nav id="mobile-bottom-nav">
+  <button class="mbn-item active" id="mbn-jobs" onclick="mbnJobs()">
+    <span class="material-symbols-rounded">work</span>
+    <span>משרות</span>
+  </button>
+  <button class="mbn-item" id="mbn-analytics" onclick="mbnAnalytics()">
+    <span class="material-symbols-rounded">analytics</span>
+    <span>סטטיסטיקה</span>
+  </button>
+  <button class="mbn-item" id="mbn-support" onclick="mbnSupport()">
+    <span class="material-symbols-rounded">favorite</span>
+    <span>תמיכה</span>
+  </button>
+  <button class="mbn-item" id="mbn-settings" onclick="mbnSettings()">
+    <span class="material-symbols-rounded">settings</span>
+    <span>הגדרות</span>
+  </button>
+</nav>
 
 <!-- CV / PREP / DOSSIER MODAL -->
 <div id="modal" onclick="if(event.target===this)closeModal()">
@@ -552,6 +997,10 @@
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
     <div class="modal-body" id="m-body"></div>
+    <div class="m-chatbar" id="m-chatbar" style="display:none">
+      <textarea id="m-chatinput" rows="1" placeholder="כתוב הודעה… (Enter לשליחה)" oninput="autoGrow(this)" onkeydown="chatKey(event)"></textarea>
+      <button class="m-send" id="m-send" onclick="sendChat()"><span class="material-symbols-rounded">send</span></button>
+    </div>
     <div class="modal-foot" id="m-foot">
       <button class="act-btn act-cv" onclick="copyModalText()">העתק 📋</button>
       <button class="act-btn act-open" id="m-pdf-btn" onclick="printCV()">PDF 🖨️</button>
@@ -571,6 +1020,37 @@
   </div>
 </div>
 
+<!-- ADD BY URL DIALOG -->
+<div id="add-url-overlay" onclick="if(event.target===this)closeAddByUrl()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1100;align-items:flex-end;justify-content:center;backdrop-filter:blur(3px)">
+  <div class="modal-card" style="max-height:80vh">
+    <div class="modal-head">
+      <div><h3>🔗 הוסף משרה מלינק</h3><div class="modal-sub" id="abu-sub">הדבק לינק למשרה — AI יחלץ את הפרטים אוטומטית</div></div>
+      <button class="modal-close" onclick="closeAddByUrl()">✕</button>
+    </div>
+    <div style="padding:0 20px 8px;display:flex;flex-direction:column;gap:12px" id="abu-form">
+      <input id="abu-url" class="d-inp" type="url" placeholder="https://boards.greenhouse.io/... או כל לינק למשרה" style="font-size:.9rem" oninput="abuUrlChange(this)"/>
+      <div id="abu-manual" style="display:none;flex-direction:column;gap:10px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <input id="abu-company" class="d-inp" placeholder="שם חברה *" style="font-size:.85rem"/>
+          <input id="abu-title" class="d-inp" placeholder="כותרת תפקיד *" style="font-size:.85rem"/>
+        </div>
+        <input id="abu-location" class="d-inp" placeholder="מיקום (Tel Aviv / Remote…)" style="font-size:.85rem"/>
+        <textarea id="abu-desc" class="d-ta" rows="3" placeholder="תיאור קצר (אופציונלי)" style="font-size:.85rem;resize:vertical"></textarea>
+      </div>
+      <div id="abu-status" style="font-size:.8rem;color:var(--inkSoft);min-height:20px"></div>
+    </div>
+    <div class="modal-foot" id="abu-foot">
+      <button class="act-btn act-letter" id="abu-parse-btn" onclick="abuParse()" style="flex:1">
+        <span class="material-symbols-rounded">auto_awesome</span>חלץ פרטים עם AI
+      </button>
+      <button class="act-btn act-cv" id="abu-manual-btn" onclick="abuToggleManual()">✍️ הזן ידנית</button>
+      <button class="act-btn act-open" id="abu-save-btn" onclick="abuSave()" style="display:none;flex:1">
+        <span class="material-symbols-rounded">add</span>הוסף לטראקר
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- SETTINGS DRAWER -->
 <div class="drawer-overlay" id="drawer-overlay" onclick="closeSettings()"></div>
 <div class="drawer" id="drawer">
@@ -584,6 +1064,7 @@
     <button class="dtab" data-tab="connect" onclick="switchDrawerTab(this)">חיבורים</button>
   </div>
   <div class="drawer-body">
+    <div class="d-section"><div class="d-lbl">תצוגה</div><button class="d-btn" onclick="toggleTheme()"><span class="material-symbols-rounded" id="theme-ico-set">dark_mode</span> החלף מצב כהה / בהיר</button></div>
     <div class="d-tab-panel on" id="dtab-cv">
       <div class="d-section"><div class="d-lbl">שם</div><input class="d-inp" id="cv-name" placeholder="OMRI GONEN" oninput="saveCvOverride()"/></div>
       <div class="d-section"><div class="d-lbl">פרטי קשר</div><input class="d-inp" id="cv-contact" placeholder="+972-55-..." oninput="saveCvOverride()"/></div>
@@ -598,13 +1079,34 @@
     </div>
     <div class="d-tab-panel" id="dtab-connect">
       <div class="d-section">
+        <div class="d-lbl">🌐 Proxy URL — צ'אט חי מאובטח (מומלץ)</div>
+        <input class="d-inp" id="proxy-inp" type="text" placeholder="https://anthropic-proxy.xxx.workers.dev" autocomplete="off"/>
+        <button class="d-btn primary" onclick="saveProxy()" style="margin-top:6px">שמור Proxy</button>
+        <div class="d-status" id="proxy-status"></div>
+        <div class="d-hint">Cloudflare Worker ששומר את המפתח כסוד בצד שרת. ראה הוראות הקמה ב-worker/README.md. כך אפשר גם לשתף את הטראקר בלי לחשוף מפתח.</div>
+      </div>
+      <div class="d-section">
+        <div class="d-lbl">🔑 Anthropic API Key — חלופה (מפתח בדפדפן)</div>
+        <input class="d-inp" id="api-key-inp" type="password" placeholder="sk-ant-..." autocomplete="off"/>
+        <button class="d-btn primary" onclick="saveApiKey()" style="margin-top:6px">שמור מפתח</button>
+        <button class="d-btn" onclick="testConnection()" style="margin-top:6px">🔌 בדוק חיבור</button>
+        <div class="d-status" id="api-key-status"></div>
+        <div class="d-hint">נשמר רק בדפדפן שלך (localStorage). השתמש בזה לשימוש אישי בלבד — לא לשתף. אם הגדרת Proxy, הוא קודם. בלי שניהם — הכפתורים מעתיקים פרומפט.</div>
+      </div>
+      <div class="d-section">
+        <div class="d-lbl">🎙️ ElevenLabs API Key — קול אנושי לראיון קולי</div>
+        <input class="d-inp" id="el-key-inp" type="password" placeholder="sk_..." autocomplete="off"/>
+        <button class="d-btn primary" onclick="saveElKey()" style="margin-top:6px">שמור מפתח ElevenLabs</button>
+        <div class="d-status" id="el-key-status"></div>
+        <div class="d-hint">מפתח חינמי ב-elevenlabs.io (10,000 תווים/חודש — מספיק לעשרות ראיונות). בלעדיו — קול מהדפדפן (רובוטי). עם המפתח — קול אנושי אמיתי.</div>
+      </div>
+      <div class="d-section">
         <div class="d-lbl">GitHub Token</div>
         <input class="d-inp" id="gh-token-inp" type="password" placeholder="ghp_..." autocomplete="off"/>
         <button class="d-btn primary" onclick="saveGhToken()" style="margin-top:6px">שמור Token</button>
         <div class="d-status" id="gh-token-status"></div>
       </div>
       <div class="d-section" style="display:flex;flex-direction:column;gap:8px">
-        <button class="d-btn" onclick="triggerScan();closeSettings()">🔄 סרוק עכשיו</button>
         <button class="d-btn" onclick="syncFeedback()">📤 סנכרן פידבק</button>
         <div class="d-status" id="sync-status"></div>
       </div>
@@ -885,11 +1387,35 @@ function setSort(b){
   b.classList.add("on");render();
 }
 function setAgeFilter(b){fAge=b.dataset.age;document.querySelectorAll("[data-age]").forEach(c=>c.classList.remove("on"));b.classList.add("on");render();}
+function resetFilters(){
+  fStage="all";fFit="all";fAge="all";fQ="";
+  document.querySelectorAll(".search-inp").forEach(i=>{i.value="";});
+  document.querySelectorAll(".search-clear").forEach(c=>c.classList.remove("show"));
+  document.querySelectorAll("[data-fit]").forEach(c=>c.classList.remove("on"));
+  document.querySelectorAll("[data-age]").forEach(c=>c.classList.remove("on"));
+  document.querySelectorAll(".sf-chip").forEach(c=>c.classList.remove("on-all","on-stage"));
+  document.querySelectorAll('[data-fit="all"],[data-age="all"]').forEach(c=>c.classList.add("on"));
+  const allStage=document.querySelector('.sf-chip[data-stage="all"]');if(allStage)allStage.classList.add("on-all");
+  render();
+}
 function onSearch(inp){fQ=inp.value.trim().toLowerCase();document.getElementById("search-clear").classList.toggle("show",!!fQ);render();}
-function clearSearch(){fQ="";const i=document.getElementById("search-inp");i.value="";document.getElementById("search-clear").classList.remove("show");render();}
+function clearSearch(){fQ="";const i=document.getElementById("search-inp");i.value="";document.getElementById("search-clear").classList.remove("show");const id=document.getElementById("search-inp-d");if(id)id.value="";const icd=document.getElementById("search-clear-d");if(icd)icd.classList.remove("show");render();}
+function onSearchDesktop(inp){fQ=inp.value.trim().toLowerCase();const icd=document.getElementById("search-clear-d");if(icd)icd.classList.toggle("show",!!fQ);render();}
+function clearSearchDesktop(){fQ="";const id=document.getElementById("search-inp-d");if(id)id.value="";const icd=document.getElementById("search-clear-d");if(icd)icd.classList.remove("show");render();}
 
 /* ── collapse / expand ── */
-function toggleCard(el){el.classList.toggle("open");}
+function toggleCard(el){
+  const opening=!el.classList.contains("open");
+  if(opening){
+    document.querySelectorAll(".job-card.open").forEach(c=>{if(c!==el)c.classList.remove("open");});
+    el.classList.add("open");
+    const tb=document.querySelector(".toolbar");
+    const off=(tb?tb.getBoundingClientRect().height:0)+18;
+    setTimeout(()=>{const y=el.getBoundingClientRect().top+window.scrollY-off;window.scrollTo({top:Math.max(0,y),behavior:"smooth"});},70);
+  }else{
+    el.classList.remove("open");
+  }
+}
 function expandAll(){document.querySelectorAll(".job-card").forEach(c=>{if(c.offsetParent!==null)c.classList.add("open");});}
 function collapseAll(){document.querySelectorAll(".job-card").forEach(c=>c.classList.remove("open"));}
 
@@ -931,12 +1457,214 @@ function openCV(i){
   _cvJob=j;_cvText=tailorCV(j);_cvCompany=j.company;_modalMode="cv";
   document.getElementById("m-title").textContent="קו״ח מותאמים — "+j.company;
   document.getElementById("m-sub").textContent=j.title;
-  document.getElementById("m-body").textContent=_cvText;
+  const body=document.getElementById("m-body");body.className="modal-body";body.textContent=_cvText;
+  document.getElementById("m-chatbar").style.display="none";
+  document.getElementById("m-foot").style.display="flex";
   document.getElementById("m-pdf-btn").style.display="";
   document.getElementById("modal").classList.add("show");
 }
-function closeModal(){document.getElementById("modal").classList.remove("show");}
+function closeModal(){document.getElementById("modal").classList.remove("show");document.getElementById("m-chatbar").style.display="none";document.getElementById("m-foot").style.display="flex";const b=document.getElementById("m-body");b.className="modal-body";}
 function copyModalText(){navigator.clipboard.writeText(_cvText).then(()=>showToast(_modalMode==="cv"?"קורות חיים הועתקו!":"הפרומפט הועתק — הדבק ב-Claude.ai"));}
+
+/* ══════════ LIVE CHAT ENGINE (direct Anthropic API) ══════════ */
+const CHAT_MODEL="claude-sonnet-4-6";
+function getApiKey(){return localStorage.getItem('anthropic_key')||'';}
+function getProxy(){return (localStorage.getItem('claude_proxy')||'').trim();}
+function chatReady(){return !!(getProxy()||getApiKey());}
+function saveApiKey(){
+  const v=document.getElementById('api-key-inp').value.trim();
+  if(v){localStorage.setItem('anthropic_key',v);document.getElementById('api-key-status').textContent='מפתח שמור ✓ — הכפתורים יפתחו צ\'אט חי';showToast('מפתח API נשמר');}
+  else{localStorage.removeItem('anthropic_key');document.getElementById('api-key-status').textContent='';showToast('מפתח הוסר');}
+}
+function saveProxy(){
+  const v=document.getElementById('proxy-inp').value.trim().replace(/\/$/,'');
+  if(v){localStorage.setItem('claude_proxy',v);document.getElementById('proxy-status').textContent='Proxy מחובר ✓ — צ\'אט חי בלי מפתח בדפדפן';showToast('Proxy נשמר');}
+  else{localStorage.removeItem('claude_proxy');document.getElementById('proxy-status').textContent='';showToast('Proxy הוסר');}
+}
+let _chat={system:"",messages:[],busy:false};
+function autoGrow(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,140)+'px';}
+function chatKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}}
+function appendMsg(role,text,cls){
+  const body=document.getElementById('m-body');
+  const d=document.createElement('div');
+  d.className='chat-msg '+(cls||role);
+  d.textContent=text;
+  body.appendChild(d);body.scrollTop=body.scrollHeight;
+  return d;
+}
+async function callClaude(){
+  const proxy=getProxy();
+  const payload={model:CHAT_MODEL,max_tokens:2000,system:_chat.system,messages:_chat.messages};
+  let res;
+  if(proxy){
+    // route through Cloudflare Worker — no key in the browser
+    res=await fetch(proxy,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)});
+  }else{
+    res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'content-type':'application/json','x-api-key':getApiKey(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify(payload)
+    });
+  }
+  if(!res.ok){
+    const t=await res.text();
+    let msg;
+    if(res.status===401)msg='המפתח שגוי או פג תוקף (401) — בדוק/החלף בהגדרות → Connections.';
+    else if(res.status===403)msg='אין הרשאה למפתח הזה (403) — ודא שיש קרדיט פעיל ב-console.anthropic.com.';
+    else if(res.status===404)msg='המודל לא נמצא (404): '+t.slice(0,120);
+    else if(res.status===429)msg='חרגת ממכסת השימוש (429) — בדוק קרדיט/מגבלות ב-console.anthropic.com.';
+    else if(res.status===400)msg='בקשה שגויה (400): '+t.slice(0,140);
+    else msg=res.status+' '+t.slice(0,160);
+    throw new Error(msg);
+  }
+  const data=await res.json();
+  return (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n').trim();
+}
+async function testConnection(){
+  const st=document.getElementById('api-key-status');
+  const proxy=getProxy(),key=getApiKey();
+  if(!proxy&&!key){st.textContent='✗ אין מפתח ולא Proxy — הדבק מפתח ולחץ "שמור מפתח" קודם';st.style.color='var(--error)';return;}
+  st.textContent='בודק חיבור…';st.style.color='var(--inkSoft)';
+  try{
+    const payload={model:CHAT_MODEL,max_tokens:8,messages:[{role:'user',content:'ping'}]};
+    let res;
+    if(proxy){res=await fetch(proxy,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)});}
+    else{res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify(payload)});}
+    if(res.ok){st.textContent='✓ החיבור עובד! הכפתורים יפתחו צ\'אט חי 🎉';st.style.color='var(--success)';showToast('✓ החיבור ל-Claude עובד');}
+    else{
+      const t=await res.text();let m;
+      if(res.status===401)m='✗ המפתח שגוי או פג תוקף (401) — בדוק שהעתקת אותו במלואו';
+      else if(res.status===403)m='✗ אין הרשאה/קרדיט (403) — הוסף קרדיט ב-console.anthropic.com';
+      else if(res.status===429)m='✗ חריגה ממכסה (429) — בדוק קרדיט';
+      else if(res.status===404)m='✗ מודל לא נמצא (404): '+t.slice(0,80);
+      else m='✗ שגיאה '+res.status+': '+t.slice(0,80);
+      st.textContent=m;st.style.color='var(--error)';
+    }
+  }catch(e){st.textContent='✗ הקריאה נכשלה (רשת/CORS): '+e.message;st.style.color='var(--error)';}
+}
+async function runChatTurn(){
+  _chat.busy=true;
+  const send=document.getElementById('m-send');if(send)send.disabled=true;
+  const typing=appendMsg('ai','מקליד…','ai typing');
+  try{
+    const reply=await callClaude();
+    typing.remove();
+    _chat.messages.push({role:'assistant',content:reply});
+    appendMsg('ai',reply);
+  }catch(err){
+    typing.remove();
+    appendMsg('ai','אופס — קריאה ל-Claude נכשלה. בדוק שהמפתח תקין בהגדרות.\n\n'+err.message,'err');
+  }finally{
+    _chat.busy=false;const s=document.getElementById('m-send');if(s)s.disabled=false;
+  }
+}
+function sendChat(){
+  if(_chat.busy)return;
+  const inp=document.getElementById('m-chatinput');
+  const text=inp.value.trim();if(!text)return;
+  inp.value='';autoGrow(inp);
+  _chat.messages.push({role:'user',content:text});
+  appendMsg('user',text);
+  runChatTurn();
+}
+
+/* ── one-shot research report (web search), not a chat ── */
+function mdLite(s){
+  const esc=t=>t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const inline=t=>t.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\[(.+?)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+  const lines=esc(s).split('\n');let html='',inList=false;
+  const closeList=()=>{if(inList){html+='</ul>';inList=false;}};
+  for(const ln of lines){
+    const t=ln.trim();
+    if(/^#{1,4}\s/.test(t)){closeList();html+='<div class="rp-h">'+inline(t.replace(/^#{1,4}\s/,''))+'</div>';continue;}
+    if(/^[-•*]\s/.test(t)){if(!inList){html+='<ul class="rp-ul">';inList=true;}html+='<li>'+inline(t.replace(/^[-•*]\s/,''))+'</li>';continue;}
+    const num=t.match(/^(\d+)[.)]\s+(.*)/);
+    if(num){closeList();html+='<div class="rp-num"><span class="rp-n">'+num[1]+'</span><span>'+inline(num[2])+'</span></div>';continue;}
+    if(!t){closeList();html+='<div class="rp-sp"></div>';continue;}
+    closeList();html+='<p class="rp-p">'+inline(t)+'</p>';
+  }
+  closeList();return html;
+}
+async function callResearch(system,userText,useTools){
+  const proxy=getProxy(),key=getApiKey();
+  const payload={model:CHAT_MODEL,max_tokens:2500,system,messages:[{role:'user',content:userText}]};
+  if(useTools)payload.tools=[{type:'web_search_20250305',name:'web_search',max_uses:5}];
+  let res;
+  if(proxy)res=await fetch(proxy,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)});
+  else res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify(payload)});
+  if(!res.ok){const t=await res.text();const err=new Error(res.status+' '+t.slice(0,160));err.status=res.status;throw err;}
+  const data=await res.json();
+  return (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n').trim();
+}
+function openReport({title,sub,system,query,fallbackText}){
+  document.getElementById('m-title').textContent=title;
+  document.getElementById('m-sub').textContent=sub||'';
+  const body=document.getElementById('m-body');
+  const bar=document.getElementById('m-chatbar');
+  const foot=document.getElementById('m-foot');
+  document.getElementById('m-pdf-btn').style.display='none';
+  if(!chatReady()){
+    _modalMode='prompt';_cvText=fallbackText||query;
+    body.className='modal-body';body.innerHTML='';
+    const note=document.createElement('div');note.className='chat-disabled-note';
+    note.innerHTML='🔎 <b>רוצה דוסייר אוטומטי עם חיפוש ברשת?</b> הוסף מפתח API פעם אחת.<button class="cdn-btn" onclick="closeModal();openSettings(\'connect\')">פתח הגדרות והוסף מפתח</button>';
+    body.appendChild(note);
+    const pre=document.createElement('div');pre.style.whiteSpace='pre-wrap';pre.textContent=_cvText;body.appendChild(pre);
+    bar.style.display='none';foot.style.display='flex';
+    document.getElementById('modal').classList.add('show');
+    return;
+  }
+  _modalMode='report';
+  body.className='modal-body';
+  body.innerHTML='<div class="rp-loading"><div class="rp-spin"></div><div>🔎 חוקר את החברה ברשת…</div><div class="rp-loading-sub">אוסף מידע עדכני · 10-20 שניות</div></div>';
+  bar.style.display='none';foot.style.display='none';
+  document.getElementById('modal').classList.add('show');
+  (async()=>{
+    let text;
+    try{text=await callResearch(system,query,true);}
+    catch(e){
+      try{text=await callResearch(system,query,false);}
+      catch(e2){body.innerHTML='<div class="rp-err">לא הצלחתי להשלים את הדוסייר 😕<br>'+((e2&&e2.message)||(e&&e.message)||'')+'</div>';return;}
+    }
+    if(!text){body.innerHTML='<div class="rp-err">לא חזר תוכן. נסה שוב.</div>';return;}
+    _cvText=text;
+    body.innerHTML=mdLite(text);
+    foot.style.display='flex';
+    document.getElementById('m-pdf-btn').style.display='none';
+  })();
+}
+/* Launch: if API key present → live chat; else → copy-prompt fallback */
+function launchChat({title,sub,system,kickoff,fallbackText,pdf}){
+  document.getElementById('m-title').textContent=title;
+  document.getElementById('m-sub').textContent=sub||'';
+  const body=document.getElementById('m-body');
+  const bar=document.getElementById('m-chatbar');
+  const foot=document.getElementById('m-foot');
+  if(chatReady()){
+    _modalMode='chat';
+    _chat={system:system,messages:[],busy:false};
+    body.className='modal-body chat';body.innerHTML='';
+    bar.style.display='flex';foot.style.display='none';
+    document.getElementById('modal').classList.add('show');
+    if(kickoff){_chat.messages.push({role:'user',content:kickoff});runChatTurn();}
+    setTimeout(()=>document.getElementById('m-chatinput').focus(),120);
+  }else{
+    // fallback: show the prompt for copy
+    _modalMode='prompt';_cvText=fallbackText||(system+'\n\n'+(kickoff||''));
+    body.className='modal-body';
+    body.innerHTML='';
+    const note=document.createElement('div');
+    note.className='chat-disabled-note';
+    note.innerHTML='💬 <b>רוצה לדבר ישירות עם Claude כאן</b>, בלי להעתיק? צריך להוסיף מפתח API פעם אחת.<button class="cdn-btn" onclick="closeModal();openSettings(\'connect\')">פתח הגדרות והוסף מפתח</button>';
+    body.appendChild(note);
+    const pre=document.createElement('div');
+    pre.style.whiteSpace='pre-wrap';pre.textContent=_cvText;
+    body.appendChild(pre);
+    bar.style.display='none';foot.style.display='flex';
+    document.getElementById('m-pdf-btn').style.display=pdf?'':'none';
+    document.getElementById('modal').classList.add('show');
+  }
+}
 function copyCV(){copyModalText();}
 function downloadCV(){
   const b=new Blob([_cvText],{type:"text/plain;charset=utf-8"}),a=document.createElement("a");
@@ -965,8 +1693,8 @@ function printCV(){
 /* ── FEATURE: interview prep prompt ── */
 function openPrep(i){
   const j=window._sorted[i],cvData=getCV();
-  _modalMode="prep";_cvCompany=j.company;
-  _cvText=`אתה מאמן קריירה בכיר. הכן אותי לראיון בעברית.
+  _cvCompany=j.company;
+  const prompt=`אתה מאמן קריירה בכיר. הכן אותי לראיון בעברית.
 
 ## המשרה
 חברה: ${j.company}
@@ -985,37 +1713,568 @@ ${cvData.summary}
 4. דגל אדום אחד שכדאי לי להימנע ממנו
 
 תן תשובה מובנית וקצרה.`;
-  document.getElementById("m-title").textContent="🎯 הכנה לראיון — "+j.company;
-  document.getElementById("m-sub").textContent=j.title;
-  document.getElementById("m-body").textContent=_cvText;
-  document.getElementById("m-pdf-btn").style.display="none";
+  launchChat({
+    title:"🎯 הכנה לראיון — "+j.company,
+    sub:j.title,
+    system:"אתה מאמן קריירה בכיר ב-RevOps/GTM. ענה בעברית, מובנה וקצר. אחרי ההכנה, הזמן את המשתמש לשאול שאלות המשך או לתרגל.",
+    kickoff:prompt,
+    fallbackText:prompt
+  });
+}
+
+/* ── FEATURE: interactive interview practice (stage-aware, emotionally supportive) ── */
+function currentStage(j){
+  const rounds=getRounds(j);
+  // last pending round defines what we're practicing for; else next stage after last completed; else first
+  for(const r of rounds){if(r.outcome==="pending"&&r.stage)return r.stage;}
+  if(rounds.length){const last=rounds[rounds.length-1];const idx=ROUND_STAGES.indexOf(last.stage);if(idx>=0&&idx<ROUND_STAGES.length-1)return ROUND_STAGES[idx+1];}
+  return ROUND_STAGES[0];
+}
+const STAGE_GUIDE={
+  "ראיון טלפוני":"שיחת סינון ראשונית עם מגייס/ת. קצרה, אנושית. מתמקדת ב-fit כללי, מוטיבציה, ציפיות שכר וזמינות. טון: חם, פתוח.",
+  "ראיון HR":"ראיון משאבי אנוש. בודק התאמה תרבותית, ערכים, soft skills ושאלות התנהגותיות (STAR). טון: אישי, אמפתי.",
+  "ראיון וידאו":"ראיון מוקלט/חי בזום. חשובה נוכחות, בהירות וקצב. מערב גם שאלות התנהגותיות וגם מקצועיות.",
+  "ראיון מקצועי":"ראיון עומק עם מנהל/ת מקצועי. צלילה ל-RevOps/GTM — מטריקות, פייפליין, lead scoring, אופרציה, מערכות. טון: ענייני, חד.",
+  "ראיון טכני":"ראיון יישומי/טכני. תרחישים, כלים (CRM, אוטומציה, SQL/דשבורדים), פתרון בעיות בזמן אמת.",
+  "עבודת בית / מטלה":"מטלה ביתית. תרגול הצגת התוצר — איך מסבירים החלטות, הנחות, ו-tradeoffs בפגישת הצגה.",
+  "ראיון מנהל":"ראיון עם מנהל בכיר/VP. אסטרטגיה, חשיבה עסקית, איך תיצור impact ב-90 הימים הראשונים. טון: בוגר, בטוח.",
+  "ראיון סופי":"שלב אחרון — לרוב מנכ\"ל/מייסד. חזון, אנרגיה, התאמה לטווח ארוך, וסגירה. טון: מנהיגותי, אנושי.",
+  "אחר":"ראיון כללי — שילוב של התנהגותי, מקצועי ומוטיבציה."
+};
+const STAGE_GUIDE_EN={
+  "ראיון טלפוני":"Initial phone screening with a recruiter. Short and warm. Covers general fit, motivation, salary expectations, and availability.",
+  "ראיון HR":"HR interview. Assesses cultural fit, values, soft skills, and behavioral questions (STAR format).",
+  "ראיון וידאו":"Video interview (Zoom/Teams). Combines behavioral and professional questions. Presence, clarity and pacing matter.",
+  "ראיון מקצועי":"Deep-dive with the hiring manager. Focused on RevOps/GTM — metrics, pipeline, lead scoring, operations, tech stack. Be sharp and specific.",
+  "ראיון טכני":"Technical interview: scenarios, SQL, CRM workflows, live problem-solving. Show your process, not just the answer.",
+  "עבודת בית / מטלה":"Take-home assignment or case study. Structure your thinking, show impact metrics, and defend your choices.",
+  "ראיון מנהל":"Senior leadership interview (VP/Director). Strategy, business impact, and your 90-day plan. Be decisive and confident.",
+  "ראיון סופי":"Final round — often with CEO/Founder. Vision, leadership, long-term fit, and closing. Be authentic and compelling.",
+  "אחר":"General interview — mix of behavioral, professional, and motivation questions."
+};
+
+function openPractice(i){
+  const j=window._sorted[i];
+  const stage=currentStage(j);
+  const rounds=getRounds(j);
+  // collect known interviewers from rounds
+  const knownInterviewers=rounds.filter(r=>r.name&&r.name.trim()).map(r=>({name:r.name.trim(),stage:r.stage||""}));
+
+  // build stage chips
+  const stageChips=ROUND_STAGES.map(s=>`
+    <button class="stage-chip${s===stage?" on":""}" onclick="practiceSelStage(this,'${s.replace(/'/g,"\\'")}')">
+      ${s}
+    </button>`).join("");
+
+  // build interviewer chips from rounds
+  const iviewChips=knownInterviewers.length ? knownInterviewers.map((iv,idx)=>`
+    <button class="iview-chip" onclick="practiceSelInterviewer(this,'${iv.name.replace(/'/g,"\\'")}')">
+      <span class="material-symbols-rounded" style="font-size:16px">person</span>${iv.name}${iv.stage?` · <small>${iv.stage}</small>`:""}
+    </button>`).join("") : "";
+
+  const body=document.getElementById("m-body");
+  const head=document.getElementById("m-title");
+  const sub=document.getElementById("m-sub");
+  const foot=document.getElementById("m-foot");
+  const bar=document.getElementById("m-chatbar");
+  head.textContent="🎙️ הגדרות תרגול — "+j.company;
+  sub.textContent=j.title;
+  foot.style.display="none";
+  bar.style.display="none";
+  body.className="modal-body";
+  body.style.whiteSpace="normal";
+  body.innerHTML=`<div class="psetup" id="psetup-${i}">
+    <div class="psetup-section">
+      <div class="psetup-lbl"><span class="material-symbols-rounded">translate</span>שפת הראיון</div>
+      <div class="lang-chips">
+        <button class="lang-chip on" id="lang-he" onclick="practiceSelLang('he')">
+          <span class="flag">🇮🇱</span><span class="lname">עברית</span>
+        </button>
+        <button class="lang-chip" id="lang-en" onclick="practiceSelLang('en')">
+          <span class="flag">🇬🇧</span><span class="lname">English</span>
+        </button>
+      </div>
+    </div>
+    <div class="psetup-section">
+      <div class="psetup-lbl"><span class="material-symbols-rounded">stairs</span>שלב הראיון</div>
+      <div class="stage-chips">${stageChips}</div>
+    </div>
+    <div class="psetup-section">
+      <div class="psetup-lbl"><span class="material-symbols-rounded">person</span>המראיין/ת${knownInterviewers.length?" (מהסבבים שלך)":""}</div>
+      <div class="interviewer-row">
+        ${iviewChips}
+        <input class="iview-manual" id="iview-manual" type="text" placeholder="שם ותפקיד המראיין/ת (אופציונלי)" value="${knownInterviewers.length?knownInterviewers[knownInterviewers.length-1].name:""}"/>
+      </div>
+    </div>
+    <div class="psetup-btns">
+      <button class="psetup-start" style="flex:1" onclick="startPractice(${i})">
+        <span class="material-symbols-rounded">chat</span>צ׳אט
+      </button>
+      <button class="psetup-start-voice" onclick="startVoicePractice(${i})">
+        <span class="material-symbols-rounded">mic</span>ראיון קולי
+      </button>
+    </div>
+  </div>`;
+  // store context on window for the start function
+  window._practiceCtx={i,stage,lang:'he'};
   document.getElementById("modal").classList.add("show");
 }
+
+function practiceSelLang(lang){
+  window._practiceCtx.lang=lang;
+  document.getElementById("lang-he").classList.toggle("on",lang==="he");
+  document.getElementById("lang-en").classList.toggle("on",lang==="en");
+}
+function practiceSelStage(btn,stage){
+  window._practiceCtx.stage=stage;
+  btn.closest(".stage-chips").querySelectorAll(".stage-chip").forEach(b=>b.classList.remove("on"));
+  btn.classList.add("on");
+}
+function practiceSelInterviewer(btn,name){
+  btn.closest(".interviewer-row").querySelectorAll(".iview-chip").forEach(b=>b.classList.remove("on"));
+  btn.classList.add("on");
+  const inp=document.getElementById("iview-manual");
+  if(inp)inp.value=name;
+}
+
+function startPractice(i){
+  const {stage,lang}=window._practiceCtx||{};
+  const j=window._sorted[i],cvData=getCV();
+  _cvCompany=j.company;
+  const interviewer=(document.getElementById("iview-manual")||{}).value||"";
+  const stageUsed=stage||currentStage(j);
+  const langHe=lang!=="en";
+
+  const guideHe=STAGE_GUIDE[stageUsed]||"";
+  const guideEn=STAGE_GUIDE_EN[stageUsed]||"";
+
+  const interviewerCtx=interviewer
+    ?(langHe?`\n## המראיין/ת\n${interviewer}\nהתאם את השאלות לסגנון ולתפקיד של מי שמראיין — מה הם ישאלו, מה חשוב להם.`
+            :`\n## Interviewer\n${interviewer}\nTailor your questions to this person's role and perspective.`)
+    :"";
+
+  const sysPrompt=langHe
+    ?`אתה מאמן ראיונות בכיר וגם מאמן מנטלי. אנהל איתך **סימולציית ראיון אינטראקטיבית** בעברית — שאלה, התשובה שלי, ואז הפידבק שלך. עבור אחת-אחת, לא הכל ביחד.
+
+## השלב: ${stageUsed}
+${guideHe}${interviewerCtx}
+
+## המשרה
+חברה: ${j.company}
+תפקיד: ${j.title}
+מיקום: ${j.location||""}
+${j.description?`תיאור:\n${j.description.slice(0,600)}`:""}
+
+## הפרופיל שלי
+עומרי גונן — ${cvData.tagline}
+${cvData.summary}
+
+## כללי הסימולציה
+1. שאל **שאלה אחת בכל פעם** — מותאמת לשלב ולמשרה. ערבב: מקצועית, התנהגותית STAR, ולפחות שאלה קשה/מלכודת אחת.
+2. חכה לתשובה. אל תענה במקומי.
+3. אחרי כל תשובה: 💪 **חזק** · 🎯 **לשפר** · 📊 **ניקוד 1-10** · ➡️ שאלה הבאה.
+4. אחרי 6-8 שאלות: סיכום — ציון ממוצע, 3 חוזקות, 2 דברים לתרגל.
+
+## טון
+מעצים, לא שובר. אפילו ביקורת יוצאת ממקום של אמונה בי. המטרה — לצאת חזק יותר.`
+    :`You are a senior interview coach and mental performance trainer. Run an **interactive interview simulation** in English — one question at a time, then my answer, then your feedback. Never answer for me.
+
+## Stage: ${stageUsed}
+${guideEn}${interviewerCtx}
+
+## Job
+Company: ${j.company}
+Role: ${j.title}
+Location: ${j.location||""}
+${j.description?`Description:\n${j.description.slice(0,600)}`:""}
+
+## My Profile
+Omri Gonen — ${cvData.tagline}
+${cvData.summary}
+
+## Simulation Rules
+1. Ask **one question at a time** — tailored to the stage and this specific job. Mix: professional/technical, behavioral STAR, and at least one tough/curveball question.
+2. Wait for my answer. Never answer for me.
+3. After each answer: 💪 **Strengths** · 🎯 **Improve** · 📊 **Score 1-10** · ➡️ Next question.
+4. After 6-8 questions: Summary — average score, 3 strengths, 2 things to practise before the real interview.
+
+## Tone
+Empowering, not crushing. Even critical feedback should leave me energised and confident. The goal is to finish stronger than I started.`;
+
+  const kickoff=langHe?"אני מוכן. תתחיל בבקשה בשאלה הראשונה.":"I'm ready. Please start with the first question.";
+  launchChat({
+    title:"🎙️ תרגול — "+j.company,
+    sub:stageUsed+(interviewer?" · "+interviewer:"")+(langHe?" · עברית":" · English"),
+    system:sysPrompt,
+    kickoff,
+    fallbackText:sysPrompt
+  });
+}
+
+/* ══════════════════════════════════════════════════════
+   VOICE INTERVIEW ENGINE
+   Web Speech API: SpeechRecognition (STT) + speechSynthesis (TTS)
+   ══════════════════════════════════════════════════════ */
+const _vc={
+  active:false, muted:false, busy:false,
+  messages:[], system:'', lang:'he-IL',
+  rec:null, synth:window.speechSynthesis,
+  jobLabel:'', stageLabel:''
+};
+
+function startVoicePractice(i){
+  const {stage,lang}=window._practiceCtx||{};
+  const j=window._sorted[i],cvData=getCV();
+  const interviewer=(document.getElementById("iview-manual")||{}).value||"";
+  const stageUsed=stage||currentStage(j);
+  const langHe=lang!=="en";
+  const langCode=langHe?"he-IL":"en-US";
+
+  // check browser support
+  const SpeechRec=window.SpeechRecognition||window.webkitSpeechRecognition;
+  const overlay=document.getElementById("voice-overlay");
+  overlay.classList.add("show");
+  // close text modal
+  document.getElementById("modal").classList.remove("show");
+
+  if(!SpeechRec){
+    document.getElementById("vo-no-support").style.display="block";
+    document.getElementById("vo-no-support").textContent=
+      "הדפדפן הזה לא תומך בזיהוי קול. נסה Chrome או Edge.";
+    document.getElementById("vo-who").textContent="";
+    return;
+  }
+  if(!chatReady()){
+    document.getElementById("vo-no-support").style.display="block";
+    document.getElementById("vo-no-support").textContent=
+      langHe?"חסר חיבור ל-API. הגדר מפתח API בהגדרות.":"No API connection. Set your API key in Settings.";
+    return;
+  }
+
+  // build same system prompt as text practice
+  const guideHe=STAGE_GUIDE[stageUsed]||"";
+  const guideEn=STAGE_GUIDE_EN[stageUsed]||"";
+  const interviewerCtx=interviewer
+    ?(langHe?`\n## המראיין/ת\n${interviewer}\nהתאם את השאלות לסגנון המראיין.`
+            :`\n## Interviewer\n${interviewer}\nTailor questions to this interviewer's perspective.`)
+    :"";
+
+  const sysPrompt=langHe
+    ?`אתה מאמן ראיונות בכיר. מנהל סימולציית ראיון קולית בעברית.
+
+## השלב: ${stageUsed}
+${guideHe}${interviewerCtx}
+
+## המשרה
+חברה: ${j.company} | תפקיד: ${j.title}
+${j.description?`תיאור:\n${j.description.slice(0,400)}`:""}
+
+## הפרופיל
+עומרי גונן — ${cvData.tagline}
+${cvData.summary}
+
+## כללי השיחה הקולית (חשוב!)
+- שאל שאלה אחת בכל פעם — קצרה וברורה (מקסימום 2-3 משפטים).
+- אחרי כל תשובה: פידבק קצר (**חזק** / **לשפר** / **ניקוד**) ואז שאלה הבאה.
+- אחרי 5-6 שאלות: סיכום קצר עם ציון ממוצע ו-2 המלצות.
+- דבר בצורה טבעית ושוטפת — לא רשימות מסורבלות, לא כותרות.
+- שמור על טון חם ומעצים.`
+    :`You are a senior interview coach running a voice interview simulation in English.
+
+## Stage: ${stageUsed}
+${guideEn}${interviewerCtx}
+
+## Job
+${j.company} · ${j.title}
+${j.description?`${j.description.slice(0,400)}`:""}
+
+## Profile
+Omri Gonen — ${cvData.tagline}. ${cvData.summary}
+
+## Voice Interview Rules (important!)
+- Ask ONE question at a time — short and clear (max 2-3 sentences).
+- After each answer: brief feedback (strength / improvement / score 1-10) then next question.
+- After 5-6 questions: short summary with average score and top 2 tips.
+- Speak naturally and conversationally — no bullet lists, no headers.
+- Keep the tone warm and empowering.`;
+
+  const kickoff=langHe
+    ?"שלום! אני מוכן לראיון. תתחיל בבקשה בשאלה הראשונה."
+    :"Hi! I'm ready for the interview. Please start with the first question.";
+
+  // init state
+  Object.assign(_vc,{
+    active:true,muted:false,busy:false,
+    messages:[],system:sysPrompt,lang:langCode,
+    jobLabel:j.company,stageLabel:stageUsed+(interviewer?" · "+interviewer:""),
+    rec:null
+  });
+
+  // setup UI
+  document.getElementById("vo-company").textContent=j.company.toUpperCase()+" · "+j.title;
+  document.getElementById("vo-stage").textContent=stageUsed+(interviewer?" · "+interviewer:"");
+  document.getElementById("vo-who").textContent=langHe?"מתחיל...":"Starting...";
+  document.getElementById("vo-last-ai").textContent="";
+  document.getElementById("vo-interim").textContent="";
+  document.getElementById("vo-no-support").style.display="none";
+  setVoiceState("thinking");
+
+  // kick off: send kickoff message to Claude, speak response
+  _vc.messages.push({role:"user",content:kickoff});
+  voiceCallClaude();
+}
+
+function setVoiceState(state){
+  const wrap=document.getElementById("vo-avatar-wrap");
+  const who=document.getElementById("vo-who");
+  const ico=document.getElementById("vo-icon");
+  const langHe=_vc.lang.startsWith("he");
+  wrap.className="vo-avatar-wrap";
+  if(state==="speaking"){
+    wrap.classList.add("speaking");
+    who.textContent=langHe?"Claude מדבר...":"Claude speaking...";
+    ico.textContent="smart_toy";
+  }else if(state==="listening"){
+    wrap.classList.add("listening");
+    who.textContent=langHe?"תורך לדבר":"Your turn";
+    ico.textContent="mic";
+  }else if(state==="thinking"){
+    who.textContent=langHe?"חושב...":"Thinking...";
+    ico.textContent="hourglass_empty";
+  }else if(state==="idle"){
+    who.textContent="";
+    ico.textContent="smart_toy";
+  }
+}
+
+async function voiceCallClaude(){
+  if(!_vc.active)return;
+  _vc.busy=true;
+  setVoiceState("thinking");
+  try{
+    const proxy=getProxy();
+    const payload={model:CHAT_MODEL,max_tokens:600,system:_vc.system,messages:_vc.messages};
+    let res;
+    if(proxy){
+      res=await fetch(proxy,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(payload)});
+    }else{
+      res=await fetch("https://api.anthropic.com/v1/messages",{
+        method:"POST",
+        headers:{"content-type":"application/json","x-api-key":getApiKey(),
+          "anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+        body:JSON.stringify(payload)
+      });
+    }
+    if(!res.ok)throw new Error("API "+res.status);
+    const data=await res.json();
+    const text=data.content?.[0]?.text||"";
+    _vc.messages.push({role:"assistant",content:text});
+    document.getElementById("vo-last-ai").textContent=text.slice(0,160)+(text.length>160?"…":"");
+    voiceSpeak(text);
+  }catch(e){
+    console.error(e);
+    const msg=_vc.lang.startsWith("he")?"שגיאה בחיבור ל-API":"API connection error";
+    document.getElementById("vo-who").textContent=msg;
+    _vc.busy=false;
+  }
+}
+
+function getElKey(){return localStorage.getItem('elevenlabs_key')||'';}
+function saveElKey(){
+  const v=document.getElementById('el-key-inp').value.trim();
+  if(v){localStorage.setItem('elevenlabs_key',v);document.getElementById('el-key-status').textContent='מפתח ElevenLabs שמור ✓ — ראיון קולי אנושי פעיל';showToast('מפתח ElevenLabs נשמר');}
+  else{localStorage.removeItem('elevenlabs_key');document.getElementById('el-key-status').textContent='';showToast('מפתח ElevenLabs הוסר');}
+}
+
+// ElevenLabs voice IDs — professional, warm, multilingual
+const EL_VOICES={
+  he:'JBFqnCBsd6RMkjVDRZzb',  // George — professional, works great in Hebrew
+  en:'nPczCjzI2devNBz1zQrb'   // Brian — warm, clear, interview-appropriate
+};
+
+async function voiceSpeak(text){
+  if(!_vc.active)return;
+  // cancel any playing audio
+  _vc.synth.cancel();
+  if(_vc._audio){try{_vc._audio.pause();}catch(e){}; _vc._audio=null;}
+  setVoiceState("speaking");
+  const clean=text.replace(/[*_#`►•\[\]]/g,"").replace(/\n{2,}/g,". ").replace(/\n/g," ").trim();
+  const elKey=getElKey();
+  if(elKey){
+    try{await voiceSpeakEL(clean,elKey);return;}
+    catch(e){console.warn("ElevenLabs failed, falling back:",e);}
+  }
+  voiceSpeakNative(clean);
+}
+
+async function voiceSpeakEL(text,apiKey){
+  const langPrefix=_vc.lang.slice(0,2);
+  const voiceId=EL_VOICES[langPrefix]||EL_VOICES.en;
+  const res=await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}/stream`,{
+    method:"POST",
+    headers:{"xi-api-key":apiKey,"content-type":"application/json","accept":"audio/mpeg"},
+    body:JSON.stringify({
+      text,
+      model_id:"eleven_multilingual_v2",
+      voice_settings:{stability:0.45,similarity_boost:0.80,style:0.25,use_speaker_boost:true}
+    })
+  });
+  if(!res.ok)throw new Error("EL "+res.status);
+  const blob=await res.blob();
+  const url=URL.createObjectURL(blob);
+  const audio=new Audio(url);
+  _vc._audio=audio;
+  return new Promise((resolve,reject)=>{
+    audio.onended=()=>{
+      URL.revokeObjectURL(url);_vc._audio=null;
+      if(_vc.active&&!_vc.muted)voiceListen();else _vc.busy=false;
+      resolve();
+    };
+    audio.onerror=(e)=>{URL.revokeObjectURL(url);_vc._audio=null;reject(e);};
+    audio.play().catch(reject);
+  });
+}
+
+function voiceSpeakNative(clean){
+  const utt=new SpeechSynthesisUtterance(clean);
+  utt.lang=_vc.lang;
+  utt.rate=_vc.lang.startsWith("he")?0.88:0.9;
+  utt.pitch=1.0;
+  // prefer Google voices — sound more natural than system TTS
+  const voices=_vc.synth.getVoices();
+  const lp=_vc.lang.slice(0,2);
+  const best=voices.find(v=>v.lang===_vc.lang&&/google/i.test(v.name))
+            ||voices.find(v=>v.lang.startsWith(lp)&&/google/i.test(v.name))
+            ||voices.find(v=>v.lang===_vc.lang)
+            ||voices.find(v=>v.lang.startsWith(lp));
+  if(best)utt.voice=best;
+  utt.onend=()=>{if(_vc.active&&!_vc.muted)voiceListen();else _vc.busy=false;};
+  utt.onerror=()=>{if(_vc.active)voiceListen();};
+  _vc.synth.speak(utt);
+}
+
+function voiceListen(){
+  if(!_vc.active||_vc.muted)return;
+  const SpeechRec=window.SpeechRecognition||window.webkitSpeechRecognition;
+  const rec=new SpeechRec();
+  rec.lang=_vc.lang;
+  rec.interimResults=true;
+  rec.maxAlternatives=1;
+  rec.continuous=false;
+  _vc.rec=rec;
+  _vc.busy=false;
+  setVoiceState("listening");
+  document.getElementById("vo-interim").textContent="";
+
+  rec.onresult=(e)=>{
+    let interim="",final="";
+    for(const r of e.results){
+      if(r.isFinal)final+=r[0].transcript;
+      else interim+=r[0].transcript;
+    }
+    document.getElementById("vo-interim").textContent=interim||final;
+    if(final){
+      rec.stop();
+      _vc.rec=null;
+      document.getElementById("vo-interim").textContent=final;
+      _vc.messages.push({role:"user",content:final});
+      _vc.busy=true;
+      setTimeout(()=>{document.getElementById("vo-interim").textContent="";voiceCallClaude();},400);
+    }
+  };
+  rec.onerror=(e)=>{
+    if(e.error==="no-speech"&&_vc.active)voiceListen();
+  };
+  rec.onend=()=>{
+    if(_vc.active&&!_vc.busy&&!_vc.muted)voiceListen();
+  };
+  rec.start();
+}
+
+function toggleVoiceMute(){
+  _vc.muted=!_vc.muted;
+  const btn=document.getElementById("vo-mute-btn");
+  const ico=document.getElementById("vo-mute-ico");
+  btn.classList.toggle("muted",_vc.muted);
+  ico.textContent=_vc.muted?"mic_off":"mic";
+  if(_vc.muted){
+    _vc.synth.cancel();
+    if(_vc.rec)try{_vc.rec.stop();}catch(e){}
+    setVoiceState("idle");
+  }else{
+    voiceListen();
+  }
+}
+
+function voiceSkip(){
+  _vc.synth.cancel();
+  if(_vc._audio){try{_vc._audio.pause();}catch(e){}; _vc._audio=null;}
+  if(_vc.rec)try{_vc.rec.stop();}catch(e){}
+  _vc.rec=null;_vc.busy=false;
+  if(!_vc.muted)voiceListen();
+}
+
+function endVoiceCall(){
+  _vc.active=false;
+  _vc.synth.cancel();
+  if(_vc._audio){try{_vc._audio.pause();}catch(e){}; _vc._audio=null;}
+  if(_vc.rec)try{_vc.rec.stop();}catch(e){}
+  _vc.rec=null;
+  document.getElementById("voice-overlay").classList.remove("show");
+  setVoiceState("idle");
+}
+
+// load voices when available (needed for some browsers)
+if(window.speechSynthesis)window.speechSynthesis.onvoiceschanged=()=>{};
 
 /* ── FEATURE: company dossier prompt ── */
 function openDossier(i){
   const j=window._sorted[i];
-  _modalMode="dossier";_cvCompany=j.company;
-  _cvText=`חקור עבורי את החברה הבאה והכן דוסייר תמציתי בעברית (השתמש בחיפוש אינטרנט עדכני).
+  _cvCompany=j.company;
+  const query=`חקור את החברה והכן דוסייר לקראת ראיון עבודה.
 
 חברה: ${j.company}
-${j.url?`קישור: ${j.url}`:""}
+תפקיד הרלוונטי: ${j.title}
+${j.location?`מיקום: ${j.location}`:""}
+${j.url?`קישור למשרה: ${j.url}`:""}
 
-## מה לכלול
-1. מה החברה עושה (משפט-שניים)
-2. שלב/גיוס: כמה גייסו, סבב אחרון, משקיעים בולטים
-3. גודל: מספר עובדים משוער, איפה הם ממוקמים
-4. 2-3 חדשות / אירועים אחרונים (12 חודשים)
-5. תרבות ומוניטין כמעסיק
-6. למה זה רלוונטי למישהו מתחום RevOps/GTM
-7. דגל אדום אחד אם יש
+החזר בדיוק במבנה הבא (כותרות עם ## וטקסט תמציתי מתחת):
 
-תן תשובה קצרה ומדויקת עם מקורות.`;
-  document.getElementById("m-title").textContent="🏢 דוסייר חברה — "+j.company;
-  document.getElementById("m-sub").textContent=j.title;
-  document.getElementById("m-body").textContent=_cvText;
-  document.getElementById("m-pdf-btn").style.display="none";
-  document.getElementById("modal").classList.add("show");
+## ⚡ במשפט
+מה החברה עושה, במשפט אחד חד.
+
+## 💰 מימון ושלב
+סבב אחרון, סכום, משקיעים בולטים, הערכת שווי אם ידועה.
+
+## 👥 גודל ומיקום
+מספר עובדים משוער, משרדים, שוק יעד.
+
+## 📰 חדשות אחרונות
+2-3 אירועים/הכרזות מהחודשים האחרונים, עם תאריך.
+
+## 🌟 תרבות ומוניטין כמעסיק
+איך זה להיות עובד שם (Glassdoor/לינקדאין/דעות).
+
+## 🎯 רלוונטי לתפקיד שלי (RevOps / GTM)
+למה התפקיד הזה מעניין, ואיזה כאב הם כנראה מנסים לפתור.
+
+## 🗣️ 3 שאלות חכמות לראיון
+שאלות שמראות שעשית שיעורי בית.
+
+## 🚩 דגל אדום
+סיכון/חשש אחד אם קיים, אחרת כתוב "לא זוהה".
+
+## 🔗 מקורות
+הקישורים שמהם נלקח המידע.
+
+חשוב: השתמש בחיפוש ברשת כדי למצוא מידע עדכני ואמיתי. אל תמציא — אם פרט לא נמצא, כתוב "לא נמצא מידע".`;
+  openReport({
+    title:"🏢 דוסייר חברה — "+j.company,
+    sub:j.title,
+    system:"אתה אנליסט מודיעין עסקי שמכין דוסיירים על חברות הייטק לקראת ראיונות עבודה. חובה להשתמש בכלי החיפוש ברשת כדי לאסוף מידע עדכני ומדויק. ענה בעברית בלבד, תמציתי, ובמבנה המבוקש בדיוק. לעולם אל תמציא עובדות — אם משהו לא נמצא, אמור זאת. תמיד צרף מקורות בסוף.",
+    query:query,
+    fallbackText:query
+  });
 }
 
 /* ── FEATURE: pipeline analytics ── */
@@ -1053,11 +2312,232 @@ function openAnalytics(){
 }
 function closeAnalytics(){document.getElementById("sheet").classList.remove("show");}
 
+/* ── FEATURE: emotional support ── */
+function _supportPrompt(context){
+  const stats=computeStats();
+  const applied=stats.by.applied+stats.by.interview+stats.by.offer+stats.by.rejected;
+  const interviews=stats.by.interview+stats.by.offer;
+  const rejected=stats.by.rejected||0;
+  // rounds passed
+  let roundsPassed=0,roundsTotal=0;
+  JOBS.forEach(j=>{getRounds(j).forEach(r=>{roundsTotal++;if(r.outcome==="passed")roundsPassed++;});});
+  const trackerSummary=`מצב הטראקר הנוכחי שלי:
+- ${stats.total} משרות פעילות בטראקר
+- ${applied} הגשות עד כה
+- ${interviews} ראיונות
+- ${roundsPassed} מתוך ${roundsTotal} סבבי ראיון שעברתי בהצלחה
+- ${rejected} דחיות${context||""}`;
+
+  return`אתה משלב שני תפקידים בשיחה הזו: **מנטור קריירה בכיר** (15+ שנות ניסיון בהובלת אנשים, גיוס וניהול ב-RevOps/GTM) ו**מאמן לחוסן מנטלי** שמלווה אנשים רגשית בתהליך חיפוש עבודה. ענה בעברית, בגוף ראשון, כאילו אנחנו יושבים יחד.
+
+${trackerSummary}
+
+==================================================
+הכישורים שאתה מביא לשיחה (השתמש בהם לפי הצורך)
+==================================================
+
+### 1. הקשבה רפלקטיבית (תמיד קודם)
+לפני שאתה מייעץ — תקף את מה שאני מרגיש. שקף לי בחזרה במילים שלך מה שמעת ("נשמע שאתה..."). אל תמהר לפתור. רגש שלא הוכר חוזר.
+
+### 2. מסגור מחדש קוגניטיבי (CBT reframing)
+כשאני אומר משהו מוחלט/קטסטרופלי ("אני לא אמצא", "כולם דחו אותי", "אני לא מספיק טוב") — עזור לי בעדינות לזהות את העיוות ולנסח מחדש לפי עובדות. השתמש בנתונים מהטראקר כעוגן למציאות (עברתי ${roundsPassed} סבבי ראיון — זה לא "אף אחד לא רוצה אותי").
+
+### 3. ראיון מוטיבציוני (Motivational Interviewing)
+אל תדחוף פתרונות. שאל שאלות פתוחות שמוציאות ממני את התשובות שלי. אני בעל הסמכות על חיי. תפקידך לעזור לי לראות בהירות, לא להגיד לי מה לעשות.
+
+### 4. פרספקטיבה אסטרטגית של מנטור
+כשרלוונטי — תן לי את מבט-העל שמנהל בכיר רואה: איך נראה השוק עכשיו, מה באמת מחפשים בתפקידי RevOps/GTM, איך לבנות נרטיב קריירה משכנע, מתי דחייה היא על fit ולא על ערך. דבר אמת, גם כשהיא לא נוחה — אבל תמיד עם כבוד.
+
+### 5. ויסות אנרגיה ופעולה
+חיפוש עבודה הוא מרתון. עזור לי לזהות שחיקה, לשמור על אנרגיה, ולסיים כל שיחה עם צעד אחד קטן וברור שמחזיר תחושת שליטה.
+
+==================================================
+איך לנהל את השיחה
+==================================================
+פתח בשאלה אחת, פתוחה, חמה: "איך אתה מרגיש היום בתהליך?"
+הקשב לתשובה ושקף אותה לפני שתמשיך. ואז התאם:
+
+• אם אני **עייף / מיואש / תקוע** → תקף קודם, אחר כך מסגר מחדש עם נתוני הטראקר, וסיים בצעד קטן אחד.
+• אם אני **בסדר / אנרגטי** → חזק מה שעובד, ועזור לי לתכנן את הצעד הבא בחוכמה.
+• אם אני **לפני ראיון** → עזור לי להיכנס לזון: הכוחות שלי, הסיפור שלי, מה לזכור כשאני נכנס.
+• אם אני **אחרי דחייה** → תן מקום לאכזבה, ואז עזור לי להפיק לקח אחד בלי להאשים את עצמי.
+
+==================================================
+גבולות וביטחון (חשוב מאוד)
+==================================================
+אתה תמיכה רגשית — לא טיפול פסיכולוגי, ולא תחליף לאיש מקצוע.
+אם אני מתאר מצוקה עמוקה, חוסר תקווה מתמשך, או מחשבות על פגיעה עצמית —
+עצור את האימון, הגב באנושיות, והמלץ לי בחום לפנות לאדם קרוב או לעזרה מקצועית
+(בישראל: קו סה"ר 1201, ער"ן 1201). אל תתעלם מזה לעולם.
+
+==================================================
+טון
+==================================================
+חם, אמיתי, אנושי. לא קלישאתי, לא מתיילד.
+אל תגיד "אתה נהדר" — תגיד מה עבד לי בפועל, עם דוגמה.
+שאלה אחת בכל פעם. תן לי לדבר. ענה קצר.
+
+תתחיל עכשיו.`;
+}
+
+function openSupport(){
+  const sys=_supportPrompt("");
+  launchChat({
+    title:"💙 תמיכה רגשית",
+    sub:"שיחה עם מאמן מנטלי",
+    system:sys,
+    kickoff:"היי.",
+    fallbackText:sys
+  });
+}
+
+function openJobSupport(i){
+  const j=window._sorted[i];
+  const st=getJobState(j);
+  const rounds=getRounds(j);
+  const lastRound=rounds.length?rounds[rounds.length-1]:null;
+  const stageCtx=lastRound?`\n- שלב נוכחי בחברה הזו: ${lastRound.stage} (${lastRound.outcome==="pending"?"ממתין לתשובה":lastRound.outcome==="passed"?"עבר ✅":"נדחה ❌"})`:"";
+  const jobCtx=`\n\nהקשר ספציפי — חברה: ${j.company} | תפקיד: ${j.title} | סטטוס: ${st.status||"שמור"}${stageCtx}`;
+  const sys=_supportPrompt(jobCtx);
+  launchChat({
+    title:"💙 תמיכה — "+j.company,
+    sub:j.title+" · "+j.location,
+    system:sys,
+    kickoff:"היי.",
+    fallbackText:sys
+  });
+}
+
+/* ── ADD BY URL ── */
+let _abuParsed=null;
+let _abuManualMode=false;
+function openAddByUrl(){
+  _abuParsed=null;_abuManualMode=false;
+  document.getElementById('abu-url').value='';
+  document.getElementById('abu-status').textContent='';
+  document.getElementById('abu-manual').style.display='none';
+  document.getElementById('abu-save-btn').style.display='none';
+  document.getElementById('abu-parse-btn').style.display='';
+  document.getElementById('abu-manual-btn').textContent='✍️ הזן ידנית';
+  document.getElementById('abu-sub').textContent='הדבק לינק למשרה — AI יחלץ את הפרטים אוטומטית';
+  const ov=document.getElementById('add-url-overlay');
+  ov.style.display='flex';
+  setTimeout(()=>document.getElementById('abu-url').focus(),80);
+}
+function closeAddByUrl(){document.getElementById('add-url-overlay').style.display='none';}
+function abuUrlChange(inp){
+  const v=inp.value.trim();
+  document.getElementById('abu-status').textContent='';
+  document.getElementById('abu-save-btn').style.display='none';
+  if(v&&!_abuManualMode)document.getElementById('abu-parse-btn').style.display='';
+}
+function abuToggleManual(){
+  _abuManualMode=!_abuManualMode;
+  document.getElementById('abu-manual').style.display=_abuManualMode?'flex':'none';
+  document.getElementById('abu-manual-btn').textContent=_abuManualMode?'❌ סגור הזנה ידנית':'✍️ הזן ידנית';
+  document.getElementById('abu-parse-btn').style.display=_abuManualMode?'none':'';
+  if(_abuManualMode){
+    document.getElementById('abu-save-btn').style.display='';
+    document.getElementById('abu-company').focus();
+  } else {
+    document.getElementById('abu-save-btn').style.display='none';
+  }
+}
+async function abuParse(){
+  const url=document.getElementById('abu-url').value.trim();
+  if(!url){toast('הדבק לינק למשרה');return;}
+  if(!chatReady()){
+    // Fallback: just add the URL with manual entry
+    abuToggleManual();
+    document.getElementById('abu-status').textContent='אין מפתח API — הזן פרטים ידנית';
+    return;
+  }
+  const btn=document.getElementById('abu-parse-btn');
+  btn.disabled=true;btn.innerHTML='<span class="material-symbols-rounded" style="animation:fabSpin .8s linear infinite">sync</span>מחלץ פרטים…';
+  document.getElementById('abu-status').textContent='';
+  const prompt=`בקשה: חלץ פרטי משרה מהלינק הזה: ${url}
+
+השתמש בחיפוש ברשת כדי לגשת לדף המשרה ולחלץ את הפרטים.
+החזר JSON בלבד (ללא markdown, ללא הסברים):
+{
+  "company": "שם החברה",
+  "title": "כותרת התפקיד",
+  "location": "מיקום (עיר / Remote / Hybrid)",
+  "description": "תיאור קצר עד 300 תווים",
+  "url": "${url}"
+}
+אם לא הצלחת לגשת לדף, השתמש במידע מה-URL עצמו ומכל מידע שיש לך.`;
+  try{
+    const raw=await callResearch(
+      "אתה עוזר שחולץ פרטי משרה מלינקים. החזר JSON בלבד ללא markdown.",
+      prompt,true
+    );
+    // extract JSON
+    const m=raw.match(/\{[\s\S]*\}/);
+    if(!m)throw new Error('לא חזר JSON תקין');
+    _abuParsed=JSON.parse(m[0]);
+    document.getElementById('abu-company').value=_abuParsed.company||'';
+    document.getElementById('abu-title').value=_abuParsed.title||'';
+    document.getElementById('abu-location').value=_abuParsed.location||'';
+    document.getElementById('abu-desc').value=_abuParsed.description||'';
+    document.getElementById('abu-manual').style.display='flex';
+    document.getElementById('abu-save-btn').style.display='';
+    document.getElementById('abu-status').textContent='✅ פרטים חולצו — עדכן אם צריך ולחץ הוסף';
+    document.getElementById('abu-parse-btn').style.display='none';
+    document.getElementById('abu-manual-btn').textContent='❌ סגור הזנה ידנית';
+    _abuManualMode=true;
+  }catch(e){
+    document.getElementById('abu-status').textContent='⚠️ לא הצלחתי לחלץ אוטומטית — הזן ידנית';
+    abuToggleManual();
+  }finally{
+    btn.disabled=false;btn.innerHTML='<span class="material-symbols-rounded">auto_awesome</span>חלץ פרטים עם AI';
+  }
+}
+function abuSave(){
+  const company=(document.getElementById('abu-company').value||'').trim();
+  const title=(document.getElementById('abu-title').value||'').trim();
+  if(!company||!title){toast('חברה ותפקיד הם שדות חובה');return;}
+  const url=document.getElementById('abu-url').value.trim()||(_abuParsed&&_abuParsed.url)||'';
+  const location=document.getElementById('abu-location').value.trim();
+  const description=document.getElementById('abu-desc').value.trim();
+  const newJob={
+    company,title,location,url,description,
+    fit_score:0,score_reason:"הוסף ידנית",
+    posted:new Date().toISOString().slice(0,10),
+    scan_date:new Date().toISOString().slice(0,10),
+    initial_status:"saved",
+    _manualAdd:true
+  };
+  // persist to localStorage pending-adds list (pipeline merges on next run)
+  const pending=JSON.parse(localStorage.getItem('pendingJobs')||'[]');
+  pending.push(newJob);
+  localStorage.setItem('pendingJobs',JSON.stringify(pending));
+  // also inject into live JOBS array so it shows immediately
+  JOBS.unshift(newJob);
+  closeAddByUrl();
+  render();
+  toast('✅ '+company+' — '+title+' נוסף לטראקר');
+}
+
 /* ── RENDER ── */
 function render(){
   const stats=computeStats();
+  const gEl=document.getElementById("hero-greeting");
+  if(gEl){const h=new Date().getHours();const g=h<5?"לילה טוב":h<12?"בוקר טוב":h<17?"צהריים טובים":h<21?"ערב טוב":"לילה טוב";gEl.textContent=`${g}, עומרי 👋`;}
   document.getElementById("hero-meta").textContent=`Jun 10, 2026 · ${stats.total} משרות פעילות`;
   document.getElementById("hero-coach").textContent=coachLine(stats);
+
+  /* ── Desktop top-bar stats chips ── */
+  const dtbEl=document.getElementById("dtb-stats");
+  if(dtbEl){
+    const statItems=[
+      {v:stats.total,l:'משרות',stage:'all'},
+      {v:stats.by.applied||0,l:'הוגשו',stage:'applied'},
+      {v:stats.by.interview||0,l:'ראיונות',stage:'interview'},
+      {v:stats.by.offer||0,l:'הצעות',stage:'offer'},
+    ];
+    dtbEl.innerHTML=statItems.map(s=>`<button class="dtb-stat${fStage===s.stage?' active':''}" onclick="setFunnelFilter('${s.stage}')"><span class="v">${s.v}</span><span class="l">${s.l}</span></button>`).join('');
+  }
 
   const funnelStages=STAGES.filter(s=>s.key!=="rejected");
   const maxCount=Math.max(1,...funnelStages.map(s=>stats.by[s.key]||0));
@@ -1167,21 +2647,20 @@ function render(){
         <button class="star-btn${st.starred?" on":""}" onclick='event.stopPropagation();toggleStar(window._sorted[${i}])'>★</button>
         <div class="fit-mark" style="background:${fc.bg}">
           <div class="fit-num" style="color:${fc.fg}">${j.fit_score}</div>
-          <div class="fit-lbl" style="color:${fc.fg}">FIT</div>
         </div>
         <div class="card-text">
           <div class="card-company">${j.company}</div>
           <div class="card-role">${j.title}</div>
-          ${j.posted?`<div class="card-posted">🕐 ${postedLabel(j.posted)}</div>`:""}
-        </div>
-        <div class="card-head-right">
-          <div class="s-pill" style="--s-bg:${sc.bg};--s-fg:${sc.fg};--s-solid:${sc.solid}">
-            <span class="s-dot"></span>${sm.he}${st.statusDate?" · "+fmtDate(st.statusDate):""}
+          <div class="card-meta-row">
+            <span class="s-pill" style="--s-bg:${sc.bg};--s-fg:${sc.fg};--s-solid:${sc.solid}">
+              <span class="s-dot"></span>${sm.he}${st.statusDate?" · "+fmtDate(st.statusDate):""}
+            </span>
+            ${follow?`<span class="follow-badge">💬 Follow up?</span>`:""}
+            ${novel?`<span class="new-badge">חדש ✨</span>`:""}
+            ${j.posted?`<span class="card-posted">🕐 ${postedLabel(j.posted)}</span>`:""}
           </div>
-          ${follow?`<span class="follow-badge">💬 Follow up?</span>`:""}
-          ${novel?`<span class="new-badge">חדש ✨</span>`:""}
         </div>
-        <div class="chevron">▾</div>
+        <span class="chevron material-symbols-rounded">expand_more</span>
       </div>
       <div class="card-body-wrap">
         <div class="card-body-inner">
@@ -1222,11 +2701,13 @@ function render(){
             <div class="actions">
               <button class="act-btn act-letter" onclick='event.stopPropagation();copyLetterPrompt(this,${i})'><span class="material-symbols-rounded">mail</span>מכתב</button>
               <button class="act-btn act-prep" onclick='event.stopPropagation();openPrep(${i})'><span class="material-symbols-rounded">quiz</span>הכנה לראיון</button>
+              <button class="act-btn act-practice" onclick='event.stopPropagation();openPractice(${i})'><span class="material-symbols-rounded">record_voice_over</span>תרגול ראיון</button>
               <button class="act-btn act-dossier" onclick='event.stopPropagation();openDossier(${i})'><span class="material-symbols-rounded">corporate_fare</span>דוסייר</button>
               <button class="act-btn act-cv" onclick='event.stopPropagation();openCV(${i})'><span class="material-symbols-rounded">description</span>קו״ח</button>
               <button class="act-btn act-copy" onclick='event.stopPropagation();copyOpener(this,${i})'>פנייה 📋</button>
               <button class="act-btn act-wa" onclick='event.stopPropagation();shareWA(${i})'>וואטסאפ</button>
               <a href="${j.url}" target="_blank" rel="noopener" class="act-btn act-open" onclick='event.stopPropagation()'><span class="material-symbols-rounded">open_in_new</span>פתח משרה</a>
+              <button class="act-btn act-support" onclick='event.stopPropagation();openJobSupport(${i})'><span class="material-symbols-rounded">favorite</span>תמיכה רגשית</button>
               <button class="act-btn act-dismiss" onclick='event.stopPropagation();learnIrrelevant(this,${i})'><span class="material-symbols-rounded">thumb_down</span>לא רלוונטי — למד מזה</button>
             </div>
             ${dismissSection}
@@ -1245,10 +2726,15 @@ function render(){
     if(!vis.some(o=>o.i===window._selIndex))window._selIndex=vis.length?vis[0].i:-1;
     document.getElementById("container").innerHTML=vis.map(o=>buildRailRow(o.x,o.i,o.i===window._selIndex)).join("");
     const selO=vis.find(o=>o.i===window._selIndex);
-    document.getElementById("detail").innerHTML=selO?window._buildCard(selO.x,selO.i,true,true):'<div class="detail-empty">בחר משרה מהרשימה כדי לראות פרטים</div>';
+    document.getElementById("detail").innerHTML=selO?window._buildCard(selO.x,selO.i,true,true):'<div class="detail-empty"><span class="de-icon material-symbols-rounded">work_outline</span><div class="de-text">בחר משרה מהרשימה</div><div class="de-sub">לחץ על משרה כדי לראות פרטים</div></div>';
   }else{
     document.getElementById("detail").innerHTML='';
-    document.getElementById("container").innerHTML=list.map((x,i)=>window._buildCard(x,i,false,jobVisible(x))).join("");
+    if(v===0){
+      const cleared=(fStage!=='all'||fFit!=='all'||fAge!=='all'||fQ)?'<button class="empty-cta" onclick="resetFilters()">נקה סינון</button>':'';
+      document.getElementById("container").innerHTML=`<div class="list-empty"><span class="le-icon material-symbols-rounded">travel_explore</span><div class="le-title">${fQ?'לא נמצאו משרות תואמות':'אין משרות בתצוגה הזו'}</div><div class="le-sub">${fQ?'נסה מונח חיפוש אחר':'הסריקה רצה אוטומטית 3× ביום — משרות חדשות יופיעו כאן'}</div>${cleared}</div>`;
+    }else{
+      document.getElementById("container").innerHTML=list.map((x,i)=>window._buildCard(x,i,false,jobVisible(x))).join("");
+    }
   }
 
   const starredC=JOBS.filter(j=>getJobState(j).starred).length;
@@ -1260,6 +2746,60 @@ function render(){
 }
 
 function selectJob(i){window._selIndex=i;render();}
+
+/* ── Navigation rail ── */
+function nr(section){
+  document.querySelectorAll('.nr-item').forEach(b=>b.classList.remove('active'));
+  const btn=document.getElementById('nr-'+section);
+  if(btn)btn.classList.add('active');
+  if(section==='analytics')openAnalytics();
+}
+/* ── Mobile bottom nav handlers ── */
+function mbnJobs(){
+  document.querySelectorAll('.mbn-item').forEach(b=>b.classList.remove('active'));
+  const btn=document.getElementById('mbn-jobs');if(btn)btn.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function mbnAnalytics(){
+  document.querySelectorAll('.mbn-item').forEach(b=>b.classList.remove('active'));
+  const btn=document.getElementById('mbn-analytics');if(btn)btn.classList.add('active');
+  openAnalytics();
+  /* restore jobs active state after sheet closes */
+  document.getElementById('sheet').addEventListener('click',function once(e){
+    if(e.target===this){document.querySelectorAll('.mbn-item').forEach(b=>b.classList.remove('active'));const j=document.getElementById('mbn-jobs');if(j)j.classList.add('active');this.removeEventListener('click',once);}
+  });
+}
+function mbnSetActive(id){
+  document.querySelectorAll('.mbn-item').forEach(b=>b.classList.remove('active'));
+  const btn=document.getElementById(id);if(btn)btn.classList.add('active');
+}
+function mbnRestoreJobs(){
+  document.querySelectorAll('.mbn-item').forEach(b=>b.classList.remove('active'));
+  const j=document.getElementById('mbn-jobs');if(j)j.classList.add('active');
+}
+function toggleFilters(){
+  const sf=document.getElementById('secondary-filters');
+  const chip=document.getElementById('filters-toggle');
+  if(!sf)return;
+  sf.classList.toggle('open');
+  if(chip)chip.classList.toggle('open',sf.classList.contains('open'));
+}
+function mbnSupport(){
+  mbnSetActive('mbn-support');
+  openSupport();
+  /* restore jobs active when modal closes */
+  document.getElementById('modal').addEventListener('click',function once(e){
+    if(e.target===this){mbnRestoreJobs();this.removeEventListener('click',once);}
+  });
+}
+function mbnSettings(){
+  mbnSetActive('mbn-settings');
+  openSettings();
+  /* restore jobs active when drawer overlay closes */
+  document.getElementById('drawer-overlay').addEventListener('click',function once(){
+    mbnRestoreJobs();this.removeEventListener('click',once);
+  },{once:true});
+}
 function buildRailRow(x,i,sel){
   const j=x.j,st=x.st,stage=x.stage;
   const fc=fitColor(j.fit_score),sc=stageColor(STAGES.find(s=>s.key===stage)?.hue||235);
@@ -1309,12 +2849,13 @@ ${cvData.summary}
 
 טון: מקצועי אך אנושי. לא תבניתי. לא buzzwords ריקים.`;
 
-  navigator.clipboard.writeText(prompt).then(()=>{
-    const orig=btn.innerHTML;
-    btn.textContent="הועתק! ✓";btn.classList.add("copied");
-    showToast("פרומפט למכתב הועתק — הדבק ב-Claude.ai");
-    setTimeout(()=>{btn.innerHTML=orig;btn.classList.remove("copied");},2200);
-  }).catch(()=>showToast("ההעתקה נכשלה"));
+  launchChat({
+    title:"✉️ מכתב מקדים — "+j.company,
+    sub:j.title,
+    system:"אתה כותב מכתבי מקדים מקצועיים בעברית. טון אנושי, לא תבניתי, בלי buzzwords ריקים. אחרי שתכתוב, הצע למשתמש לחדד או לקצר.",
+    kickoff:prompt,
+    fallbackText:prompt
+  });
 }
 function shareWA(i){
   const j=window._sorted[i],c=j.contact;
@@ -1359,26 +2900,6 @@ async function syncFeedback(){
 }
 
 /* ── Scan button ── */
-async function triggerScan(){
-  const token=localStorage.getItem('gh_token');
-  if(!token){
-    showToast('הוסף GitHub token בהגדרות כדי לסרוק');
-    openSettings('connect');
-    return;
-  }
-  const btn=document.getElementById('scan-btn');
-  const orig=btn.innerHTML;btn.innerHTML='<span class="material-symbols-rounded">hourglass_top</span>סורק…';btn.disabled=true;
-  try{
-    const r=await fetch('https://api.github.com/repos/omriki55/family-chores-admin/actions/workflows/job-scan.yml/dispatches',{
-      method:'POST',
-      headers:{Authorization:`Bearer ${token}`,Accept:'application/vnd.github.v3+json','Content-Type':'application/json'},
-      body:JSON.stringify({ref:'main'})
-    });
-    if(r.status===204)showToast('✅ סריקה הופעלה! תוצאות יגיעו בעוד ~2 דקות');
-    else showToast('❌ שגיאה בהפעלת סריקה');
-  }catch(e){showToast('❌ '+e.message);}
-  setTimeout(()=>{btn.innerHTML=orig;btn.disabled=false;},5000);
-}
 
 /* ── Settings drawer ── */
 function openSettings(tab){
@@ -1394,11 +2915,24 @@ function openSettings(tab){
   const tk=localStorage.getItem('gh_token')||'';
   document.getElementById('gh-token-inp').value=tk;
   document.getElementById('gh-token-status').textContent=tk?'Token שמור ✓':'';
+  const ak=getApiKey();
+  document.getElementById('api-key-inp').value=ak;
+  document.getElementById('api-key-status').textContent=ak?'מפתח שמור ✓':'';
+  const px=getProxy();
+  document.getElementById('proxy-inp').value=px;
+  document.getElementById('proxy-status').textContent=px?'Proxy מחובר ✓ — צ\'אט חי בלי מפתח בדפדפן':'';
+  const elk=getElKey();
+  document.getElementById('el-key-inp').value=elk;
+  document.getElementById('el-key-status').textContent=elk?'מפתח ElevenLabs שמור ✓ — ראיון קולי אנושי פעיל':'';
   if(tab)switchDrawerTabByKey(tab);
 }
 function closeSettings(){
   document.getElementById('drawer').classList.remove('open');
   document.getElementById('drawer-overlay').classList.remove('show');
+  /* restore mobile bottom nav jobs-active if settings was opened from nav */
+  if(document.getElementById('mbn-settings')&&document.getElementById('mbn-settings').classList.contains('active')){
+    mbnRestoreJobs();
+  }
 }
 function switchDrawerTab(btn){
   document.querySelectorAll('.dtab').forEach(t=>t.classList.remove('on'));
@@ -1456,7 +2990,10 @@ function applyTheme(t){
   document.documentElement.setAttribute('data-theme',t);
   const ico=document.getElementById('theme-ico');
   if(ico)ico.textContent=(t==='dark')?'light_mode':'dark_mode';
-  const tc=document.querySelector('meta[name="theme-color"]:not([media])')||document.querySelector('meta[name="theme-color"]');
+  const ico2=document.getElementById('theme-ico2');
+  if(ico2)ico2.textContent=(t==='dark')?'light_mode':'dark_mode';
+  const icoSet=document.getElementById('theme-ico-set');
+  if(icoSet)icoSet.textContent=(t==='dark')?'light_mode':'dark_mode';
 }
 function initTheme(){
   let t=localStorage.getItem('theme');
@@ -1489,6 +3026,58 @@ document.addEventListener('keydown',e=>{
 });
 
 render();
+
+/* ── Daily personal question + encouragement on first visit of the day ── */
+(function dailyCheckIn(){
+  const today=new Date().toDateString();
+  const last=localStorage.getItem('last_checkin');
+  if(last===today)return; // already shown today
+  if(!chatReady())return; // no API — skip
+  localStorage.setItem('last_checkin',today);
+
+  const stats=computeStats();
+  const hour=new Date().getHours();
+  const greeting=hour<12?"בוקר טוב":"אחר הצהריים טוב";
+  const daysSince=(()=>{
+    const first=localStorage.getItem('first_use_date');
+    if(!first){localStorage.setItem('first_use_date',today);return 0;}
+    return Math.round((new Date()-new Date(first))/86400000);
+  })();
+  const applied=stats.by.applied||0, interviews=stats.by.interview||0;
+
+  // pick one of 6 rotating personal questions
+  const qIdx=(new Date().getDate())%6;
+  const questions=[
+    "איך אתה מרגיש הבוקר לגבי התהליך? מה הדבר שכי מרגש אותך עכשיו ומה הדבר שקצת מטריד?",
+    "מה למדת על עצמך כמקצוען מהראיונות האחרונים?",
+    "אם היית צריך לתאר את החברה האידיאלית בשבילך במשפט אחד — מה היית אומר?",
+    "מה ההישג שאתה הכי גאה בו מהחודש האחרון, שתרצה לספר עליו בראיון הבא?",
+    "מה אתה עושה טוב יותר מרוב האנשים בתפקידי RevOps?",
+    "מה הדבר שאתה הכי רוצה שמגייס יבין עלייך לאחר ראיון איתך?"
+  ];
+  const q=questions[qIdx];
+
+  const sys=`אתה חבר קרוב ומנטור חכם של עומרי — לא בוס, לא מאמן פורמלי. שיחת בוקר קצרה ואנושית.
+
+מצב נוכחי של התהליך:
+- ${daysSince} ימים מאז שהתחיל החיפוש
+- ${applied} הגשות, ${interviews} ראיונות
+
+שאל אותו שאלה אחת — ${q}
+אחרי שיענה, תן תגובה אנושית וחמה (2-3 משפטים).
+אם יש משהו מעניין בתשובה — העמק. אם נשמע מתוח — תן נקודת מבט מעודדת שמגיעה ממקום אמיתי.
+שמור על שיחה קצרה, לא מרצה. לא רשימות. דיבור אנושי.`;
+
+  setTimeout(()=>{
+    launchChat({
+      title:`${greeting}, עומרי 👋`,
+      sub:"שאלת הבוקר",
+      system:sys,
+      kickoff:q,
+      fallbackText:q
+    });
+  },1800); // small delay so page renders first
+})();
 
 /* ── PWA: register service worker for offline + installability ── */
 if('serviceWorker' in navigator){
