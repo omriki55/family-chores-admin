@@ -1,17 +1,14 @@
 {
   "roles": [
-    "Head of Revenue Operations",
-    "RevOps Manager",
-    "GTM Engineer",
-    "Head of Growth",
-    "Marketing Operations Lead",
-    "Sales Operations Manager"
+    "Software Engineer",
+    "Product Manager",
+    "Data Analyst"
   ],
   "ats": {
-    "greenhouse": ["monday", "wiz", "fireblocks", "melio", "gong", "riskified", "similarweb", "lemonade", "jfrog", "snyk", "taboola", "verbit"],
-    "lever": ["yotpo", "bigpanda", "deel"],
-    "ashby": ["island"]
+    "greenhouse": ["examplecompany1", "examplecompany2"],
+    "lever": ["examplecompany3"],
+    "ashby": ["examplecompany4"]
   },
-  "ats_note": "Israeli-HQ companies only — listings are pre-filtered to Israel/remote locations before scoring (see ats_scraper._DEFAULT_LOCATIONS).",
-  "updated": "2026-06-05"
+  "ats_note": "Replace the example slugs with the ATS board names of companies you want to track (e.g. greenhouse.io/yourcompany).",
+  "updated": "2026-06-10"
 }
