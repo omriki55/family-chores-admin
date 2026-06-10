@@ -550,6 +550,9 @@
     }
     .btn-wz-back:hover { background: var(--surface-container); }
 
+    .secret-row { display:flex; align-items:center; gap:8px; margin-top:8px; flex-wrap:wrap; }
+    kbd { background:var(--surface-container-high,#eae7ef); border:1px solid var(--line); border-radius:5px; padding:1px 6px; font-size:.8rem; font-family:monospace; }
+
     /* Step 4 — Done */
     .done-header {
       text-align: center;
@@ -730,7 +733,7 @@
       Get Started Free
       <span class="material-symbols-rounded" style="font-size:20px">arrow_forward</span>
     </a>
-    <a href="https://github.com/omriki55/family-chores-admin" target="_blank" rel="noopener" class="btn-ghost">
+    <a href="https://github.com/omriki55/omrigonenjobfinder" target="_blank" rel="noopener" class="btn-ghost">
       <span class="material-symbols-rounded" style="font-size:18px">code</span>
       View on GitHub
     </a>
@@ -888,7 +891,9 @@
       <input type="text" id="field-name" placeholder="e.g. Omri Cohen"/>
       <label class="field-label" for="field-profile">Your experience in one line</label>
       <input type="text" id="field-profile" placeholder="10 years RevOps, B2B SaaS, Salesforce expert"/>
-      <label class="field-label" for="field-apikey">Anthropic API key</label>
+      <label class="field-label" for="field-github">Your GitHub username</label>
+      <input type="text" id="field-github" placeholder="e.g. johndoe" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <label class="field-label" for="field-apikey">Anthropic API key <span style="font-weight:400;color:var(--ink-faint)">(optional — add later)</span></label>
       <input type="password" id="field-apikey" placeholder="sk-ant-..."/>
       <div class="field-note">
         <span class="material-symbols-rounded">lock</span>
@@ -910,60 +915,72 @@
     <div class="wz-step" id="wz-4">
       <div class="done-header">
         <span class="done-icon material-symbols-rounded">task_alt</span>
-        <div class="wz-title">Your config is ready!</div>
-        <p class="wz-sub" style="margin:0 auto">Download the file and follow the steps below to go live.</p>
+        <div class="wz-title">Your config is ready — 3 steps to go live</div>
+        <p class="wz-sub" style="margin:0 auto">Everything is set up. Follow the steps below — takes about 3 minutes.</p>
       </div>
 
-      <pre class="config-block" id="config-output"></pre>
-
-      <div class="done-buttons">
-        <button class="btn-download" onclick="downloadConfig()">
-          <span class="material-symbols-rounded" style="font-size:18px">download</span>
-          Download config.json
-        </button>
-        <a href="https://github.com/omriki55/family-chores-admin" target="_blank" rel="noopener" class="btn-next-step">
-          <span class="material-symbols-rounded" style="font-size:18px">open_in_new</span>
-          Next: Go to GitHub
-        </a>
+      <!-- STEP 1 -->
+      <div class="inst-step" style="margin-top:28px">
+        <div class="inst-num">1</div>
+        <div class="inst-content">
+          <strong>Fork the repo into your GitHub account</strong>
+          <p>Click the button below — it copies the entire system into your account for free.</p>
+          <a id="fork-link" href="https://github.com/omriki55/omrigonenjobfinder/fork" target="_blank" rel="noopener" class="inst-link">
+            <span class="material-symbols-rounded">fork_right</span>
+            Use this template on GitHub
+          </a>
+        </div>
       </div>
 
-      <div class="instructions">
-        <div class="instructions-title">4 steps to go live</div>
-
-        <div class="inst-step">
-          <div class="inst-num">1</div>
-          <div class="inst-content">
-            <strong>Fork the repo on GitHub</strong>
-            <p>Click the button to copy the entire system into your account — free forever.</p>
-            <a href="https://github.com/omriki55/family-chores-admin/fork" target="_blank" rel="noopener" class="inst-link">
-              <span class="material-symbols-rounded">fork_right</span>
-              Use this template
-            </a>
+      <!-- STEP 2 -->
+      <div class="inst-step">
+        <div class="inst-num">2</div>
+        <div class="inst-content">
+          <strong>Paste your config into the repo</strong>
+          <p>Click the button below — it copies your config <em>and</em> opens the file editor directly in your repo. Just paste (<kbd>Ctrl+V</kbd> / <kbd>⌘V</kbd>) and click <strong>Commit changes</strong>.</p>
+          <pre class="config-block" id="config-output" style="margin:12px 0;font-size:.75rem;max-height:160px;overflow-y:auto"></pre>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
+            <button class="inst-link" onclick="copyAndOpen()" id="copy-open-btn" style="background:var(--primary);color:#fff;border:none;cursor:pointer">
+              <span class="material-symbols-rounded">edit_note</span>
+              Copy config &amp; Open editor
+            </button>
+            <button class="inst-link" onclick="copyConfig()" style="background:var(--surface-container);color:var(--ink);border:none;cursor:pointer">
+              <span class="material-symbols-rounded">content_copy</span>
+              Copy only
+            </button>
           </div>
+          <p id="copy-ack" style="display:none;font-size:.8rem;color:var(--success);margin-top:6px;font-weight:600">✅ Copied! Now paste in the editor and click "Commit changes"</p>
         </div>
+      </div>
 
-        <div class="inst-step">
-          <div class="inst-num">2</div>
-          <div class="inst-content">
-            <strong>Upload config.json</strong>
-            <p>In your forked repo, navigate to <span class="code-inline">job_search/</span> and upload the <span class="code-inline">config.json</span> file you just downloaded.</p>
+      <!-- STEP 3 -->
+      <div class="inst-step">
+        <div class="inst-num">3</div>
+        <div class="inst-content">
+          <strong>Add your Anthropic API key</strong>
+          <p>In your forked repo: <strong>Settings → Secrets and variables → Actions → New repository secret</strong></p>
+          <div class="secret-row">
+            <span class="code-inline">Name:</span> <span class="code-inline" style="background:#001257;color:#dde1ff">ANTHROPIC_API_KEY</span>
           </div>
+          <div class="secret-row" style="margin-top:6px">
+            <span class="code-inline">Value:</span> <span style="font-size:.82rem;color:var(--ink-soft)">your key from console.anthropic.com → API Keys</span>
+          </div>
+          <p style="margin-top:10px;font-size:.82rem;color:var(--ink-soft)">No Anthropic key yet? <a href="https://console.anthropic.com" target="_blank" style="color:var(--primary)">Get one free →</a> (takes 2 minutes)</p>
+          <a id="secrets-link" href="https://github.com/omriki55/omrigonenjobfinder/settings/secrets/actions/new" target="_blank" rel="noopener" class="inst-link" style="margin-top:10px">
+            <span class="material-symbols-rounded">key</span>
+            Open Secrets settings
+          </a>
         </div>
+      </div>
 
-        <div class="inst-step">
-          <div class="inst-num">3</div>
-          <div class="inst-content">
-            <strong>Add your API key to GitHub Secrets</strong>
-            <p>Go to <strong>Settings → Secrets and variables → Actions</strong> and add a secret named <span class="code-inline">ANTHROPIC_API_KEY</span> with your key value.</p>
-          </div>
-        </div>
-
-        <div class="inst-step">
-          <div class="inst-num">4</div>
-          <div class="inst-content">
-            <strong>Enable GitHub Pages</strong>
-            <p>Go to <strong>Settings → Pages</strong>, set source to <span class="code-inline">main</span> branch, folder <span class="code-inline">/docs</span>. Your tracker will be live at <em>yourusername.github.io/family-chores-admin</em>.</p>
-          </div>
+      <!-- DONE -->
+      <div class="inst-step" style="background:var(--success-bg);border-radius:16px;padding:16px 20px">
+        <div class="inst-num" style="background:var(--success)">✓</div>
+        <div class="inst-content">
+          <strong>Your tracker is live!</strong>
+          <p>GitHub Actions will run the first scan automatically. Your tracker will be at:</p>
+          <p id="tracker-url-display" style="margin-top:6px;font-weight:700;color:var(--primary);word-break:break-all;font-size:.9rem">yourusername.github.io/omrigonenjobfinder</p>
+          <p style="font-size:.8rem;color:var(--ink-soft);margin-top:4px">Enable GitHub Pages: Settings → Pages → Branch: main → Folder: /docs</p>
         </div>
       </div>
     </div>
@@ -980,7 +997,7 @@
     <span class="footer-sep">·</span>
     Built with Claude Code
     <span class="footer-sep">·</span>
-    <a href="https://github.com/omriki55/family-chores-admin" target="_blank" rel="noopener">github.com/omriki55/family-chores-admin</a>
+    <a href="https://github.com/omriki55/omrigonenjobfinder" target="_blank" rel="noopener">github.com/omriki55/omrigonenjobfinder</a>
   </div>
 </footer>
 
@@ -1024,9 +1041,12 @@
     if (from === 3) {
       const name = document.getElementById('field-name').value.trim();
       const profile = document.getElementById('field-profile').value.trim();
+      const ghUser = document.getElementById('field-github').value.trim();
       if (!name) { shakeField('field-name'); return; }
       if (!profile) { shakeField('field-profile'); return; }
+      if (!ghUser) { shakeField('field-github'); return; }
       generateConfig();
+      updateGithubLinks(ghUser);
     }
     showStep(from + 1);
     document.querySelector('.wizard-wrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1087,15 +1107,35 @@
     document.getElementById('config-output').textContent = JSON.stringify(config, null, 2);
   }
 
-  function downloadConfig() {
+  function updateGithubLinks(ghUser) {
+    const repo = 'omrigonenjobfinder';
+    document.getElementById('fork-link').href = `https://github.com/omriki55/${repo}/fork`;
+    document.getElementById('secrets-link').href = `https://github.com/${ghUser}/${repo}/settings/secrets/actions/new`;
+    document.getElementById('tracker-url-display').textContent = `${ghUser}.github.io/${repo}`;
+    // store for copyAndOpen
+    window._ghUser = ghUser;
+    window._ghRepo = repo;
+  }
+
+  function copyConfig() {
     const text = document.getElementById('config-output').textContent;
-    const blob = new Blob([text], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'config.json';
-    a.click();
-    URL.revokeObjectURL(url);
+    navigator.clipboard.writeText(text).then(() => {
+      document.getElementById('copy-ack').style.display = 'block';
+      setTimeout(() => { document.getElementById('copy-ack').style.display = 'none'; }, 4000);
+    });
+  }
+
+  function copyAndOpen() {
+    const text = document.getElementById('config-output').textContent;
+    const ghUser = window._ghUser || '';
+    const ghRepo = window._ghRepo || 'omrigonenjobfinder';
+    navigator.clipboard.writeText(text).then(() => {
+      document.getElementById('copy-ack').style.display = 'block';
+      setTimeout(() => { document.getElementById('copy-ack').style.display = 'none'; }, 4000);
+    });
+    // Open the file editor in their forked repo
+    const editorUrl = `https://github.com/${ghUser}/${ghRepo}/edit/main/job_search/config.json`;
+    window.open(editorUrl, '_blank');
   }
 </script>
 </body>
