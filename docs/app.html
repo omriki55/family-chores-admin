@@ -842,6 +842,39 @@
     html[data-theme="dark"] .act-practice{background:#5f1f3a;color:#ffcfe0}
     html[data-theme="dark"] .round-card.r-passed{background:#1d4a30}
     html[data-theme="dark"] .round-card.r-rejected{background:#5c1414}
+
+    /* ===== DESIGN v2 OVERRIDES (Apple/Linear) ===== */
+    :root{
+      --primary:#5B5BF6;--primary-container:#EEF0FF;--on-primary-container:#1E1B4B;
+      --accent:#5B5BF6;--accentDeep:#4338CA;--accentSoft:#EEF0FF;--accentInk:#1E1B4B;
+      --canvas:#FAFAFC;--surface:#FFFFFF;--surfaceAlt:#F4F4F7;--surface-container:#F4F4F7;
+      --surface-container-high:#ECECF2;--surface-container-highest:#E9E9F0;
+      --ink:#0B0B14;--inkSoft:#45454F;--inkFaint:#6E6E7A;--line:#D9D9E3;--lineSoft:#ECECF2;
+      --grad:linear-gradient(135deg,#5B5BF6 0%,#9333EA 100%);
+      --heroBg:linear-gradient(135deg,#EEF0FF 0%,#F5EDFF 100%);
+      --e3:0 24px 60px -12px rgba(11,11,20,.14);
+    }
+    html[data-theme="dark"]{
+      --primary:#A5B4FC;--primary-container:#312E81;--on-primary-container:#E0E7FF;
+      --accent:#A5B4FC;--accentDeep:#C7D2FE;--accentSoft:#312E81;--accentInk:#E0E7FF;
+      --canvas:#0B0B14;--surface:#0B0B14;--surfaceAlt:#15151F;--surface-container:#15151F;
+      --surface-container-high:#1E1E2A;--surface-container-highest:#262635;
+      --ink:#EDEDF2;--inkSoft:#C5C5D2;--inkFaint:#8E8E9C;--line:#3A3A4A;--lineSoft:#262635;
+      --grad:linear-gradient(135deg,#6366F1 0%,#A855F7 100%);
+      --heroBg:linear-gradient(135deg,#1E1B4B 0%,#3B1D5E 100%);
+    }
+    .hero{background:var(--heroBg)}
+    .add-contact-btn{
+      border:1.5px dashed var(--line);background:transparent;color:var(--inkSoft);
+      border-radius:999px;padding:9px 16px;font-family:var(--font-ui);font-size:.8rem;font-weight:600;
+      cursor:pointer;align-self:flex-start;transition:all .15s;
+    }
+    .add-contact-btn:hover{border-color:var(--accent);color:var(--accent)}
+    .c-edit{background:none;border:none;cursor:pointer;color:var(--inkFaint);font-size:.85rem;margin-inline-start:6px}
+    .c-edit:hover{color:var(--accent)}
+    .contact-box .d-inp{width:100%;padding:9px 12px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font-family:var(--font-ui);font-size:.85rem;outline:none}
+    .contact-box .d-inp:focus{border-color:var(--accent)}
+    .contact-box .d-btn{padding:8px 16px;border:none;border-radius:999px;background:var(--grad);color:#fff;font-family:var(--font-ui);font-size:.82rem;font-weight:700;cursor:pointer}
   </style>
 </head>
 <body>
@@ -1084,8 +1117,7 @@
     </div>
     <div class="d-tab-panel" id="dtab-roles">
       <div class="d-section"><div class="d-lbl">תפקידים מבוקשים (שורה לכל תפקיד)</div><textarea class="d-ta" id="roles-ta" rows="7" oninput="saveRoles()"></textarea></div>
-      <button class="d-btn" onclick="downloadConfig()">⬇ הורד config.json</button>
-      <div class="d-hint">העלה קובץ זה לתיקיית job_search/ כדי לשנות את חיפוש המשרות</div>
+      <div class="d-hint">התפקידים כאן משמשים להתאמת קורות החיים והפרומפטים. את תפקידי הסריקה מעדכנים באשף שבדף הבית.</div>
     </div>
     <div class="d-tab-panel" id="dtab-connect">
       <div class="d-section">
@@ -1109,16 +1141,6 @@
         <button class="d-btn primary" onclick="saveElKey()" style="margin-top:6px">שמור מפתח ElevenLabs</button>
         <div class="d-status" id="el-key-status"></div>
         <div class="d-hint">מפתח חינמי ב-elevenlabs.io (10,000 תווים/חודש — מספיק לעשרות ראיונות). בלעדיו — קול מהדפדפן (רובוטי). עם המפתח — קול אנושי אמיתי.</div>
-      </div>
-      <div class="d-section">
-        <div class="d-lbl">GitHub Token</div>
-        <input class="d-inp" id="gh-token-inp" type="password" placeholder="ghp_..." autocomplete="off"/>
-        <button class="d-btn primary" onclick="saveGhToken()" style="margin-top:6px">שמור Token</button>
-        <div class="d-status" id="gh-token-status"></div>
-      </div>
-      <div class="d-section" style="display:flex;flex-direction:column;gap:8px">
-        <button class="d-btn" onclick="syncFeedback()">📤 סנכרן פידבק</button>
-        <div class="d-status" id="sync-status"></div>
       </div>
     </div>
   </div>
@@ -1267,8 +1289,6 @@ function saveScoringFeedback(j,val){
   const k=jobKey(j),cur=STATE[k]||{status:"saved"};
   cur.score_feedback=val;STATE[k]=cur;saveState(STATE);
   clearTimeout(window._fbTimer);
-  if(val&&localStorage.getItem('gh_token'))
-    window._fbTimer=setTimeout(syncFeedback,4000);
 }
 
 /* ── dismiss ── */
@@ -1276,10 +1296,8 @@ function dismissJob(j,reason){
   const k=jobKey(j),cur=STATE[k]||{status:"saved"};
   cur.dismissed=true;cur.dismiss_reason=reason;cur.dismiss_date=new Date().toISOString().slice(0,10);cur.company=j.company;
   STATE[k]=cur;saveState(STATE);
-  const hasToken=localStorage.getItem('gh_token');
-  if(hasToken)syncFeedback();
   if(reason==="irrelevant")
-    showToast(hasToken?"🧠 נלמד — "+j.company+" לא יוצע שוב בסריקה הבאה":"🧠 נשמר. הוסף GitHub token בהגדרות כדי שהסורק ילמד");
+    showToast("🧠 נשמר — לא יוצע שוב");
   render();
 }
 function learnIrrelevant(btn,i){
@@ -2562,19 +2580,19 @@ function render(){
     const fc=fitColor(j.fit_score);
     const follow=needsFollowupDirect(st);
     const sm=STAGES.find(s=>s.key===stage)||STAGES[0];
-    const c=j.contact;
+    const c=j.contact||st.contact;
     const delay=Math.min(i,12)*0.03;
     const novel=isNew(j);
-    const contactHTML=c?`<div class="contact-box">
-      <div class="contact-head">👤 למי לפנות · via Clay</div>
+    const contactHTML=`<div id="cwrap-${i}">`+(c?`<div class="contact-box">
+      <div class="contact-head">👤 למי לפנות${j.contact?" · via Clay":""}<button class="c-edit" onclick="event.stopPropagation();addContactUI(${i})" title="עריכת איש קשר">✎</button></div>
       <div class="contact-main">
         <div class="avatar">${initials(c.name)}</div>
-        <div><div class="contact-name">${c.name}</div><div class="contact-title">${c.title}</div></div>
+        <div><div class="contact-name">${c.name}</div><div class="contact-title">${c.title||""}</div></div>
       </div>
       <div class="contact-links">
-        ${c.email?`<a class="clink" href="mailto:${c.email}">✉️ ${c.email}</a>`:""}
-        ${c.linkedin?`<a class="clink li" href="${c.linkedin}" target="_blank" rel="noopener">in LinkedIn</a>`:""}
-      </div></div>`:"";
+        ${c.email?`<a class="clink" href="mailto:${c.email}?subject=${encodeURIComponent(j.title+" @ "+j.company)}&body=${encodeURIComponent(j.ai_opener||"")}" onclick="event.stopPropagation()">✉️ שלח מייל עם פתיח מוכן</a>`:""}
+        ${c.linkedin?`<a class="clink li" href="${c.linkedin}" target="_blank" rel="noopener" onclick="event.stopPropagation()">in LinkedIn</a>`:""}
+      </div></div>`:`<button class="add-contact-btn" onclick="event.stopPropagation();addContactUI(${i})">👤 + הוסף איש קשר / מגייס</button>`)+`</div>`;
     const stepBtns=STAGES.map(s=>{
       const sc2=stageColor(s.hue);
       return`<button class="step-btn${stage===s.key?" on":""}"
@@ -2826,8 +2844,39 @@ ${cvData.summary}
     fallbackText:prompt
   });
 }
+function addContactUI(i){
+  const j=window._sorted[i];
+  const c=j.contact||getJobState(j).contact||{};
+  const w=document.getElementById('cwrap-'+i);
+  if(!w)return;
+  w.innerHTML=`<div class="contact-box" onclick="event.stopPropagation()">
+    <div class="contact-head">👤 איש קשר / מגייס</div>
+    <input class="d-inp" id="cn-${i}" placeholder="שם" value="${esc(c.name||'')}"/>
+    <input class="d-inp" id="ct-${i}" placeholder="תפקיד (למשל Talent Acquisition)" value="${esc(c.title||'')}"/>
+    <input class="d-inp" id="ce-${i}" placeholder="אימייל" value="${esc(c.email||'')}" style="direction:ltr"/>
+    <input class="d-inp" id="cl-${i}" placeholder="קישור LinkedIn" value="${esc(c.linkedin||'')}" style="direction:ltr"/>
+    <div style="display:flex;gap:8px;margin-top:4px;flex-wrap:wrap">
+      <button class="d-btn" onclick="saveContact(${i})">שמור</button>
+      ${c.name?`<button class="d-btn" style="background:var(--error-container);color:var(--error)" onclick="removeContact(${i})">הסר</button>`:''}
+      <button class="d-btn" style="background:var(--surface-container-highest);color:var(--inkSoft)" onclick="render()">ביטול</button>
+    </div></div>`;
+}
+function saveContact(i){
+  const j=window._sorted[i],k=jobKey(j),cur=STATE[k]||{status:"saved"};
+  const c={name:document.getElementById('cn-'+i).value.trim(),
+    title:document.getElementById('ct-'+i).value.trim(),
+    email:document.getElementById('ce-'+i).value.trim(),
+    linkedin:document.getElementById('cl-'+i).value.trim()};
+  if(!c.name&&!c.email&&!c.linkedin){showToast('מלאו לפחות שם או אימייל');return;}
+  cur.contact=c;STATE[k]=cur;saveState(STATE);
+  showToast('איש קשר נשמר ✓');render();
+}
+function removeContact(i){
+  const j=window._sorted[i],k=jobKey(j),cur=STATE[k]||{status:"saved"};
+  delete cur.contact;STATE[k]=cur;saveState(STATE);render();
+}
 function shareWA(i){
-  const j=window._sorted[i],c=j.contact;
+  const j=window._sorted[i],c=j.contact||getJobState(j).contact;
   let msg=`🎯 *${j.company}* — ${j.title}\nFit ${j.fit_score}/10 · 📍 ${j.location}\n`;
   if(j.posted)msg+=`עלתה: ${postedLabel(j.posted)}\n`;
   if(c)msg+=`איש קשר: ${c.name}, ${c.title}${c.email?" ("+c.email+")":""}\n`;
@@ -2837,6 +2886,7 @@ function shareWA(i){
 
 /* ── GitHub feedback sync ── */
 async function syncFeedback(){
+  return; // obsolete in SaaS — feedback lives in your account
   const token=localStorage.getItem('gh_token');
   if(!token){showToast('הוסף GitHub token בהגדרות');return;}
   const dismissed={};
@@ -2881,9 +2931,6 @@ function openSettings(tab){
   document.getElementById('cv-summary').value=ov.summary||'';
   const roles=JSON.parse(localStorage.getItem('desired_roles')||'null')||CV_BASE_ROLES;
   document.getElementById('roles-ta').value=roles.join('\n');
-  const tk=localStorage.getItem('gh_token')||'';
-  document.getElementById('gh-token-inp').value=tk;
-  document.getElementById('gh-token-status').textContent=tk?'Token שמור ✓':'';
   const ak=getApiKey();
   document.getElementById('api-key-inp').value=ak;
   document.getElementById('api-key-status').textContent=ak?'מפתח שמור ✓':'';
