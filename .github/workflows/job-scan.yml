@@ -1,11 +1,10 @@
-name: Job Scan
+name: SaaS Job Scan
 permissions:
-  contents: write
+  contents: read
 on:
   workflow_dispatch:
   schedule:
-    # 3x daily, Sunday–Thursday only (Israeli work week). Israel is UTC+3 (IDT).
-    # Day-of-week 0=Sun … 4=Thu — skips Fri/Sat when no jobs are posted.
+    # 3x daily, Sunday–Thursday (Israeli work week), UTC times
     - cron: '0 5 * * 0-4'    # 08:00 Israel
     - cron: '0 10 * * 0-4'   # 13:00 Israel
     - cron: '0 15 * * 0-4'   # 18:00 Israel
@@ -17,13 +16,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - run: pip install anthropic python-dotenv
-      - run: python job_search/run_pipeline.py
+      - run: pip install anthropic
+      - run: python job_search/saas_pipeline.py
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-      - run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/index.html job_search/scored_jobs.json
-          git diff --cached --quiet || git commit -m "Auto scan — $(date +%Y-%m-%d)"
-          git push
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
