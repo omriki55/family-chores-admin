@@ -5,12 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>AI Job Search Engine — Built in Minutes</title>
   <meta name="description" content="Your AI-powered job search tracker. Auto-scans daily, scores fit with AI, and keeps you emotionally supported throughout the hunt."/>
+  <link rel="canonical" href="https://omriki55.github.io/omrigonenjobfinder/landing.html"/>
+  <link rel="icon" type="image/svg+xml" href="./icon.svg"/>
+  <meta name="theme-color" content="#4F6BED"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="AI Job Search Engine — Built in Minutes"/>
+  <meta property="og:description" content="Sign up, fill a 2-minute wizard, and your personal AI scans and scores jobs for you 3 times a day."/>
+  <meta property="og:url" content="https://omriki55.github.io/omrigonenjobfinder/landing.html"/>
+  <meta name="twitter:card" content="summary"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'"/>
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/></noscript>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet" media="print" onload="this.media='all'"/>
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet"/></noscript>
   <script src="./supabase-config.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
   <style>
     /* ===== CSS VARIABLES ===== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -45,6 +55,11 @@
 
     /* ===== RTL SUPPORT ===== */
     [dir="rtl"] .flip-rtl { transform: scaleX(-1); }
+    :focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+      html { scroll-behavior: auto; }
+    }
     .lang-toggle {
       background: transparent;
       border: 1.5px solid var(--line);
@@ -217,7 +232,7 @@
       align-items: center;
       gap: 6px;
       background: var(--primary-container);
-      color: var(--primary);
+      color: var(--primary-dark);
       font-size: 0.8rem;
       font-weight: 600;
       padding: 6px 14px;
@@ -274,8 +289,8 @@
     }
     .btn-ghost {
       background: transparent;
-      color: var(--primary);
-      border: 2px solid var(--primary);
+      color: var(--primary-dark);
+      border: 2px solid var(--primary-dark);
       padding: 14px 28px;
       border-radius: 100px;
       font-family: 'Heebo', sans-serif;
@@ -314,7 +329,6 @@
     .stat-label {
       font-size: 0.82rem;
       font-weight: 500;
-      opacity: 0.85;
       white-space: nowrap;
     }
 
@@ -326,7 +340,7 @@
       font-weight: 700;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--primary);
+      color: var(--primary-dark);
       margin-bottom: 12px;
     }
     .section-title {
@@ -792,7 +806,7 @@
     /* ===== FOOTER ===== */
     footer {
       background: var(--ink);
-      color: rgba(255,255,255,.7);
+      color: rgba(255,255,255,.82);
       text-align: center;
       padding: 40px 24px;
       font-size: 0.9rem;
@@ -977,7 +991,7 @@
       <div class="wz-title" data-i18n="wz1.title">What roles are you looking for?</div>
       <p class="wz-sub" data-i18n="wz1.sub">List one role per line. Be specific — these are used to scan and score jobs.</p>
 
-      <div class="cv-zone" id="cv-zone" onclick="document.getElementById('cv-file').click()">
+      <div class="cv-zone" id="cv-zone" role="button" tabindex="0" aria-label="Upload CV" onclick="document.getElementById('cv-file').click()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();document.getElementById('cv-file').click()}">
         <span class="material-symbols-rounded" style="font-size:32px;color:var(--primary)">upload_file</span>
         <div class="cv-zone-title" data-i18n="cv.title">Upload your CV — we'll fill in the details for you</div>
         <div class="cv-zone-sub" data-i18n="cv.sub">PDF, DOCX or TXT · drag &amp; drop or click to choose a file</div>
@@ -986,7 +1000,7 @@
       <input type="file" id="cv-file" accept=".pdf,.docx,.txt" style="display:none"/>
       <div class="cv-divider"><span data-i18n="cv.or">or fill in manually</span></div>
 
-      <textarea id="field-roles" data-i18n-ph="wz1.ph" placeholder="Revenue Operations Manager&#10;Head of Growth&#10;GTM Engineer" rows="5"></textarea>
+      <textarea id="field-roles" aria-label="Target roles" data-i18n-ph="wz1.ph" placeholder="Revenue Operations Manager&#10;Head of Growth&#10;GTM Engineer" rows="5"></textarea>
       <div class="wz-nav">
         <button class="btn-wz-next" onclick="wzNext(1)">
           <span data-i18n="btn.continue">Continue</span>
@@ -1005,7 +1019,7 @@
         <button class="chip" onclick="toggleChip(this)" data-val="Hybrid" data-i18n="chip.hybrid">🏠 Hybrid</button>
         <button class="chip" onclick="toggleChip(this, true)" data-val="other" id="chip-other" data-i18n="chip.other">✏️ Other</button>
       </div>
-      <input type="text" id="other-location" class="other-input" data-i18n-ph="wz2.otherPh" placeholder="e.g. Berlin, New York, London"/>
+      <input type="text" id="other-location" aria-label="Other location" class="other-input" data-i18n-ph="wz2.otherPh" placeholder="e.g. Berlin, New York, London"/>
       <div class="wz-nav">
         <button class="btn-wz-back" onclick="wzBack(2)">
           <span class="material-symbols-rounded flip-rtl" style="font-size:16px">arrow_back</span>
@@ -1087,7 +1101,7 @@
     <label class="field-label" for="auth-username" data-i18n="auth.username">Username</label>
     <input type="text" id="auth-username" autocomplete="username" autocapitalize="off" spellcheck="false"/>
     <label class="field-label" for="auth-password" data-i18n="auth.password">Password</label>
-    <input type="password" id="auth-password" autocomplete="current-password"/>
+    <input type="password" id="auth-password" autocomplete="current-password" onkeydown="if(event.key==='Enter')submitAuth()"/>
     <div id="auth-name-wrap" style="display:none">
       <label class="field-label" for="auth-fullname" data-i18n="auth.fullname">Full name (optional)</label>
       <input type="text" id="auth-fullname"/>
@@ -1132,7 +1146,12 @@
     }
     if (from === 2) {
       const selected = [...document.querySelectorAll('#location-chips .chip.selected')];
-      if (!selected.length) { alert(t('alert.location')); return; }
+      if (!selected.length) {
+        const row = document.getElementById('location-chips');
+        row.style.outline = '2px solid #ba1a1a'; row.style.outlineOffset = '6px'; row.style.borderRadius = '8px';
+        setTimeout(() => { row.style.outline = ''; }, 1600);
+        return;
+      }
     }
     if (from === 3) {
       const name = document.getElementById('field-name').value.trim();
@@ -1200,7 +1219,7 @@
         if (p.apikey) {
           await sb.from('user_secrets').upsert({ user_id: currentUser.id, anthropic_key: p.apikey, updated_at: new Date().toISOString() });
         }
-      } catch (e) {}
+      } catch (e) { alert('השמירה נכשלה — בדקו את החיבור ונסו שוב / Save failed, please retry'); return; }
       logEvent('config_generated', { roles: p.roles.length, has_key: !!p.apikey });
     }
     document.getElementById('key-warn').style.display = p.apikey ? 'none' : 'block';
@@ -1209,9 +1228,13 @@
   }
 
   // ===== SUPABASE: AUTH / ANALYTICS / CONTENT =====
-  const sb = (window.SUPABASE_URL && window.SUPABASE_ANON_KEY && window.supabase)
-    ? window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY)
-    : null;
+  let sb = null;
+  function initSbClient() {
+    if (!sb && window.SUPABASE_URL && window.SUPABASE_ANON_KEY && window.supabase) {
+      sb = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+    }
+    return sb;
+  }
   const AUTH_EMAIL_DOMAIN = 'users.jobfinder.local';
   let currentUser = null;
   let authMode = 'login';
@@ -1221,7 +1244,7 @@
     try { sb.from('events').insert({ event, meta: meta || {}, user_id: currentUser ? currentUser.id : null }).then(() => {}); } catch (e) {}
   }
 
-  function openAuth(mode) { switchAuthTab(mode || 'login'); document.getElementById('auth-overlay').classList.add('open'); }
+  function openAuth(mode) { switchAuthTab(mode || 'login'); document.getElementById('auth-overlay').classList.add('open'); setTimeout(() => document.getElementById('auth-username').focus(), 60); }
   function closeAuth() { document.getElementById('auth-overlay').classList.remove('open'); document.getElementById('auth-error').style.display = 'none'; }
   function switchAuthTab(mode) {
     authMode = mode;
@@ -1244,6 +1267,8 @@
     if (!/^[a-z0-9_-]{3,24}$/.test(username)) return authError(t('auth.badUsername'));
     if (password.length < 6) return authError(t('auth.badPassword'));
     const email = username + '@' + AUTH_EMAIL_DOMAIN;
+    const sbtn = document.getElementById('auth-submit');
+    sbtn.disabled = true; sbtn.style.opacity = .7;
     try {
       if (authMode === 'signup') {
         const fullName = document.getElementById('auth-fullname').value.trim();
@@ -1260,6 +1285,7 @@
       await refreshAuthUi();
       if (window._pendingFinish) { window._pendingFinish = false; finishWizard(); }
     } catch (e) { authError(String(e.message || e)); }
+    finally { sbtn.disabled = false; sbtn.style.opacity = 1; }
   }
 
   async function doLogout() {
@@ -1316,6 +1342,7 @@
   }
 
   function initSupabase() {
+    initSbClient();
     if (!sb) return;
     refreshAuthUi();
     applyRemoteContent();
@@ -1594,7 +1621,8 @@
     if (!saved) saved = (navigator.language || '').startsWith('he') ? 'he' : 'en';
     if (saved === 'he') applyLang('he');
   })();
-  initSupabase();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initSupabase);
+  else initSupabase();
 </script>
 </body>
 </html>
