@@ -158,6 +158,21 @@
     .chevron{font-size:22px;color:var(--inkFaint);transition:transform .25s var(--ease);flex-shrink:0;line-height:1}
     .job-card.open .chevron{transform:rotate(180deg)}
     .follow-badge{font-size:.64rem;background:#fef0d8;color:#7a5900;border-radius:999px;padding:3px 9px;font-weight:700;white-space:nowrap}
+    /* ── Multi-dim meta panel ── */
+    .meta-dims{background:var(--surface-container-highest);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:7px}
+    .meta-dims-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:2px}
+    .meta-verdict{font-size:.77rem;color:var(--inkSoft);line-height:1.4;font-style:italic;border-right:2px solid var(--lineSoft);padding-right:8px}
+    .meta-apply-badge{font-size:.7rem;font-weight:700;border-radius:8px;padding:3px 10px;white-space:nowrap;flex-shrink:0}
+    .meta-apply-yes{background:#d4f5d4;color:#1a6b1a}
+    .meta-apply-no{background:#ffe5e5;color:#991111}
+    .dim-row{display:grid;grid-template-columns:68px 1fr 22px;align-items:center;gap:8px}
+    .dim-label{font-size:.66rem;color:var(--inkSoft);font-weight:600;text-align:right}
+    .dim-bar-track{height:5px;border-radius:3px;background:var(--surface-container);overflow:hidden}
+    .dim-bar-fill{height:100%;border-radius:3px;transition:width .4s ease}
+    .dim-val{font-size:.66rem;color:var(--inkFaint);font-weight:700;text-align:center}
+    .meta-comp{font-size:.74rem;color:var(--ink);font-weight:600}
+    .meta-gaps{display:flex;flex-wrap:wrap;gap:4px}
+    .meta-gap-chip{background:var(--surface-container);color:var(--inkSoft);border-radius:8px;padding:2px 9px;font-size:.65rem;font-weight:600;border:1px solid var(--lineSoft)}
     /* ── Today Actions panel ── */
     #today-panel{background:linear-gradient(135deg,#fff8ed 0%,#fff3e0 100%);border:1.5px solid #f5c464;border-radius:18px;padding:14px 18px 12px;margin-bottom:14px;display:none}
     #today-panel.has-actions{display:block}
@@ -2635,6 +2650,29 @@ function openThankYouEmail(i){
   window.open(`mailto:${email}?subject=${sub}&body=${body}`,"_blank");
 }
 
+
+function metaPanel(j){
+  let m={};
+  try{m=typeof j.meta==='string'?JSON.parse(j.meta):(j.meta||{});}catch(e){}
+  const dims=m.dimensions;
+  if(!dims&&!m.verdict&&!m.comp_estimate)return '';
+  const DL={skills:'כישורים',seniority:'בכירות',location:'מיקום',growth:'צמיחה',comp:'שכר'};
+  const dc=v=>v>=8?'#22c55e':v>=6?'#84cc16':v>=4?'#f59e0b':'#ef4444';
+  const dimsH=dims?Object.entries(DL).map(([k,lbl])=>{
+    const v=dims[k]||0;
+    return `<div class="dim-row"><div class="dim-label">${lbl}</div><div class="dim-bar-track"><div class="dim-bar-fill" style="width:${v*10}%;background:${dc(v)}"></div></div><div class="dim-val">${v}</div></div>`;
+  }).join(''):'';
+  const gapsH=(m.gaps||[]).length?`<div class="meta-gaps">${(m.gaps||[]).map(g=>`<span class="meta-gap-chip">⚡ ${g}</span>`).join('')}</div>`:'';
+  const applyB=m.apply!=null?`<span class="meta-apply-badge ${m.apply?'meta-apply-yes':'meta-apply-no'}">${m.apply?'✅ מומלץ':'⚠️ דלג'}</span>`:'';
+  const compH=m.comp_estimate&&m.comp_estimate!=='unknown'?`<div class="meta-comp">💰 שכר משוער: ${m.comp_estimate}</div>`:'';
+  return `<div class="meta-dims">
+    <div class="meta-dims-head">
+      <span style="font-size:.74rem;font-weight:700;color:var(--ink)">🎯 ניתוח AI</span>${applyB}
+    </div>
+    ${m.verdict?`<div class="meta-verdict">"${m.verdict}"</div>`:''}
+    ${dimsH}${compH}${gapsH}
+  </div>`;
+}
 function render(){
   const stats=computeStats();
   const gEl=document.getElementById("hero-greeting");  renderTodayPanel();
@@ -2787,6 +2825,7 @@ function render(){
               ${j.job_type?`<span class="meta-chip">⚡ ${j.job_type}</span>`:""}
             </div>
             ${aiNote?`<div class="ai-note"><div class="ai-note-head">⚡ התאמת AI</div><div class="ai-note-text">${aiNote}</div></div>`:""}
+            ${metaPanel(j)}
             ${contactHTML}
             <div class="notes-wrap">
               <div class="notes-lbl">🧠 פידבק לסינון <span style="font-weight:400;opacity:.6;font-size:.6rem">(משפר את הניקוד בסריקה הבאה)</span></div>
@@ -3270,7 +3309,7 @@ function __showGate(msg) {
 
   const [{ data: prof }, { data: rows }, { data: us }, { data: sec }] = await Promise.all([
     __sb.from('profiles').select('full_name,username,roles,profile_summary,location').eq('user_id', __uid).maybeSingle(),
-    __sb.from('jobs').select('company,title,location,url,description,fit_score,score_reason,ai_opener,status,posted,scan_date').order('fit_score', { ascending: false }).limit(400),
+    __sb.from('jobs').select('company,title,location,url,description,fit_score,score_reason,ai_opener,status,posted,scan_date,meta').order('fit_score', { ascending: false }).limit(400),
     __sb.from('user_state').select('state').eq('user_id', __uid).maybeSingle(),
     __sb.from('user_secrets').select('anthropic_key').eq('user_id', __uid).maybeSingle()
   ]);
