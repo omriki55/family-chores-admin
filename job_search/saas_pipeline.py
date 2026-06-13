@@ -40,6 +40,9 @@ DEFAULT_ATS = {
                    "similarweb", "lemonade", "jfrog", "snyk", "taboola", "verbit"],
     "lever": ["yotpo", "bigpanda", "deel"],
     "ashby": ["island"],
+    # Workable: tokens are search keywords (not company slugs).
+    # Returns cross-company results; includes remote/TELECOMMUTE roles globally.
+    "workable": ["revops", "revenue operations"],
 }
 
 SENIORITY_PREFIXES = ("head of ", "senior ", "sr. ", "sr ", "lead ", "principal ",
