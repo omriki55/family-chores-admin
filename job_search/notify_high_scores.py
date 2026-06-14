@@ -18,6 +18,7 @@ import json
 import os
 import urllib.request
 from datetime import date, timezone, datetime
+from collections import defaultdict
 
 SUPABASE_URL = os.environ["SUPABASE_URL"].rstrip("/")
 SERVICE_KEY = os.environ["SUPABASE_SERVICE_ROLE_KEY"]
@@ -56,10 +57,9 @@ def fetch_todays_high_scores():
 
 
 def fetch_user_emails(user_ids):
-    """Return {user_id: email} from Supabase auth.users via service role."""
+    """Return {user_id: email} from Supabase auth admin API."""
     if not user_ids:
         return {}
-    # Use the admin API to get users
     out = {}
     for uid in user_ids:
         try:
@@ -72,8 +72,8 @@ def fetch_user_emails(user_ids):
             with urllib.request.urlopen(req, timeout=10) as r:
                 u = json.loads(r.read())
                 out[uid] = u.get("email", "")
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"  ⚠️  Could not fetch email for {uid[:8]}...: {e}")
     return out
 
 
@@ -173,31 +173,20 @@ def main():
         return
 
     # Group by user
-    from collections import defaultdict
     by_user = defaultdict(list)
     for j in jobs:
         by_user[j["user_id"]].append(j)
 
     print(f"  {len(jobs)} jobs across {len(by_user)} users")
 
-    # Get user info (username + email from profiles)
-    profiles = {p["user_id"]: p for p in (
-        _sb("GET", f"profiles?user_id=in.({','.join(by_user.keys())})&select=user_id,username,email") or []
-    )}
-
-    # Fallback: fetch emails from auth admin API
-    missing_emails = [uid for uid, p in profiles.items() if not p.get("email")]
-    if missing_emails:
-        auth_emails = fetch_user_emails(missing_emails)
-        for uid, email in auth_emails.items():
-            if uid in profiles:
-                profiles[uid]["email"] = email
+    # Fetch emails via Supabase auth admin API (no profiles table required)
+    user_emails = fetch_user_emails(list(by_user.keys()))
 
     sent = 0
     for uid, user_jobs in by_user.items():
-        profile = profiles.get(uid, {})
-        email = profile.get("email") or (uid == list(by_user.keys())[0] and ALERT_EMAIL) or ""
-        username = profile.get("username", "")
+        # Use auth email if found, else fall back to ALERT_EMAIL env var
+        email = user_emails.get(uid) or ALERT_EMAIL
+        username = ""
 
         if not email:
             print(f"  ⚠️  No email for user {uid[:8]}... — skipping")
